@@ -1,0 +1,70 @@
+<div class="min-h-screen bg-gray-100 flex flex-col">
+  <!-- Header - Agora com largura total -->
+  <header class="sticky top-0 z-40 bg-white border-b h-16 w-full flex items-center px-6">
+    <button class="lg:hidden text-gray-500 hover:text-gray-700 mr-4" (click)="toggleSidebar()">
+      <i-lucide name="menu" class="w-6 h-6"></i-lucide>
+    </button>
+    
+    <!-- Logotipo no header -->
+    <div class="flex items-center space-x-2">
+      <i-lucide name="file-box" class="w-6 h-6 text-blue-600"></i-lucide>
+      <span class="text-lg font-medium text-blue-600">Baron revestimentos</span>
+    </div>
+    
+    <div class="flex-1"></div>
+    
+    <!-- Botão para fechar sidebar em mobile -->
+    <button *ngIf="isSidebarOpen" class="lg:hidden text-gray-500 hover:text-gray-700" (click)="toggleSidebar()">
+      <i-lucide name="x" class="w-6 h-6"></i-lucide>
+    </button>
+  </header>
+
+  <!-- Conteúdo principal e sidebar -->
+  <div class="flex flex-1">
+    <!-- Backdrop mobile -->
+    <div *ngIf="isSidebarOpen" class="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden" (click)="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="fixed top-16 bottom-0 left-0 z-30 w-64 transform bg-white shadow-lg transition-transform lg:static lg:translate-x-0 lg:h-auto"
+           [class.translate-x-0]="isSidebarOpen" [class.-translate-x-full]="!isSidebarOpen">
+      <div class="flex flex-col h-full">
+        <!-- Navigation -->
+        <nav class="flex-1 px-2 py-4 overflow-y-auto">
+          <ul class="space-y-1">
+            <li *ngFor="let item of navigationItems">
+              <a [routerLink]="item.path" routerLinkActive="bg-blue-600 text-white" [routerLinkActiveOptions]="{ exact: true }"
+                 class="flex items-center px-4 py-2 text-sm rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
+                 (click)="toggleSidebar()">
+                <i-lucide [name]="item.icon" class="w-5 h-5 mr-3"></i-lucide>
+                {{ item.name }}
+              </a>
+            </li>
+          </ul>
+        </nav>
+        
+        <div class="p-4 border-t">
+          <div class="flex items-center">
+            <div class="h-9 w-9 rounded-full bg-blue-100 flex items-center justify-center">
+              <i-lucide name="user" class="w-5 h-5 text-blue-600"></i-lucide>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-gray-700">{{ user.name }}</p>
+              <p class="text-xs text-gray-500">{{ user.email }}</p>
+            </div>
+            <button class="ml-auto text-gray-400 hover:text-red-600 transition-colors" title="Sair" (click)="logout()">
+              <i-lucide name="log-out" class="w-5 h-5"></i-lucide>
+            </button>
+          </div>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="flex-1 overflow-hidden">
+      <!-- Router Outlet -->
+      <main class="relative overflow-y-auto p-6 focus:outline-none">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  </div>
+</div>
