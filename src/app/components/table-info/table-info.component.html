@@ -1,0 +1,33 @@
+<div class="card">
+  <div *ngIf="isLoading" class="p-4 text-center">Carregando…</div>
+
+  <div *ngIf="!isLoading" class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr>
+          <th *ngFor="let col of columns" [style.width]="col.width">{{ col.header }}</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of data; let i = index" class="hover:bg-gray-50">
+          <td *ngFor="let col of columns">
+            <ng-container [ngSwitch]="col.type">
+              <span *ngSwitchCase="'currency'">{{ row[col.field] | currency:'BRL':'symbol':'1.2-2' }}</span>
+              <span *ngSwitchDefault>{{ row[col.field] }}</span>
+            </ng-container>
+          </td>
+          <td class="flex space-x-2 p-2">
+            <button (click)="edit.emit(row)"   class="text-primary hover:text-primary-light" title="Editar">✏️</button>
+            <button (click)="delete.emit(row)" class="text-error hover:text-error/80" title="Excluir">🗑️</button>
+          </td>
+        </tr>
+        <tr *ngIf="data.length === 0">
+          <td [attr.colspan]="columns.length + 1" class="text-center py-8 text-gray-500">
+            Sem registros.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
