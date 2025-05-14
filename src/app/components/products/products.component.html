@@ -11,5 +11,11 @@
     <div class="mt-5">
         <app-search placeholder="Buscar produtos..."></app-search>
     </div>
-    <app-table-info></app-table-info>
+    <app-table-info
+        [columns]="columns"
+        [data]="products"
+        [isLoading]="isDeleting"
+        (edit)="onEdit($event)"
+        (delete)="onDelete($event)">
+    </app-table-info>
 </div>
