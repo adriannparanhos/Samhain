@@ -16,18 +16,25 @@ export interface TableColumn<T> {
     <div class="card">
       <div *ngIf="isLoading" class="p-4 text-center">Carregando…</div>
       <div *ngIf="!isLoading" class="overflow-x-auto">
-        <table class="w-full border-collapse">
-          <thead>
-            <tr class="border-b border-gray-200">
-              <th *ngFor="let col of columns" [style.width]="col.width" class="p-3 text-left font-medium text-gray-700">
+        <table class="w-full border-collapse border border-gray-200 rounded-md">
+          <thead class="bg-gray-300">
+            <tr>
+              <th *ngFor="let col of columns" [style.width]="col.width" 
+                  class="p-3 text-left font-medium text-gray-700 border-b border-r border-gray-300">
                 {{ col.header }}
               </th>
-              <th class="p-3 text-left font-medium text-gray-700">Ações</th>
+              <th class="p-3 text-left font-medium text-gray-700 border-b border-gray-300">
+                Ações
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let row of data; let i = index" class="border-b border-gray-100 hover:bg-gray-50">
-              <td *ngFor="let col of columns" class="p-3">
+            <tr *ngFor="let row of data; let i = index; let last = last" 
+                [class.border-b]="!last"
+                class="border-gray-200 hover:bg-gray-50">
+              <td *ngFor="let col of columns; let lastCol = last" 
+                  class="p-3 border-r border-gray-200" 
+                  [class.border-r-0]="lastCol">
                 <ng-container [ngSwitch]="col.type">
                   <span *ngSwitchCase="'currency'" class="block">
                     {{ getNumberValue(row, col.field) | currency:'BRL':'symbol':'1.2-2' }}
@@ -40,10 +47,10 @@ export interface TableColumn<T> {
               <td class="p-3">
                 <div class="flex space-x-2">
                   <button (click)="edit.emit(row)"
-                          class="text-primary hover:text-primary-light"
+                          class="text-primary hover:text-primary-light p-1 rounded hover:bg-gray-100"
                           title="Editar">✏️</button>
                   <button (click)="delete.emit(row)"
-                          class="text-error hover:text-error/80"
+                          class="text-error hover:text-error/80 p-1 rounded hover:bg-gray-100"
                           title="Excluir">🗑️</button>
                 </div>
               </td>

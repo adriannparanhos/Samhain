@@ -32,7 +32,6 @@ export class ProductsComponent implements OnInit {
   ];
 
   ngOnInit() {
-    // simula fetch
     this.products = [
       { id: 1, name: 'Parafuso', type: 'A', unitValue: 2.50, ncm: '1234.56.78', ipi: 5 },
       { id: 2, name: 'Porca', type: 'B', unitValue: 1.25, ncm: '4321.65.87', ipi: 3 },
@@ -41,7 +40,6 @@ export class ProductsComponent implements OnInit {
   }
 
   onEdit(product: Product) {
-    // redirecionar, abrir modal etc.
     console.log('editar', product);
   }
 

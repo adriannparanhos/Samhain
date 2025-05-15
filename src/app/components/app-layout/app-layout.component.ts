@@ -31,7 +31,7 @@ export class AppLayoutComponent {
 
   navigationItems: NavItem[] = [
     { name: 'Dashboard', path: '/dashboard', icon: 'home'      },
-    { name: 'Empresas',  path: '/companies', icon: 'building-2'},
+    { name: 'Empresas',  path: '/enterprises', icon: 'building-2'},
     { name: 'Produtos',  path: '/products',  icon: 'package'   },
     { name: 'Orçamentos',path: '/budgets',   icon: 'file-text' }
   ];
