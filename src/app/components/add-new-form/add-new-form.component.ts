@@ -1,12 +1,54 @@
-import { Component } from '@angular/core';
-import { ReturnArrowComponent } from "../return-arrow/return-arrow.component";
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
+import { CommonModule, Location } from '@angular/common';
+import { LucideAngularModule } from 'lucide-angular';
+
+
+export interface FieldConfig {
+  name: string;
+  label: string;
+  type: 'text' | 'number' | 'select' | 'checkbox' | 'textarea' | 'date' | 'email' | 'number' | 'currency';
+  options?: { label: string; value: string }[];
+  validators?: ValidatorFn[];
+  placeholder?: string;
+}
+
 
 @Component({
   selector: 'app-add-new-form',
-  imports: [ReturnArrowComponent],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
   templateUrl: './add-new-form.component.html',
   styleUrl: './add-new-form.component.css'
 })
-export class AddNewFormComponent {
+export class AddNewFormComponent implements OnInit {
+  @Input() fields: FieldConfig[] = [];
+  @Output() submitForm = new EventEmitter<any>();
+  @Output() formReady = new EventEmitter<FormGroup>();
+
+  form!: FormGroup;
+
+  constructor(private fb: FormBuilder, private location: Location ) { }
+
+  ngOnInit(): void {
+      const group: any = {};
+      for (const f of this.fields) {
+        group[f.name] = ['', f.validators || []];
+      }
+    this.form = this.fb.group(group);
+    this.formReady.emit(this.form);
+  }
+
+  onSubmit() {
+    if (this.form.valid) {
+      this.submitForm.emit(this.form.value);
+    } else {
+      this.form.markAllAsTouched();
+    }
+  }
+
+  onCancel() {
+    this.location.back();
+  }
 
 }
