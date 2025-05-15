@@ -1,0 +1,26 @@
+<div class="flex flex-col min-h-screen">
+    <main class="flex-1 flex flex-col items-center justify-start pt-8 px-4 space-y-8">
+        <div class="w-full max-w-4xl overflow-hidden mr-12">
+            <header class="flex items-center px-6 py-4">
+              <app-return-arrow (click)="returnPage()"></app-return-arrow>
+              <h1 class="text-4xl font-medium ml-4">Novo Produto</h1>
+            </header>
+        </div>
+
+        <section class="w-full max-w-4xl bg-white rounded-lg shadow overflow-hidden">
+            <div class="flex px-6 py-3 bg-gray-100 border-b">
+                <lucide-icon name="package" class="h-6 w-6 text-blue-500 mr-2" />
+                <h2 class="text-lg font-medium">Informações do Produto</h2>
+            </div>
+            <div class="p-6">
+                <app-add-new-form
+                [fields]="formFields"
+                (submitForm)="onFormSubmit($event)">
+                </app-add-new-form>
+            </div>
+        </section>
+        <div class="w-full max-w-4xl flex justify-end">
+          <app-button-form></app-button-form>
+        </div>
+    </main>
+</div>

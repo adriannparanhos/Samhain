@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ButtonComponent } from "../button/button.component";
 import { SearchComponent } from "../search/search.component";
 import { TableColumn, TableInfoComponent } from '../table-info/table-info.component';
+import { Router } from '@angular/router';
 
 interface Product {
   id: number;
@@ -20,6 +21,8 @@ interface Product {
   styleUrl: './products.component.css'
 })
 export class ProductsComponent implements OnInit {
+  constructor(private router: Router) {}
+
   products: Product[] = [];
   isDeleting: boolean = false;
 
@@ -52,7 +55,7 @@ export class ProductsComponent implements OnInit {
     }, 500);
   }
 
-  openModal() {
-    alert('Modal opened');
+  openAddProduct() {
+    this.router.navigate(['products/add']);
   }
 }

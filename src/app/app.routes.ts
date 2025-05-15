@@ -4,6 +4,7 @@ import { ProductsComponent } from './components/products/products.component';
 import { EnterprisesComponent } from './components/enterprises/enterprises.component';
 import { BudgetsComponent } from './components/budgets/budgets.component';
 import { AddNewEnterpriseComponent } from './components/add-new-enterprise/add-new-enterprise.component';
+import { AddNewProductComponent } from './components/add-new-product/add-new-product.component';
 
 export const routes: Routes = [
     {path: 'dashboard', component: DashboardComponent},
@@ -11,4 +12,5 @@ export const routes: Routes = [
     {path: 'enterprises', component: EnterprisesComponent},
     {path: 'budgets', component: BudgetsComponent},
     {path: 'enterprises/add', component: AddNewEnterpriseComponent},
+    {path: 'products/add', component: AddNewProductComponent},
 ];

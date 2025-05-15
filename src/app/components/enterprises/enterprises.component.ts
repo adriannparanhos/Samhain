@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { ButtonComponent } from '../button/button.component';
 import { SearchComponent } from '../search/search.component';
 import { TableColumn, TableInfoComponent } from '../table-info/table-info.component';
-import { Route } from 'lucide-angular';
 import { Router } from '@angular/router';
 
 interface Enterprise {
