@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ButtonComponent } from '../button/button.component';
 import { SearchComponent } from '../search/search.component';
 import { TableColumn, TableInfoComponent } from '../table-info/table-info.component';
+import { Router } from '@angular/router';
 
 interface Budget {
   id: number;
@@ -22,6 +23,8 @@ interface Budget {
   styleUrl: './budgets.component.css'
 })
 export class BudgetsComponent {
+  constructor(private router: Router) {}
+
   budgets: Budget[] = [];
   isDeleting: boolean = false;
 
@@ -54,8 +57,9 @@ export class BudgetsComponent {
     }, 500);
   }
 
-  openModal() {
-    alert('Modal opened');
+  openAddBudget() {
+    this.router.navigate(['budgets/add']);
   }
+
 
 }
