@@ -47,8 +47,4 @@ export class AddNewFormComponent implements OnInit {
     }
   }
 
-  onCancel() {
-    this.location.back();
-  }
-
 }
