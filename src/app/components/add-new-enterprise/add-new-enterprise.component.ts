@@ -3,11 +3,12 @@ import { ReturnArrowComponent } from "../return-arrow/return-arrow.component";
 import { Router } from '@angular/router';
 import { AddNewFormComponent } from '../add-new-form/add-new-form.component';
 import { FieldConfig } from '../add-new-form/add-new-form.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-add-new-enterprise',
   standalone: true,
-  imports: [ReturnArrowComponent, AddNewFormComponent],
+  imports: [ReturnArrowComponent, AddNewFormComponent, LucideAngularModule],
   templateUrl: './add-new-enterprise.component.html',
   styleUrl: './add-new-enterprise.component.css'
 })

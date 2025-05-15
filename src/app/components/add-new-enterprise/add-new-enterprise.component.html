@@ -1,20 +1,37 @@
-<div class="flex flex-col items-center  min-h-screen p-6 bg-gray-50">
-  <div class="flex items-center mb-8">
+<div class="flex flex-col min-h-screen">
+
+  <header class="flex items-center px-6 py-4">
     <app-return-arrow (click)="returnPage()"></app-return-arrow>
     <h1 class="text-4xl font-medium ml-4">Nova empresa</h1>
-  </div>
+  </header>
 
-  <div class="w-full max-w-2xl bg-white p-6 rounded-lg shadow">
-    <app-add-new-form
-      [fields]="formFields"
-      (submitForm)="onFormSubmit($event)">
-    </app-add-new-form>
-  </div>
+  <main class="flex-1 flex flex-col items-center justify-start pt-8 px-4 space-y-8">
 
-  <div class="w-full max-w-2xl bg-white p-6 rounded-lg shadow">
-    <app-add-new-form
-      [fields]="formFieldsEndereco"
-      (submitForm)="onFormSubmit($event)">
-    </app-add-new-form>
-  </div>
+    <section class="w-full max-w-2xl bg-white rounded-lg shadow overflow-hidden">
+      <div class="flex px-6 py-3 bg-gray-100 border-b">
+        <lucide-icon name="building-2" class="h-6 w-6 text-blue-500 mr-2" />
+        <h2 class="text-lg font-medium">Informações da Empresa</h2>
+      </div>
+      <div class="p-6">
+        <app-add-new-form
+          [fields]="formFields"
+          (submitForm)="onFormSubmit($event)">
+        </app-add-new-form>
+      </div>
+    </section>
+
+    <section class="w-full max-w-2xl bg-white rounded-lg shadow overflow-hidden">
+      <div class="px-6 py-3 bg-gray-100 border-b">
+        <h2 class="text-lg font-medium">Endereço</h2>
+      </div>
+      <div class="p-6">
+        <app-add-new-form
+          [fields]="formFieldsEndereco"
+          (submitForm)="onFormSubmit($event)">
+        </app-add-new-form>
+      </div>
+    </section>
+
+  </main>
+
 </div>
