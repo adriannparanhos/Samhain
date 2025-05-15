@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { ButtonComponent } from '../button/button.component';
 import { SearchComponent } from '../search/search.component';
 import { TableColumn, TableInfoComponent } from '../table-info/table-info.component';
+import { Route } from 'lucide-angular';
+import { Router } from '@angular/router';
 
 interface Enterprise {
   id: number;
@@ -18,6 +20,9 @@ interface Enterprise {
   styleUrl: './enterprises.component.css'
 })
 export class EnterprisesComponent {
+
+  constructor(private router: Router) {}
+
   enterprises: Enterprise[] = [];
   isDeleting: boolean = false;
 
@@ -48,7 +53,7 @@ export class EnterprisesComponent {
     }, 500);
   }
 
-  openModal() {
-    alert('Modal opened');
+  openAddEnterprise() {
+    this.router.navigate(['enterprises/add']);
   }
 }

@@ -93,13 +93,13 @@ export class TableInfoComponent<T> {
   getStatusClasses(status: string): string {
     switch (status) {
       case 'Aprovado':
-        return 'bg-green-400 text-green-600 hover:bg-green-300 rounded-full px-5 py-0.5 font-medium';
+        return 'bg-green-400 text-green-600 hover:bg-green-300 rounded-full px-3 py-0.5 font-medium';
       case 'Pendente':
-        return 'bg-yellow-400 text-yellow-600 hover:bg-yellow-300 rounded-full px-5 py-0.5 font-medium';
+        return 'bg-yellow-400 text-yellow-600 hover:bg-yellow-300 rounded-full px-3 py-0.5 font-medium';
       case 'Cancelado':
-        return 'bg-red-400 text-red-600 hover:bg-red-300 rounded-full px-5 py-0.5 font-medium';
+        return 'bg-red-400 text-red-600 hover:bg-red-300 rounded-full px-3 py-0.5 font-medium';
       default:
-        return 'bg-gray-400 text-gray-600 hover:bg-gray-300 rounded-full px-1 py-0.5 font-medium';
+        return 'bg-gray-400 text-gray-600 hover:bg-gray-300 rounded-full px-3 py-0.5 font-medium';
     }
   }
 }
