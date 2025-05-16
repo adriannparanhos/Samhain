@@ -13,9 +13,31 @@
     </div>
     <app-table-info
         [columns]="columns"
-        [data]="enterprises"
+        [data]="pagedEnterprises"
         [isLoading]="isDeleting"
         (edit)="onEdit($event)"
         (delete)="onDelete($event)">
     </app-table-info>
+
+    <nav class="flex justify-center items-center mt-6 space-x-2">
+    <button (click)="goToPage(currentPage - 1)"
+            [disabled]="currentPage === 1"
+            class="px-3 py-1 border rounded hover:bg-gray-100 disabled:opacity-50">
+        Anterior
+    </button>
+
+    <button *ngFor="let _ of [].constructor(totalPages); let i = index"
+            (click)="goToPage(i + 1)"
+            [class.font-bold]="currentPage === i + 1"
+            class="px-3 py-1 border rounded hover:bg-gray-100">
+        {{ i + 1 }}
+    </button>
+
+    <button (click)="goToPage(currentPage + 1)"
+            [disabled]="currentPage === totalPages"
+            class="px-3 py-1 border rounded hover:bg-gray-100 disabled:opacity-50">
+        Próxima
+    </button>
+    </nav>
+
 </div>
