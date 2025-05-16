@@ -40,7 +40,8 @@ export class AddNewBudgetComponent {
   formFields: FieldConfig[] = [
     { name: 'empresa', label: 'Empresa', type: 'select', options: [{ label: 'Empresa super legal', value: 'Empresa de mineiração' }, { label: 'Empresa super chata', value: 'Empresa de games' }] },
     { name: 'Condição de pagamento', label: 'Condição de Pagamento', type: 'select', options: [{ label: '15 DDL', value: '15 DDL' }, { label: '28 DDL', value: '28 DDL' }, { label: '28/42 DDL', value: '28/42 DDL' }, { label: '28/42/56 DDL', value: '28/42/56 DDL' }, { label: 'Pagamento a vista', value: 'Pagamento a vista' }, { label: 'Pagamento para 30 dias', value: 'pagamento para 30 dias' }], },
-    { name: 'descricao', label: 'Descrição', type: 'textarea', placeholder: 'Descrição do orçamento' }
+    { name: 'descricao', label: 'Descrição', type: 'textarea', placeholder: 'Descrição do orçamento' },
+    { name: 'status', label: 'Status', type: 'select', options: [{ label: 'Aprovado', value: 'Aprovado' }, { label: 'Pendente', value: 'Pendente' }, { label: 'Reprovado', value: 'Reprovado' }] },
   ];
 
   onFormSubmit(formData: any) {
