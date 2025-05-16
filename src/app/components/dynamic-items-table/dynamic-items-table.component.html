@@ -197,44 +197,127 @@
     </tbody>
   </table>
 
-  Resumo de totais
-  <div *ngIf="items.length > 0" class="border-t border-gray-200 p-4">
-    <div class="flex justify-end">
-      <div class="w-full max-w-xs space-y-2">
-        <div class="flex justify-between">
-          <span class="text-gray-500">Subtotal:</span>
-          <span class="font-medium">{{ calculateSubtotal() | currency:'BRL':'symbol':'1.2-2' }}</span>
+    <div *ngIf="items.length > 0" class="border-t border-gray-200">
+        <div class="p-4 bg-gray-50 rounded-b-lg">
+            <div class="flex flex-col">
+                <div class="w-full space-y-3 mb-4">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Ajustes</h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="relative">
+                            <label class="block text-sm text-gray-600 mb-1">Desconto Global (%)</label>
+                            <div class="relative">
+                                <input 
+                                    type="number" 
+                                    [(ngModel)]="descontoGlobal" 
+                                    (ngModelChange)="calculateAll()"
+                                    class="w-full rounded-md border border-gray-300 shadow-sm pr-7 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    min="0" max="100" step="0.01"
+                                    [class.border-red-500]="descontoGlobal < 0 || descontoGlobal > 100">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500">%</span>
+                                </div>
+                            </div>
+                            <p *ngIf="descontoGlobal < 0 || descontoGlobal > 100" class="mt-1 text-xs text-red-500">
+                            O desconto deve estar entre 0% e 100%
+                            </p>
+                        </div>
+                        
+                        <div class="relative">
+                            <label class="block text-sm text-gray-600 mb-1">Valor do Frete</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500">R$</span>
+                                </div>
+                                <input 
+                                    type="number" 
+                                    [(ngModel)]="valorFrete" 
+                                    (ngModelChange)="calculateAll()"
+                                    class="w-full rounded-md border border-gray-300 shadow-sm pl-10 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    min="0" step="0.01"
+                                    [class.border-red-500]="valorFrete < 0">
+                            </div>
+                            <p *ngIf="valorFrete < 0" class="mt-1 text-xs text-red-500">
+                            O valor do frete não pode ser negativo
+                            </p>
+                        </div>
+                        
+                        <div class="relative">
+                            <label class="block text-sm text-gray-600 mb-1">DIFAL</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500">R$</span>
+                                </div>
+                                <input 
+                                    type="number" 
+                                    [(ngModel)]="valorDifal" 
+                                    (ngModelChange)="calculateAll()"
+                                    class="w-full rounded-md border border-gray-300 shadow-sm pl-10 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    min="0" step="0.01"
+                                    [class.border-red-500]="valorDifal < 0">    
+                            </div>
+                            <p *ngIf="valorDifal < 0" class="mt-1 text-xs text-red-500">
+                            O valor do DIFAL não pode ser negativo
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-200 my-4"></div>
+                
+                <div class="w-full">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-3">Resumo</h4>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Subtotal:</span>
+                            <span class="font-medium">{{ calculateSubtotal() | currency:'BRL':'symbol':'1.2-2' }}</span>
+                        </div>
+                    
+                    <div *ngIf="descontoGlobal > 0" class="flex justify-between">
+                        <span class="text-gray-600">Desconto Global ({{ descontoGlobal }}%):</span>
+                        <span class="font-medium text-red-600">
+                        -{{ (subtotal * (descontoGlobal / 100)) | currency:'BRL':'symbol':'1.2-2' }}
+                        </span>
+                    </div>
+                    
+                    <div *ngIf="totalIPI > 0" class="flex justify-between">
+                        <span class="text-gray-600">Total IPI:</span>
+                        <span class="font-medium">{{ totalIPI | currency:'BRL':'symbol':'1.2-2' }}</span>
+                    </div>
+                    
+                    <div *ngIf="valorFrete > 0" class="flex justify-between">
+                        <span class="text-gray-600">Frete:</span>
+                        <span class="font-medium">{{ valorFrete | currency:'BRL':'symbol':'1.2-2' }}</span>
+                    </div>
+                    
+                    <div *ngIf="valorDifal > 0" class="flex justify-between">
+                        <span class="text-gray-600">DIFAL:</span>
+                        <span class="font-medium">{{ valorDifal | currency:'BRL':'symbol':'1.2-2' }}</span>
+                    </div>
+                    
+                    <div class="flex justify-between pt-3 mt-2 border-t border-gray-200">
+                        <span class="font-bold text-gray-800">Total:</span>
+                        <span class="font-bold text-green-600 text-lg">{{ calculateGrandTotal() | currency:'BRL':'symbol':'1.2-2' }}</span>
+                    </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div *ngIf="descontoGlobal > 0" class="flex justify-between">
-          <span class="text-gray-500">Desconto Global ({{ descontoGlobal }}%):</span>
-          <span class="font-medium text-red-600">
-            -{{ (calculateSubtotal() * (descontoGlobal / 100)) | currency:'BRL':'symbol':'1.2-2' }}
-          </span>
+  
+        <div *ngIf="formErrors.length > 0" class="border-t border-red-200 bg-red-50 p-4 text-red-600 text-sm">
+            <div class="flex items-center mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span class="font-medium">Por favor, corrija os seguintes erros:</span>
+            </div>
+            <ul class="list-disc pl-5">
+                <li *ngFor="let error of formErrors">{{ error }}</li>
+            </ul>
         </div>
-        
-        <div *ngIf="totalIPI > 0" class="flex justify-between">
-          <span class="text-gray-500">Total IPI:</span>
-          <span class="font-medium">{{ totalIPI | currency:'BRL':'symbol':'1.2-2' }}</span>
-        </div>
-        
-        <div *ngIf="valorFrete > 0" class="flex justify-between">
-          <span class="text-gray-500">Frete:</span>
-          <span class="font-medium">{{ valorFrete | currency:'BRL':'symbol':'1.2-2' }}</span>
-        </div>
-        
-        <div *ngIf="valorDifal > 0" class="flex justify-between">
-          <span class="text-gray-500">DIFAL:</span>
-          <span class="font-medium">{{ valorDifal | currency:'BRL':'symbol':'1.2-2' }}</span>
-        </div>
-        
-        <div class="flex justify-between pt-2 border-t border-gray-200">
-          <span class="font-bold">Total:</span>
-          <span class="font-bold text-green-600">{{ calculateGrandTotal() | currency:'BRL':'symbol':'1.2-2' }}</span>
-        </div>
-      </div>
     </div>
-  </div>
 
   <div *ngIf="formErrors.length > 0" class="border-t border-red-200 bg-red-50 p-4 text-red-600 text-sm">
     <div *ngFor="let error of formErrors">{{ error }}</div>

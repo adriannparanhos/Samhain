@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
 interface OrcamentoItem {
   id?: string;
@@ -17,7 +18,7 @@ interface OrcamentoItem {
 @Component({
   selector: 'app-dynamic-items-table',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './dynamic-items-table.component.html',
 })
 export class DynamicItemsTableComponent {
@@ -43,10 +44,13 @@ export class DynamicItemsTableComponent {
   };
   
   items: OrcamentoItem[] = [];
+  form!: FormGroup;
   
   descontoGlobal: number = 0;
   valorFrete: number = 0;
   valorDifal: number = 0;
+  subtotal = 0;
+  grandTotal = 0;
   
   formValidated: boolean = false;
   formErrors: string[] = [];
@@ -61,9 +65,18 @@ export class DynamicItemsTableComponent {
     }, 0);
   }
   
-  constructor() { }
+  constructor(private fb: FormBuilder) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.form = this.fb.group({
+      // … outros controles de itens
+      globalDiscount: [0, [Validators.min(0), Validators.max(100)]],
+      shipping:       [0, [Validators.min(0)]],
+      difal:          [0, [Validators.min(0)]],
+    });
+
+    // re-calcula totais sempre que mudar
+    this.form.valueChanges.subscribe(() => this.calculateAll());
     this.addItem();
   }
   
@@ -205,5 +218,12 @@ export class DynamicItemsTableComponent {
       return [...this.items]; 
     }
     return [];
+  }
+
+  calculateAll() {
+    // chamar seus métodos de cálculo já existentes
+    this.subtotal  = this.calculateSubtotal();
+    // this.totalIPI  = this.totalIPI;           // supondo já calculado
+    this.grandTotal = this.calculateGrandTotal();
   }
 }
