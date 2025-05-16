@@ -1,0 +1,242 @@
+<div class="bg-white rounded-lg shadow-md overflow-x-auto">
+  <div class="flex justify-between items-center p-4 border-b border-gray-200">
+    <h3 class="text-lg font-medium flex items-center text-gray-800">
+      <span class="inline-block mr-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+      </span>
+      Itens do Orçamento
+    </h3>
+    <button (click)="addItem()" class="bg-primary text-white px-3 py-2 rounded-md hover:bg-primary-dark transition-colors duration-200 flex items-center text-sm bg-blue-600 hover:bg-blue-700 font-medium">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Adicionar Item
+    </button>
+  </div>
+
+  <table class="w-full text-left">
+    <thead class="bg-gray-50 text-xs uppercase text-gray-600">
+      <tr>
+        <th class="px-4 py-3">Produto</th>
+        <th class="px-4 py-3">Modelo</th>
+        <th class="px-4 py-3 w-[12%]">Qtd</th>
+        <th class="px-4 py-3 w-[15%]">Dimensões</th>
+        <th class="px-4 py-3 w-[15%]">Valor Unit.</th>
+        <th class="px-4 py-3 w-[10%]">Desc. (%)</th>
+        <th class="px-4 py-3 w-[15%]">Total</th>
+        <th class="px-4 py-3 w-[5%]"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items; let i = index" class="border-t border-gray-200 hover:bg-gray-50 transition-colors duration-150">
+        <td class="px-4 py-3">
+          <select 
+            [(ngModel)]="item.produto"
+            (ngModelChange)="onProdutoChange(item)"
+            (change)="onFieldChange()"
+            class="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            [class.border-red-500]="isItemInvalid(item) && !item.produto">
+            <option value="" disabled selected>Selecione um produto</option>
+            <option *ngFor="let p of produtos" [value]="p">{{ p }}</option>
+          </select>
+          <p *ngIf="isItemInvalid(item) && !item.produto" class="mt-1 text-xs text-red-500">
+            Produto é necessário
+          </p>
+        </td>
+
+        <td class="px-4 py-3">
+          <select 
+            [(ngModel)]="item.modelo"
+            (ngModelChange)="onFieldChange()"
+            class="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            [class.border-red-500]="isItemInvalid(item) && !item.modelo"
+            [disabled]="!item.produto">
+            <option value="" disabled selected>
+              {{ item.produto ? 'Selecione modelo...' : '—' }}
+            </option>
+            <option *ngFor="let m of getModelosForProduto(item.produto)" [value]="m">{{ m }}</option>
+          </select>
+          <p *ngIf="isItemInvalid(item) && !item.modelo && item.produto" class="mt-1 text-xs text-red-500">
+            Modelo é necessário
+          </p>
+        </td>
+
+        <td class="px-4 py-3">
+          <input 
+            type="number"
+            [(ngModel)]="item.quantidade"
+            (ngModelChange)="onFieldChange()"
+            class="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            [class.border-red-500]="isItemInvalid(item) && (!item.quantidade || item.quantidade <= 0)"
+            min="1" />
+          <p *ngIf="isItemInvalid(item) && (!item.quantidade || item.quantidade <= 0)" class="mt-1 text-xs text-red-500">
+            Quantidade inválida
+          </p>
+        </td>
+
+        <td class="px-4 py-3">
+          <ng-container *ngIf="item.produto === 'Peça usinada'; else naoUsinada">
+            <div class="flex space-x-1">
+              <div>
+                <input 
+                  type="number"
+                  [(ngModel)]="item.largura"
+                  (ngModelChange)="onFieldChange()"
+                  class="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  [class.border-red-500]="isItemInvalid(item) && (!item.largura || item.largura <= 0)"
+                  placeholder="Larg" />
+                <p *ngIf="isItemInvalid(item) && (!item.largura || item.largura <= 0)" class="mt-1 text-xs text-red-500">
+                  Obrigatório
+                </p>
+              </div>
+              <div>
+                <input 
+                  type="number"
+                  [(ngModel)]="item.comprimento"
+                  (ngModelChange)="onFieldChange()"
+                  class="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  [class.border-red-500]="isItemInvalid(item) && (!item.comprimento || item.comprimento <= 0)"
+                  placeholder="Comp" />
+                <p *ngIf="isItemInvalid(item) && (!item.comprimento || item.comprimento <= 0)" class="mt-1 text-xs text-red-500">
+                  Obrigatório
+                </p>
+              </div>
+            </div>
+          </ng-container>
+          <ng-template #naoUsinada>
+            <span class="text-gray-500 text-sm">N/A</span>
+          </ng-template>
+        </td>
+
+        <td class="px-4 py-3">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <span class="text-gray-500">R$</span>
+            </div>
+            <input 
+              type="number"
+              [(ngModel)]="item.valorUnitario"
+              (ngModelChange)="onFieldChange()"
+              class="w-full rounded-md border border-gray-300 shadow-sm pl-10 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              [class.border-red-500]="isItemInvalid(item) && (!item.valorUnitario || item.valorUnitario <= 0)"
+              step="0.01" min="0" />
+          </div>
+          <p *ngIf="isItemInvalid(item) && (!item.valorUnitario || item.valorUnitario <= 0)" class="mt-1 text-xs text-red-500">
+            Valor obrigatório
+          </p>
+        </td>
+
+        <td class="px-4 py-3">
+          <div class="relative">
+            <input 
+              type="number"
+              [(ngModel)]="item.desconto"
+              (ngModelChange)="onFieldChange()"
+              class="w-full rounded-md border border-gray-300 shadow-sm pr-7 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              [class.border-red-500]="isItemInvalid(item) && item.desconto < 0"
+              step="0.01" min="0" max="100" />
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <span class="text-gray-500">%</span>
+            </div>
+          </div>
+          <p *ngIf="isItemInvalid(item) && item.desconto < 0" class="mt-1 text-xs text-red-500">
+            Inválido
+          </p>
+        </td>
+
+        <td class="px-4 py-3 font-medium">
+          {{ calculateTotal(item) | currency:'BRL':'symbol':'1.2-2' }}
+        </td>
+
+        <td class="px-4 py-3">
+          <button 
+            (click)="removeItem(i)"
+            class="text-red-600 hover:text-red-800 p-1 rounded hover:bg-gray-100 transition-colors duration-200"
+            [disabled]="items.length <= 1"
+            title="Excluir">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+          </button>
+        </td>
+      </tr>
+
+      <tr *ngIf="items.length === 0">
+        <td colspan="8" class="px-4 py-8 text-center">
+          <div class="flex flex-col items-center justify-center text-gray-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-2 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <p class="text-lg">Nenhum item adicionado</p>
+            <div class="mt-4">
+              <button (click)="addItem()" class="bg-primary text-white px-3 py-2 rounded-md hover:bg-primary-dark transition-colors duration-200 flex items-center text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Adicionar Item
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  Resumo de totais
+  <div *ngIf="items.length > 0" class="border-t border-gray-200 p-4">
+    <div class="flex justify-end">
+      <div class="w-full max-w-xs space-y-2">
+        <div class="flex justify-between">
+          <span class="text-gray-500">Subtotal:</span>
+          <span class="font-medium">{{ calculateSubtotal() | currency:'BRL':'symbol':'1.2-2' }}</span>
+        </div>
+        
+        <div *ngIf="descontoGlobal > 0" class="flex justify-between">
+          <span class="text-gray-500">Desconto Global ({{ descontoGlobal }}%):</span>
+          <span class="font-medium text-red-600">
+            -{{ (calculateSubtotal() * (descontoGlobal / 100)) | currency:'BRL':'symbol':'1.2-2' }}
+          </span>
+        </div>
+        
+        <div *ngIf="totalIPI > 0" class="flex justify-between">
+          <span class="text-gray-500">Total IPI:</span>
+          <span class="font-medium">{{ totalIPI | currency:'BRL':'symbol':'1.2-2' }}</span>
+        </div>
+        
+        <div *ngIf="valorFrete > 0" class="flex justify-between">
+          <span class="text-gray-500">Frete:</span>
+          <span class="font-medium">{{ valorFrete | currency:'BRL':'symbol':'1.2-2' }}</span>
+        </div>
+        
+        <div *ngIf="valorDifal > 0" class="flex justify-between">
+          <span class="text-gray-500">DIFAL:</span>
+          <span class="font-medium">{{ valorDifal | currency:'BRL':'symbol':'1.2-2' }}</span>
+        </div>
+        
+        <div class="flex justify-between pt-2 border-t border-gray-200">
+          <span class="font-bold">Total:</span>
+          <span class="font-bold text-green-600">{{ calculateGrandTotal() | currency:'BRL':'symbol':'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="formErrors.length > 0" class="border-t border-red-200 bg-red-50 p-4 text-red-600 text-sm">
+    <div *ngFor="let error of formErrors">{{ error }}</div>
+  </div>
+</div>

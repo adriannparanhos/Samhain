@@ -4,7 +4,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 export interface TableColumn<T> {
   header: string;
   field: keyof T;
-  type?: 'text' | 'currency' | 'date';
+  type?: 'text' | 'currency' | 'date' | 'number';
   width?: string;
 }
 

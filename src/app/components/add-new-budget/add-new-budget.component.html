@@ -7,7 +7,7 @@
             </header>
         </div>
 
-        <section class="w-full max-w-4xl bg-white rounded-lg shadow overflow-hidden">
+        <section class="w-full max-w-6xl bg-white rounded-lg shadow overflow-hidden">
             <div class="flex px-6 py-3 bg-gray-100 border-b">
                 <lucide-icon name="building-2" class="h-6 w-6 text-blue-500 mr-2" />
                 <h2 class="text-lg font-medium">Informações do Orçamento</h2>
@@ -20,17 +20,10 @@
             </div>
         </section>
 
-        <!-- <section class="w-full max-w-4xl bg-white rounded-lg shadow overflow-hidden">
-            <div class="px-6 py-3 bg-gray-100 border-b">
-                <h2 class="text-lg font-medium">Endereço</h2>
-            </div>
-            <div class="p-6">
-                <app-add-new-form
-                [fields]="formFieldsEndereco"
-                (submitForm)="onFormSubmit($event)">
-                </app-add-new-form>
-            </div>
-        </section> -->
+        <app-dynamic-items-table class="w-full max-w-6xl"
+            >
+        </app-dynamic-items-table>
+
         <div class="w-full max-w-4xl flex justify-end">
           <app-button-form></app-button-form>
         </div>
