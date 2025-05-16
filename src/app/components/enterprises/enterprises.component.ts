@@ -75,10 +75,11 @@ export class EnterprisesComponent implements OnInit {
     this.updatePaged();
   }
 
-  onEdit(ent: Enterprise)   { this.router.navigate(['enterprises', ent.id, 'edit']); }
+  onEdit(ent: Enterprise) { this.router.navigate(['enterprises', ent.id, 'edit']); }
 
   onDelete(ent: Enterprise) {
     if (!confirm(`Excluir ${ent.razaoSocial}?`)) return;
   }
-  openAddEnterprise()       { this.router.navigate(['enterprises/add']); }
+
+  openAddEnterprise() { this.router.navigate(['enterprises/add']); }
 }

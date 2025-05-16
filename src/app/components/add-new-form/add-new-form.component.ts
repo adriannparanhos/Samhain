@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 
 
@@ -11,8 +11,9 @@ export interface FieldConfig {
   options?: { label: string; value: string }[];
   validators?: ValidatorFn[];
   placeholder?: string;
-}
+  customEvents?: { [key: string]: (event: any) => void }; 
 
+}
 
 @Component({
   selector: 'app-add-new-form',
@@ -28,7 +29,7 @@ export class AddNewFormComponent implements OnInit {
 
   form!: FormGroup;
 
-  constructor(private fb: FormBuilder, private location: Location ) { }
+  constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
       const group: any = {};

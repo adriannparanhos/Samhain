@@ -29,4 +29,9 @@ export class FetchEnterpriseService {
     const url = 'http://localhost:8080/api/v1/enterprises'; 
     return this.http.get<IEnterprise[]>(url);
   }
+
+  getEnterpriseByCnpj(cnpj: string): Observable<IEnterprise> {
+    const url = `http://localhost:8080/api/v1/enterprises/${cnpj}`;
+    return this.http.get<IEnterprise>(url);
+  }
 }
