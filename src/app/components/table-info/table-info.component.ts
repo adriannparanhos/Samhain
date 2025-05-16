@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { LucideAngularModule } from 'lucide-angular';
 
 export interface TableColumn<T> {
   header: string;
@@ -11,7 +12,7 @@ export interface TableColumn<T> {
 @Component({
   selector: 'app-table-info',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   template: `
     <div class="card bg-white rounded-lg shadow-sm p-4">
       <div *ngIf="isLoading" class="p-4 text-center text-gray-500">Carregando…</div>
@@ -55,10 +56,19 @@ export interface TableColumn<T> {
                 <div class="flex space-x-2">
                   <button (click)="edit.emit(row)"
                           class="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-gray-100 transition"
-                          title="Editar">✏️</button>
+                          title="Visualizar">
+                    <lucide-icon [name]="'eye'" class="w-5 h-5"></lucide-icon>
+                  </button>
+                  <button (click)="edit.emit(row)"
+                          class="text-yellow-600 hover:text-yellow-800 p-1 rounded hover:bg-gray-100 transition"
+                          title="Editar">
+                    <lucide-icon [name]="'pencil'" class="w-5 h-5"></lucide-icon>
+                  </button>
                   <button (click)="delete.emit(row)"
                           class="text-red-600 hover:text-red-800 p-1 rounded hover:bg-gray-100 transition"
-                          title="Excluir">🗑️</button>
+                          title="Excluir">
+                    <lucide-icon [name]="'trash-2'" class="w-5 h-5"></lucide-icon>
+                  </button>
                 </div>
               </td>
             </tr>
