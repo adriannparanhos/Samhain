@@ -31,7 +31,7 @@ export class FetchEnterpriseService {
   }
 
   getEnterpriseByCnpj(cnpj: string): Observable<IEnterprise> {
-    const url = `http://localhost:8080/api/v1/enterprises/${cnpj}`;
+    const url = `http://localhost:8080/api/v1/enterprises/byCnpj?cnpj=${cnpj}`;
     return this.http.get<IEnterprise>(url);
   }
 }

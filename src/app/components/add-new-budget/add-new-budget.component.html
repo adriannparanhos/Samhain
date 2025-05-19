@@ -15,6 +15,7 @@
             <div class="p-6">
                 <app-add-new-form
                 [fields]="formFields"
+                (formReady)="onFormReady($event)"
                 (submitForm)="onFormSubmit($event)">
                 </app-add-new-form>
             </div>

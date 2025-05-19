@@ -12,6 +12,7 @@ export interface FieldConfig {
   validators?: ValidatorFn[];
   placeholder?: string;
   customEvents?: { [key: string]: (event: any) => void }; 
+  disabled?: boolean;
 
 }
 
