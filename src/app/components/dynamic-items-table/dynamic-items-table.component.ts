@@ -17,7 +17,7 @@ interface OrcamentoItem {
   familyDescription: string;
   code: string;
   description: string;
-  textClass?: string;  // <-- aqui
+  textClass?: string;
 }
 
 @Component({
@@ -76,11 +76,13 @@ export class DynamicItemsTableComponent implements OnInit {
         .filter(item => item.model.toUpperCase().includes('DURAMAXX'))
         .map(item => {
           let familyDescription = item.familyDescription || 'Outros';
+          
           if (item.description.includes('HASTE')) {
             familyDescription = 'Extratores';
           } else if (item.description.includes('PATOLÃO')) {
             familyDescription = 'Patolão';
           }
+          
           return {
             produto: familyDescription,
             modelo: item.description,
@@ -120,13 +122,27 @@ export class DynamicItemsTableComponent implements OnInit {
         });
       }
 
-      this.produtos = Object.keys(this.groupedItems).filter(family => family !== 'Peças Usinadas');
       const chapas = this.groupedItems['Chapas semiacabadas'] || [];
       const chapas1220 = chapas.filter(i => i.description.includes('1220 x 3050'));
       const chapas1000 = chapas.filter(i => i.description.includes('1000 x 3000'));
       this.groupedItems['Chapas semiacabadas'] = [...chapas1220, ...chapas1000];
 
-      // console.log('Grouped Items:', this.groupedItems);
+      if (this.groupedItems['Chapas semiacabadas']) {
+        const revestimentos = this.groupedItems['Chapas semiacabadas'].map(item => {
+          return {
+            ...item,
+            familyDescription: 'Revestimento',
+            produto: 'Revestimento'
+          };
+        });
+        
+        this.groupedItems['Revestimento'] = revestimentos;
+      }
+
+      
+
+      this.produtos = Object.keys(this.groupedItems);
+      
       this.modelosMap = this.produtos.reduce((acc, family) => {
         acc[family] = this.groupedItems[family].map(item => item.description);
         return acc;
@@ -229,13 +245,13 @@ export class DynamicItemsTableComponent implements OnInit {
 
   isItemInvalid(item: OrcamentoItem): boolean {
     if (!this.formValidated) return false;
-    if (!item.produto || !item.quantidade || item.quantidade <= 0 || 
-        !item.valorUnitario || item.valorUnitario <= 0) {
+    if (!item.produto || !item.quantidade || item.quantidade <= 0 ||
+      !item.valorUnitario || item.valorUnitario <= 0) {
       return true;
     }
     if (!item.modelo) return true;
-    if (item.produto === 'Peça usinada' && 
-        (!item.largura || item.largura <= 0 || !item.comprimento || item.comprimento <= 0)) {
+    if (item.produto === 'Peça usinada' &&
+      (!item.largura || item.largura <= 0 || !item.comprimento || item.comprimento <= 0)) {
       return true;
     }
     if (item.desconto < 0 || item.desconto > 100) return true;
