@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
-
+import { CpfCnpjMaskDirective } from '../../directive/cpf-cnpj-mask.directive';
 
 export interface FieldConfig {
   name: string;
@@ -19,7 +19,10 @@ export interface FieldConfig {
 @Component({
   selector: 'app-add-new-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
+  imports: [CommonModule, 
+    ReactiveFormsModule, 
+    LucideAngularModule,
+    CpfCnpjMaskDirective],
   templateUrl: './add-new-form.component.html',
   styleUrl: './add-new-form.component.css'
 })

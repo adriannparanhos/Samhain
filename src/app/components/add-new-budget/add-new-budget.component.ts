@@ -13,7 +13,7 @@ import { FetchEnterpriseService } from '../../services/fetchs/fetch-enterprise.s
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, switchMap, catchError } from 'rxjs/operators';
-
+import { CpfCnpjMaskDirective } from '../../directive/cpf-cnpj-mask.directive';
 
 interface NewBudget {
   id: number;
@@ -28,7 +28,14 @@ interface NewBudget {
 
 @Component({
   selector: 'app-add-new-budget',
-  imports: [ReturnArrowComponent, AddNewFormComponent, LucideAngularModule, ButtonComponent, ButtonFormComponent, TableInfoComponent, DynamicItemsTableComponent],
+  imports: [ReturnArrowComponent, 
+    AddNewFormComponent, 
+    LucideAngularModule, 
+    ButtonComponent, 
+    ButtonFormComponent, 
+    TableInfoComponent, 
+    DynamicItemsTableComponent,
+    CpfCnpjMaskDirective],
   templateUrl: './add-new-budget.component.html',
   styleUrl: './add-new-budget.component.css'
 })
@@ -91,14 +98,17 @@ export class AddNewBudgetComponent {
     this.form = formGroup;
 
     this.form.get('cnpj')!.valueChanges.pipe(
-      debounceTime(1000), 
-      distinctUntilChanged(), 
-      filter(value => value && value.replace(/\D/g, '').length === 14), 
+      debounceTime(1000),
+      distinctUntilChanged(),
+      filter(value => {
+        const digits = value.replace(/\D/g, '');
+        return digits.length === 11 || digits.length === 14; 
+      }),
       switchMap(value =>
         this.fetchEnterpriseService.getEnterpriseByCnpj(value).pipe(
           catchError(() => {
             this.cnpjError = 'Empresa não encontrada';
-            this.form.get('Razão Social')!.setValue(''); 
+            this.form.get('Razão Social')!.setValue('');
             return of(null);
           })
         )
@@ -106,7 +116,7 @@ export class AddNewBudgetComponent {
     ).subscribe(data => {
       if (data) {
         this.cnpjError = '';
-        this.form.get('Razão Social')!.setValue(data.corporateName); 
+        this.form.get('Razão Social')!.setValue(data.corporateName);
         console.log('Empresa encontrada:', data);
       }
     });
