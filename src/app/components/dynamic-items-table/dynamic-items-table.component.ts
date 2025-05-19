@@ -14,9 +14,10 @@ interface OrcamentoItem {
   valorUnitario: number;
   desconto: number;
   ipi?: number;
-  familyDescription: string; 
-  code: string; 
-  description: string; 
+  familyDescription: string;
+  code: string;
+  description: string;
+  textClass?: string;  // <-- aqui
 }
 
 @Component({
@@ -32,7 +33,7 @@ export class DynamicItemsTableComponent implements OnInit {
   valoresPadrao: Record<string, number> = {};
   items: OrcamentoItem[] = [];
   form!: FormGroup;
-  groupedItems: Record<string, OrcamentoItem[]> = {}; 
+  groupedItems: Record<string, OrcamentoItem[]> = {};
 
   descontoGlobal: number = 0;
   valorFrete: number = 0;
@@ -57,22 +58,41 @@ export class DynamicItemsTableComponent implements OnInit {
     this.getAllProducts();
   }
 
+  private extractType(description: string): string {
+    if (description.includes('BLACK')) return 'BLACK';
+    if (description.includes('NATURAL')) return 'NATURAL';
+    if (description.includes('ULTRA')) return 'ULTRA';
+    return '';
+  }
+
+  private extractThickness(description: string): number {
+    const match = description.match(/#(\d+)/);
+    return match ? parseInt(match[1], 10) : 0;
+  }
+
   getAllProducts() {
     this.fetchProductsService.getProducts().subscribe((data: any[]) => {
       const filteredItems = data
         .filter(item => item.model.toUpperCase().includes('DURAMAXX'))
-        .map(item => ({
-          produto: item.familyDescription || 'Outros',
-          modelo: item.description.includes('DURAMAXX') ? 'DURAMAXX' : '',
-          quantidade: 1,
-          valorUnitario: 0, 
-          desconto: 0,
-          familyDescription: item.familyDescription || 'Outros',
-          code: item.code,
-          description: item.description,
-        }));
-                  
-      console.log('Filtered Items:', filteredItems);
+        .map(item => {
+          let familyDescription = item.familyDescription || 'Outros';
+          if (item.description.includes('HASTE')) {
+            familyDescription = 'Extratores';
+          } else if (item.description.includes('PATOLÃO')) {
+            familyDescription = 'Patolão';
+          }
+          return {
+            produto: familyDescription,
+            modelo: item.description,
+            quantidade: 1,
+            valorUnitario: 0,
+            desconto: 0,
+            familyDescription,
+            code: item.code,
+            description: item.description,
+          };
+        });
+
       this.groupedItems = filteredItems.reduce((acc, item) => {
         const family = item.familyDescription || 'Outros';
         if (!acc[family]) {
@@ -81,34 +101,42 @@ export class DynamicItemsTableComponent implements OnInit {
         acc[family].push(item);
         return acc;
       }, {} as Record<string, OrcamentoItem[]>);
-      console.log('Grouped Items:', this.groupedItems);
 
-      this.produtos = Object.keys(this.groupedItems);
+      for (const family in this.groupedItems) {
+        this.groupedItems[family].sort((a, b) => {
+          const typeA = this.extractType(a.description);
+          const typeB = this.extractType(b.description);
+          const thicknessA = this.extractThickness(a.description);
+          const thicknessB = this.extractThickness(b.description);
 
+          const typeOrder = ['BLACK', 'NATURAL', 'ULTRA'];
+          const typeIndexA = typeOrder.indexOf(typeA);
+          const typeIndexB = typeOrder.indexOf(typeB);
+          if (typeIndexA !== typeIndexB) {
+            return typeIndexA - typeIndexB;
+          }
+
+          return thicknessA - thicknessB;
+        });
+      }
+
+      this.produtos = Object.keys(this.groupedItems).filter(family => family !== 'Peças Usinadas');
+      const chapas = this.groupedItems['Chapas semiacabadas'] || [];
+      const chapas1220 = chapas.filter(i => i.description.includes('1220 x 3050'));
+      const chapas1000 = chapas.filter(i => i.description.includes('1000 x 3000'));
+      this.groupedItems['Chapas semiacabadas'] = [...chapas1220, ...chapas1000];
+
+      // console.log('Grouped Items:', this.groupedItems);
       this.modelosMap = this.produtos.reduce((acc, family) => {
         acc[family] = this.groupedItems[family].map(item => item.description);
         return acc;
       }, {} as Record<string, string[]>);
-      console.log('Modelos Map:', this.modelosMap);
-
-      // Initialize ipiMap and valoresPadrao (adjust as needed)
-      // this.ipiMap = filteredItems.reduce((acc, item) => {
-      //   acc[item.description] = item.ipi || 0; // Adjust if ipi is available
-      //   return acc;
-      // }, {} as Record<string, number>);
 
       this.valoresPadrao = filteredItems.reduce((acc, item) => {
-        acc[item.description] = item.valorUnitario || 0; 
+        acc[item.description] = item.valorUnitario || 0;
         return acc;
       }, {} as Record<string, number>);
     });
-  }
-
-  private extractType(description: string): string {
-    if (description.includes('BLACK')) return 'BLACK';
-    if (description.includes('NATURAL')) return 'NATURAL';
-    if (description.includes('ULTRA')) return 'ULTRA';
-    return '';
   }
 
   addItem(): void {
@@ -127,7 +155,11 @@ export class DynamicItemsTableComponent implements OnInit {
 
   onProdutoChange(item: OrcamentoItem): void {
     item.modelo = '';
-    item.familyDescription = item.produto; 
+    if (item.produto === 'Peças Usinadas') {
+      item.familyDescription = 'Chapas semiacabadas';
+    } else {
+      item.familyDescription = item.produto;
+    }
     item.ipi = this.ipiMap[item.modelo] || 0;
 
     if (this.valoresPadrao[item.modelo]) {
@@ -138,6 +170,13 @@ export class DynamicItemsTableComponent implements OnInit {
       item.largura = undefined;
       item.comprimento = undefined;
     }
+  }
+
+  getModelosForProduto(produto: string): string[] {
+    if (produto === 'Peças Usinadas') {
+      return this.modelosMap['Chapas semiacabadas'] || [];
+    }
+    return this.modelosMap[produto] || [];
   }
 
   get totalIPI(): number {
@@ -154,10 +193,6 @@ export class DynamicItemsTableComponent implements OnInit {
       this.items.splice(index, 1);
       this.onFieldChange();
     }
-  }
-
-  getModelosForProduto(produto: string): string[] {
-    return this.modelosMap[produto] || [];
   }
 
   getIPI(item: OrcamentoItem): number {
