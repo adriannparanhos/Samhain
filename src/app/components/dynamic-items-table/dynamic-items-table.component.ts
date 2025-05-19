@@ -69,13 +69,11 @@ export class DynamicItemsTableComponent {
 
   ngOnInit() {
     this.form = this.fb.group({
-      // … outros controles de itens
       globalDiscount: [0, [Validators.min(0), Validators.max(100)]],
       shipping:       [0, [Validators.min(0)]],
       difal:          [0, [Validators.min(0)]],
     });
 
-    // re-calcula totais sempre que mudar
     this.form.valueChanges.subscribe(() => this.calculateAll());
     this.addItem();
   }
@@ -221,9 +219,7 @@ export class DynamicItemsTableComponent {
   }
 
   calculateAll() {
-    // chamar seus métodos de cálculo já existentes
     this.subtotal  = this.calculateSubtotal();
-    // this.totalIPI  = this.totalIPI;           // supondo já calculado
     this.grandTotal = this.calculateGrandTotal();
   }
 }
