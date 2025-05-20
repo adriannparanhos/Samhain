@@ -4,6 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { FetchProductsService } from '../../services/fetchs/fetch-products.service';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 interface OrcamentoItem {
   id?: string;
@@ -19,22 +21,28 @@ interface OrcamentoItem {
   code: string;
   description: string;
   textClass?: string;
-
-  adicionalDesenho?: boolean;
-  adicionalProjeto?: boolean;
-  adicionalArruela?: boolean;
-  adicionalTampao?: boolean;
-  
+  clienteForneceuDesenho?: boolean;
+  adicionarProjeto?: boolean;
+  adicionarArruela?: boolean;
+  adicionarTampao?: boolean;
   valorDesenho?: number;
   valorProjeto?: number;
   valorArruela?: number;
   valorTampao?: number;
+  isPanelVisible?: boolean;
 }
 
 @Component({
   selector: 'app-dynamic-items-table',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, LucideAngularModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    LucideAngularModule,
+    MatExpansionModule,
+    MatCheckboxModule
+  ],
   templateUrl: './dynamic-items-table.component.html',
 })
 export class DynamicItemsTableComponent implements OnInit {
@@ -44,18 +52,14 @@ export class DynamicItemsTableComponent implements OnInit {
   valoresPadrao: Record<string, number> = {};
   items: OrcamentoItem[] = [];
   form!: FormGroup;
-  isSidebarOpen: boolean = false;
-  selectedItem: any = null;
-  groupedItems: Record<string, OrcamentoItem[]> = {};
-
   descontoGlobal: number = 0;
   valorFrete: number = 0;
   valorDifal: number = 0;
   subtotal = 0;
   grandTotal = 0;
-
   formValidated: boolean = false;
   formErrors: string[] = [];
+  groupedItems: Record<string, OrcamentoItem[]> = {};
 
   constructor(private fb: FormBuilder, private fetchProductsService: FetchProductsService) {}
 
@@ -89,13 +93,11 @@ export class DynamicItemsTableComponent implements OnInit {
         .filter(item => item.model.toUpperCase().includes('DURAMAXX'))
         .map(item => {
           let familyDescription = item.familyDescription || 'Outros';
-          
           if (item.description.includes('HASTE')) {
             familyDescription = 'Extratores';
           } else if (item.description.includes('PATOLÃO')) {
             familyDescription = 'Patolão';
           }
-          
           return {
             produto: familyDescription,
             modelo: item.description,
@@ -123,14 +125,12 @@ export class DynamicItemsTableComponent implements OnInit {
           const typeB = this.extractType(b.description);
           const thicknessA = this.extractThickness(a.description);
           const thicknessB = this.extractThickness(b.description);
-
           const typeOrder = ['BLACK', 'NATURAL', 'ULTRA'];
           const typeIndexA = typeOrder.indexOf(typeA);
           const typeIndexB = typeOrder.indexOf(typeB);
           if (typeIndexA !== typeIndexB) {
             return typeIndexA - typeIndexB;
           }
-
           return thicknessA - thicknessB;
         });
       }
@@ -148,14 +148,10 @@ export class DynamicItemsTableComponent implements OnInit {
             produto: 'Revestimento'
           };
         });
-        
         this.groupedItems['Revestimento'] = revestimentos;
       }
 
-      
-
       this.produtos = Object.keys(this.groupedItems);
-      
       this.modelosMap = this.produtos.reduce((acc, family) => {
         acc[family] = this.groupedItems[family].map(item => item.description);
         return acc;
@@ -177,9 +173,18 @@ export class DynamicItemsTableComponent implements OnInit {
       desconto: 0,
       familyDescription: '',
       code: '',
-      description: ''
+      description: '',
+      clienteForneceuDesenho: false,
+      adicionarProjeto: false,
+      adicionarArruela: false,
+      adicionarTampao: false,
+      isPanelVisible: false 
     });
     this.formValidated = false;
+  }
+
+  togglePanel(index: number): void {
+    this.items[index].isPanelVisible = !this.items[index].isPanelVisible;
   }
 
   onProdutoChange(item: OrcamentoItem): void {
@@ -195,7 +200,7 @@ export class DynamicItemsTableComponent implements OnInit {
       item.valorUnitario = this.valoresPadrao[item.modelo];
     }
 
-    if (item.produto !== 'Peça usinada') {
+    if (item.produto !== 'Peças Usinadas') {
       item.largura = undefined;
       item.comprimento = undefined;
     }
@@ -263,7 +268,7 @@ export class DynamicItemsTableComponent implements OnInit {
       return true;
     }
     if (!item.modelo) return true;
-    if (item.produto === 'Peça usinada' &&
+    if (item.produto === 'Peças Usinadas' &&
       (!item.largura || item.largura <= 0 || !item.comprimento || item.comprimento <= 0)) {
       return true;
     }
@@ -312,10 +317,5 @@ export class DynamicItemsTableComponent implements OnInit {
   calculateAll() {
     this.subtotal = this.calculateSubtotal();
     this.grandTotal = this.calculateGrandTotal();
-  }
-
-  openSidebar(item: OrcamentoItem) {
-    this.selectedItem = item;
-    this.isSidebarOpen = true;
   }
 }
