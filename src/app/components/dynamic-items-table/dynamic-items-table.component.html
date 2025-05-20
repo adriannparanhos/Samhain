@@ -26,11 +26,11 @@
       <tr>
         <th class="px-4 py-3">Produto</th>
         <th class="px-4 py-3">Modelo</th>
-        <th class="px-4 py-3 w-[12%]">Qtd</th>
+        <th class="px-4 py-3 w-[9%]">Qtd</th>
         <th class="px-4 py-3 w-[15%]">Dimensões</th>
-        <th class="px-4 py-3 w-[15%]">Valor Unit.</th>
-        <th class="px-4 py-3 w-[10%]">Desc. (%)</th>
-        <th class="px-4 py-3 w-[15%]">Total</th>
+        <th class="px-4 py-3 w-[14%]">Valor Unit.</th>
+        <th class="px-4 py-3 w-[9%]">Desc. (%)</th>
+        <th class="px-4 py-3 w-[12%]">Total</th>
         <th class="px-4 py-3 w-[5%]"></th>
       </tr>
     </thead>
@@ -84,7 +84,7 @@
         </td>
 
         <td class="px-4 py-3">
-          <ng-container *ngIf="item.produto === 'Peça usinada'; else naoUsinada">
+          <ng-container *ngIf="item.produto === 'Peças Usinadas'; else naoUsinada">
             <div class="flex space-x-1">
               <div>
                 <input 

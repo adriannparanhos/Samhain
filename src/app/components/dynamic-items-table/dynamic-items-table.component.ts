@@ -18,6 +18,16 @@ interface OrcamentoItem {
   code: string;
   description: string;
   textClass?: string;
+
+  adicionalDesenho?: boolean;
+  adicionalProjeto?: boolean;
+  adicionalArruela?: boolean;
+  adicionalTampao?: boolean;
+  
+  valorDesenho?: number;
+  valorProjeto?: number;
+  valorArruela?: number;
+  valorTampao?: number;
 }
 
 @Component({
