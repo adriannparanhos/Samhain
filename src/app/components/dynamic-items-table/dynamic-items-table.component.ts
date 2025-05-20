@@ -20,6 +20,7 @@ interface OrcamentoItem {
   familyDescription: string;
   code: string;
   description: string;
+  
   textClass?: string;
   clienteForneceuDesenho?: boolean;
   adicionarProjeto?: boolean;
@@ -306,6 +307,10 @@ export class DynamicItemsTableComponent implements OnInit {
       this.validateForm();
     }
   }
+  
+  public getItemsForPayload(): OrcamentoItem[] {
+    return this.salvarItens();
+  }
 
   salvarItens(): OrcamentoItem[] {
     if (this.validateForm()) {
@@ -318,4 +323,5 @@ export class DynamicItemsTableComponent implements OnInit {
     this.subtotal = this.calculateSubtotal();
     this.grandTotal = this.calculateGrandTotal();
   }
+
 }

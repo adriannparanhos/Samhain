@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ReturnArrowComponent } from '../return-arrow/return-arrow.component';
 import { Router } from '@angular/router';
 import { AddNewFormComponent } from '../add-new-form/add-new-form.component';
@@ -41,6 +41,8 @@ interface NewBudget {
   styleUrl: './add-new-budget.component.css'
 })
 export class AddNewBudgetComponent {
+  @ViewChild(DynamicItemsTableComponent) table!: DynamicItemsTableComponent;
+
   constructor(
     private router: Router, 
     private fetchEnterpriseService: FetchEnterpriseService,
@@ -78,8 +80,8 @@ export class AddNewBudgetComponent {
       placeholder: '00.000.000/0000-00',
       useMask: 'cpfCnpjMask'
     },
-    { name: 'Razão Social', label: 'Razão Social', type: 'text', placeholder: 'Razão Social da empresa', disabled: true },
-    { name: 'Condição de pagamento', label: 'Condição de Pagamento', type: 'select', options: [{ label: '15 DDL', value: '15 DDL' }, { label: '28 DDL', value: '28 DDL' }, { label: '28/42 DDL', value: '28/42 DDL' }, { label: '28/42/56 DDL', value: '28/42/56 DDL' }, { label: 'Pagamento a vista', value: 'Pagamento a vista' }, { label: 'Pagamento para 30 dias', value: 'pagamento para 30 dias' }] },
+    { name: 'razaoSocial', label: 'Razão Social', type: 'text', placeholder: 'Razão Social da empresa', disabled: true },
+    { name: 'condicaoPagamento', label: 'Condição de Pagamento', type: 'select', options: [{ label: '15 DDL', value: '15 DDL' }, { label: '28 DDL', value: '28 DDL' }, { label: '28/42 DDL', value: '28/42 DDL' }, { label: '28/42/56 DDL', value: '28/42/56 DDL' }, { label: 'Pagamento a vista', value: 'Pagamento a vista' }, { label: 'Pagamento para 30 dias', value: 'pagamento para 30 dias' }] },
     { name: 'status', label: 'Status', type: 'select', options: [{ label: 'Aprovado', value: 'Aprovado' }, { label: 'Pendente', value: 'Pendente' }, { label: 'Reprovado', value: 'Reprovado' }] },
     { name: 'descricao', label: 'Descrição', type: 'textarea', placeholder: 'Descrição do orçamento' }
   ];
@@ -115,7 +117,7 @@ export class AddNewBudgetComponent {
         this.fetchEnterpriseService.getEnterpriseByCnpj(value).pipe(
           catchError(() => {
             this.cnpjError = 'Empresa não encontrada';
-            this.form.get('Razão Social')!.setValue('');
+            this.form.get('razaoSocial')!.setValue('');
             return of(null);
           })
         )
@@ -123,10 +125,50 @@ export class AddNewBudgetComponent {
     ).subscribe(data => {
       if (data) {
         this.cnpjError = '';
-        this.form.get('Razão Social')!.setValue(data.corporateName);
+        this.form.get('razaoSocial')!.setValue(data.corporateName);
         console.log('Empresa encontrada:', data);
       }
     });
+  }
+
+  onSave() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const itens = this.table.getItemsForPayload();
+    if (itens.length === 0) {
+      alert('Adicione ao menos um item válido ao orçamento.');
+      return;
+    }
+
+    const payload = {
+      cnpj: this.form.value.cnpj,
+      razaoSocial: this.form.value.razaoSocial,
+      condicaoPagamento: this.form.value.condicaoPagamento,
+      descricao: this.form.value.descricao,
+      descontoGlobal: this.table.descontoGlobal,
+      valorDoFrete: this.table.valorFrete,
+      difal: this.table.valorDifal,
+      grandTotal: this.table.grandTotal,
+      subtotal: this.table.subtotal,
+      status: this.form.value.status,
+      itens: itens.map(item => ({
+        produto: item.produto,
+        modelo: item.modelo,
+        quantidade: item.quantidade,
+        valorUnitario: item.valorUnitario,
+        desconto: item.desconto,
+        adicionais: {
+          desenho: item.valorDesenho || false,
+          projeto: item.adicionarProjeto || false,
+          arruela: item.adicionarArruela || false,
+          tampao: item.adicionarTampao || false
+        }
+      }))
+    };
+    console.log('Payload:', payload);
   }
 
 }
