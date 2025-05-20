@@ -13,7 +13,7 @@ export interface FieldConfig {
   placeholder?: string;
   customEvents?: { [key: string]: (event: any) => void }; 
   disabled?: boolean;
-
+  useMask?: 'cpfCnpjMask' | string;
 }
 
 @Component({

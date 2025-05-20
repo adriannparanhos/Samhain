@@ -10,7 +10,7 @@ import { Item } from '../../models/constantes';
 import { TableInfoComponent } from '../table-info/table-info.component';
 import { DynamicItemsTableComponent } from '../dynamic-items-table/dynamic-items-table.component';
 import { FetchEnterpriseService } from '../../services/fetchs/fetch-enterprise.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, switchMap, catchError } from 'rxjs/operators';
 import { CpfCnpjMaskDirective } from '../../directive/cpf-cnpj-mask.directive';
@@ -31,6 +31,7 @@ interface NewBudget {
   imports: [ReturnArrowComponent, 
     AddNewFormComponent, 
     LucideAngularModule, 
+    ReactiveFormsModule,
     ButtonComponent, 
     ButtonFormComponent, 
     TableInfoComponent, 
@@ -70,11 +71,17 @@ export class AddNewBudgetComponent {
   }
 
   formFields: FieldConfig[] = [
-    { name: 'cnpj', label: 'CNPJ', type: 'text', placeholder: '00.000.000/0000-00' },
+    { 
+      name: 'cnpj', 
+      label: 'CNPJ', 
+      type: 'text', 
+      placeholder: '00.000.000/0000-00',
+      useMask: 'cpfCnpjMask'
+    },
     { name: 'Razão Social', label: 'Razão Social', type: 'text', placeholder: 'Razão Social da empresa', disabled: true },
     { name: 'Condição de pagamento', label: 'Condição de Pagamento', type: 'select', options: [{ label: '15 DDL', value: '15 DDL' }, { label: '28 DDL', value: '28 DDL' }, { label: '28/42 DDL', value: '28/42 DDL' }, { label: '28/42/56 DDL', value: '28/42/56 DDL' }, { label: 'Pagamento a vista', value: 'Pagamento a vista' }, { label: 'Pagamento para 30 dias', value: 'pagamento para 30 dias' }] },
-    { name: 'descricao', label: 'Descrição', type: 'textarea', placeholder: 'Descrição do orçamento' },
-    { name: 'status', label: 'Status', type: 'select', options: [{ label: 'Aprovado', value: 'Aprovado' }, { label: 'Pendente', value: 'Pendente' }, { label: 'Reprovado', value: 'Reprovado' }] }
+    { name: 'status', label: 'Status', type: 'select', options: [{ label: 'Aprovado', value: 'Aprovado' }, { label: 'Pendente', value: 'Pendente' }, { label: 'Reprovado', value: 'Reprovado' }] },
+    { name: 'descricao', label: 'Descrição', type: 'textarea', placeholder: 'Descrição do orçamento' }
   ];
 
   onEdit(budget: NewBudget) {

@@ -8,30 +8,52 @@
         {{ f.label }}
       </label>
 
-      <input
-        *ngIf="f.type !== 'select'"
-        [id]="f.name"
-        [type]="f.type"
-        [formControlName]="f.name"
-        [placeholder]="f.placeholder"
-        [disabled]="!!f.disabled"
-        cpfCnpjMask
-        class="border border-gray-300 rounded px-3 py-2 w-full placeholder-gray-400 focus:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+      <ng-container [ngSwitch]="true">
+        <input
+          *ngSwitchCase="f.type !== 'select' && f.type !== 'textarea' && f.useMask === 'cpfCnpjMask'"
+          [id]="f.name"
+          [type]="f.type"
+          [formControlName]="f.name"
+          [placeholder]="f.placeholder"
+          [disabled]="!!f.disabled"
+          cpfCnpjMask
+          class="border border-gray-300 rounded px-3 py-2 w-full placeholder-gray-400 focus:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
 
-      <select
-        *ngIf="f.type === 'select'"
-        [id]="f.name"
-        [formControlName]="f.name"
-        class="border border-gray-300 rounded px-3 py-2 w-full placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option value="" disabled selected>
-          {{ f.placeholder || 'Selecione...' }}
-        </option>
-        <option *ngFor="let opt of f.options" [value]="opt.value">
-          {{ opt.label }}
-        </option>
-      </select>
+        <textarea
+          *ngSwitchCase="f.type === 'textarea'"
+          [id]="f.name"
+          [formControlName]="f.name"
+          [placeholder]="f.placeholder"
+          [disabled]="!!f.disabled"
+          class="border border-gray-300 rounded px-3 py-2 w-full placeholder-gray-400 focus:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          rows="4"
+        ></textarea>
+
+        <select
+          *ngSwitchCase="f.type === 'select'"
+          [id]="f.name"
+          [formControlName]="f.name"
+          class="border border-gray-300 rounded px-3 py-2 w-full placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="" disabled selected>
+            {{ f.placeholder || 'Selecione...' }}
+          </option>
+          <option *ngFor="let opt of f.options" [value]="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
+
+        <input
+          *ngSwitchDefault
+          [id]="f.name"
+          [type]="f.type"
+          [formControlName]="f.name"
+          [placeholder]="f.placeholder"
+          [disabled]="!!f.disabled"
+          class="border border-gray-300 rounded px-3 py-2 w-full placeholder-gray-400 focus:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </ng-container>
 
       <p
         *ngIf="form.get(f.name)?.invalid && form.get(f.name)?.touched"
