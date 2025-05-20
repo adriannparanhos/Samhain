@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LucideAngularModule } from 'lucide-angular';
 import { FetchProductsService } from '../../services/fetchs/fetch-products.service';
 
 interface OrcamentoItem {
@@ -33,7 +34,7 @@ interface OrcamentoItem {
 @Component({
   selector: 'app-dynamic-items-table',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, LucideAngularModule],
   templateUrl: './dynamic-items-table.component.html',
 })
 export class DynamicItemsTableComponent implements OnInit {
@@ -43,6 +44,8 @@ export class DynamicItemsTableComponent implements OnInit {
   valoresPadrao: Record<string, number> = {};
   items: OrcamentoItem[] = [];
   form!: FormGroup;
+  isSidebarOpen: boolean = false;
+  selectedItem: any = null;
   groupedItems: Record<string, OrcamentoItem[]> = {};
 
   descontoGlobal: number = 0;
@@ -309,5 +312,10 @@ export class DynamicItemsTableComponent implements OnInit {
   calculateAll() {
     this.subtotal = this.calculateSubtotal();
     this.grandTotal = this.calculateGrandTotal();
+  }
+
+  openSidebar(item: OrcamentoItem) {
+    this.selectedItem = item;
+    this.isSidebarOpen = true;
   }
 }
