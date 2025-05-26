@@ -55,7 +55,7 @@
           <td class="px-4 py-3">
             <select 
               [(ngModel)]="item.modelo"
-              (ngModelChange)="onFieldChange()"
+              (ngModelChange)="onModeloChange(item)"
               class="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               [class.border-red-500]="isItemInvalid(item) && !item.modelo"
               [disabled]="!item.produto">
@@ -83,7 +83,7 @@
             </p>
           </td>
           <td class="px-4 py-3">
-            <ng-container *ngIf="item.produto === 'Peças Usinadas'; else naoUsinada">
+            <ng-container *ngIf="item.produto === 'Peça Usinada'; else naoUsinada">
               <div class="flex space-x-1">
                 <div>
                   <input 

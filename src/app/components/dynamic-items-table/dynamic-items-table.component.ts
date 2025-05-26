@@ -21,9 +21,9 @@ interface OrcamentoItem {
   valorUnitario: number;
   desconto: number;
   ipi?: number;
-  familyDescription: string;
-  code: string;
-  description: string;
+  ncm: string;
+  peso: number;
+  categoria: string;
 
   textClass?: string;
   clienteForneceuDesenho?: boolean;
@@ -107,43 +107,44 @@ export class DynamicItemsTableComponent implements OnInit {
     });
   }
 
-  private extractType(description: string): string {
-    if (description.includes('BLACK')) return 'BLACK';
-    if (description.includes('NATURAL')) return 'NATURAL';
-    if (description.includes('ULTRA')) return 'ULTRA';
+  private extractType(modelo: string): string {
+    if (modelo.includes('BLACK')) return 'BLACK';
+    if (modelo.includes('NATURAL')) return 'NATURAL';
+    if (modelo.includes('ULTRA')) return 'ULTRA';
     return '';
   }
 
-  private extractThickness(description: string): number {
-    const match = description.match(/#(\d+)/);
+  private extractThickness(modelo: string): number {
+    const match = modelo.match(/#(\d+)/);
     return match ? parseInt(match[1], 10) : 0;
   }
 
   getAllProducts() {
     this.fetchProductsService.getProducts().subscribe((data: any[]) => {
       const filteredItems = data
-        .filter(item => item.model.toUpperCase().includes('DURAMAXX'))
         .map(item => {
-          let familyDescription = item.familyDescription || 'Outros';
-          if (item.description.includes('HASTE')) {
-            familyDescription = 'Extratores';
-          } else if (item.description.includes('PATOLÃO')) {
-            familyDescription = 'Patolão';
+          let produto = item.produto || 'Outros';
+          if (item.modelo.includes('HASTE')) {
+            produto = 'Extratores';
+          } else if (item.modelo.includes('PATOLÃO')) {
+            produto = 'Patolão';
           }
           return {
-            produto: familyDescription,
-            modelo: item.description,
+            produto: produto,
+            modelo: item.modelo,
             quantidade: 1,
-            valorUnitario: 0,
+            valorUnitario: item.valorUnitario,
             desconto: 0,
-            familyDescription,
-            code: item.code,
-            description: item.description,
+            categoria: item.categoria,
+            espessura: item.espessura,
+            peso: item.peso,
+            ipi: item.ipi || 1,
+            ncm: item.ncm,
           };
         });
 
       this.groupedItems = filteredItems.reduce((acc, item) => {
-        const family = item.familyDescription || 'Outros';
+        const family = item.produto || 'Outros';
         if (!acc[family]) {
           acc[family] = [];
         }
@@ -151,25 +152,25 @@ export class DynamicItemsTableComponent implements OnInit {
         return acc;
       }, {} as Record<string, OrcamentoItem[]>);
 
-      for (const family in this.groupedItems) {
-        this.groupedItems[family].sort((a, b) => {
-          const typeA = this.extractType(a.description);
-          const typeB = this.extractType(b.description);
-          const thicknessA = this.extractThickness(a.description);
-          const thicknessB = this.extractThickness(b.description);
-          const typeOrder = ['BLACK', 'NATURAL', 'ULTRA'];
-          const typeIndexA = typeOrder.indexOf(typeA);
-          const typeIndexB = typeOrder.indexOf(typeB);
-          if (typeIndexA !== typeIndexB) {
-            return typeIndexA - typeIndexB;
-          }
-          return thicknessA - thicknessB;
-        });
-      }
+      // for (const family in this.groupedItems) {
+      //   this.groupedItems[family].sort((a, b) => {
+      //     const typeA = this.extractType(a.categoria);
+      //     const typeB = this.extractType(b.categoria);
+      //     const thicknessA = this.extractThickness(a.categoria);
+      //     const thicknessB = this.extractThickness(b.categoria);
+      //     const typeOrder = ['BLACK', 'NATURAL', 'ULTRA'];
+      //     const typeIndexA = typeOrder.indexOf(typeA);
+      //     const typeIndexB = typeOrder.indexOf(typeB);
+      //     if (typeIndexA !== typeIndexB) {
+      //       return typeIndexA - typeIndexB;
+      //     }
+      //     return thicknessA - thicknessB;
+      //   });
+      // }
 
       const chapas = this.groupedItems['Chapas semiacabadas'] || [];
-      const chapas1220 = chapas.filter(i => i.description.includes('1220 x 3050'));
-      const chapas1000 = chapas.filter(i => i.description.includes('1000 x 3000'));
+      const chapas1220 = chapas.filter(i => i.modelo.includes('1220 x 3050'));
+      const chapas1000 = chapas.filter(i => i.modelo.includes('1000 x 3000'));
       this.groupedItems['Chapas semiacabadas'] = [...chapas1220, ...chapas1000];
 
       if (this.groupedItems['Chapas semiacabadas']) {
@@ -185,12 +186,12 @@ export class DynamicItemsTableComponent implements OnInit {
 
       this.produtos = Object.keys(this.groupedItems);
       this.modelosMap = this.produtos.reduce((acc, family) => {
-        acc[family] = this.groupedItems[family].map(item => item.description);
+        acc[family] = this.groupedItems[family].map(item => item.modelo);
         return acc;
       }, {} as Record<string, string[]>);
 
       this.valoresPadrao = filteredItems.reduce((acc, item) => {
-        acc[item.description] = item.valorUnitario || 0;
+        acc[item.modelo] = item.valorUnitario || 0;
         return acc;
       }, {} as Record<string, number>);
     });
@@ -203,9 +204,9 @@ export class DynamicItemsTableComponent implements OnInit {
       quantidade: 1,
       valorUnitario: 0,
       desconto: 0,
-      familyDescription: '',
-      code: '',
-      description: '',
+      ncm: '',
+      peso: 0,
+      categoria: '',
       clienteForneceuDesenho: false,
       adicionarProjeto: false,
       adicionarArruela: false,
@@ -221,25 +222,45 @@ export class DynamicItemsTableComponent implements OnInit {
 
   onProdutoChange(item: OrcamentoItem): void {
     item.modelo = '';
-    if (item.produto === 'Peças Usinadas') {
-      item.familyDescription = 'Chapas semiacabadas';
+    item.valorUnitario = 0;
+
+    if (item.produto === 'Peça usinada') {
+      item.produto = 'Chapas semiacabadas';
     } else {
-      item.familyDescription = item.produto;
-    }
-    item.ipi = this.ipiMap[item.modelo] || 0;
-
-    if (this.valoresPadrao[item.modelo]) {
-      item.valorUnitario = this.valoresPadrao[item.modelo];
+      item.produto = item.produto;
     }
 
-    if (item.produto !== 'Peças Usinadas') {
+    if (item.produto !== 'Peça usinada') {
       item.largura = undefined;
       item.comprimento = undefined;
-    }
+    }    
   }
 
+  onModeloChange(item: OrcamentoItem): void {
+  if (!item.modelo) {
+    item.valorUnitario = 0;
+    return;
+  }
+
+  const produto = item.produto === 'Peça usinada' ? 'Chapas semiacabadas' : item.produto;
+  const itemSelecionado = this.groupedItems[produto]?.find(apiItem => apiItem.modelo === item.modelo);
+  
+  if (itemSelecionado) {
+    item.valorUnitario = itemSelecionado.valorUnitario || 0;
+    item.ipi = itemSelecionado.ipi || 0;
+    item.ncm = itemSelecionado.ncm || '';
+    item.peso = itemSelecionado.peso || 0;
+    item.categoria = itemSelecionado.categoria || '';
+  } else {
+    item.valorUnitario = 0;
+    item.ipi = 0;
+  }
+  
+  this.onFieldChange();
+}
+
   getModelosForProduto(produto: string): string[] {
-    if (produto === 'Peças Usinadas') {
+    if (produto === 'Peça usinada') {
       return this.modelosMap['Chapas semiacabadas'] || [];
     }
     return this.modelosMap[produto] || [];
@@ -277,7 +298,7 @@ export class DynamicItemsTableComponent implements OnInit {
   }
 
   calculateTotal(item: OrcamentoItem): number {
-    if (!item.produto || !item.valorUnitario || !item.quantidade) {
+    if (!item.modelo || !item.valorUnitario || !item.quantidade) {
       return 0;
     }
     let total = item.valorUnitario * item.quantidade;
@@ -314,7 +335,7 @@ export class DynamicItemsTableComponent implements OnInit {
       return true;
     }
     if (!item.modelo) return true;
-    if (item.produto === 'Peças Usinadas' &&
+    if (item.produto === 'Peça usinada' &&
       (!item.largura || item.largura <= 0 || !item.comprimento || item.comprimento <= 0)) {
       return true;
     }
