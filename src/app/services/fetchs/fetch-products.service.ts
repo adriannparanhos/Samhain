@@ -10,7 +10,7 @@ export class FetchProductsService {
   constructor(private http: HttpClient) { }
 
   getProducts(): Observable<any[]> {
-    const url = 'http://localhost:8080/api/v1/products'; 
+    const url = 'http://localhost:8080/api/produtos/lista'; 
     return this.http.get<any[]>(url);
   }
 }

@@ -6,6 +6,10 @@ import { LucideAngularModule } from 'lucide-angular';
 import { FetchProductsService } from '../../services/fetchs/fetch-products.service';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { CalculateValueStandartService } from '../../services/calculations/calculate-value-standart.service';
+import { Subject, combineLatest } from 'rxjs';
+import { debounceTime, switchMap } from 'rxjs/operators';
+
 
 interface OrcamentoItem {
   id?: string;
@@ -20,7 +24,7 @@ interface OrcamentoItem {
   familyDescription: string;
   code: string;
   description: string;
-  
+
   textClass?: string;
   clienteForneceuDesenho?: boolean;
   adicionarProjeto?: boolean;
@@ -47,6 +51,11 @@ interface OrcamentoItem {
   templateUrl: './dynamic-items-table.component.html',
 })
 export class DynamicItemsTableComponent implements OnInit {
+  private itemsChanged$ = new Subject<OrcamentoItem[]>();
+
+  // valores globais (descontoGlobal, frete, …) também podem entrar aqui
+  private globalsChanged$ = new Subject<{ desconto: number; frete: number; difal: number }>();
+
   produtos: string[] = [];
   modelosMap: Record<string, string[]> = {};
   ipiMap: Record<string, number> = {};
@@ -62,7 +71,11 @@ export class DynamicItemsTableComponent implements OnInit {
   formErrors: string[] = [];
   groupedItems: Record<string, OrcamentoItem[]> = {};
 
-  constructor(private fb: FormBuilder, private fetchProductsService: FetchProductsService) {}
+  constructor(
+    private fb: FormBuilder, 
+    private fetchProductsService: FetchProductsService,
+    private calculateValueStandartService: CalculateValueStandartService
+  ) {}
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -74,6 +87,24 @@ export class DynamicItemsTableComponent implements OnInit {
     this.form.valueChanges.subscribe(() => this.calculateAll());
     this.addItem();
     this.getAllProducts();
+
+    combineLatest([
+      this.itemsChanged$.pipe(debounceTime(500)),
+      this.globalsChanged$.pipe(debounceTime(500))
+    ])
+    .pipe(
+      switchMap(([items, globals]) => {
+        const payload = { itens: items, ...globals };
+        return this.calculateValueStandartService.postCalculateValueStandart(payload);
+      })
+    )
+    .subscribe(result => {
+      // result deve trazer subtotal, grandTotal e, se quiser,
+      // totais individuais por item
+      this.subtotal = result.subtotal;
+      this.grandTotal = result.grandTotal;
+      // …etc.
+    });
   }
 
   private extractType(description: string): string {
@@ -234,13 +265,27 @@ export class DynamicItemsTableComponent implements OnInit {
     return item.ipi || this.ipiMap[item.modelo] || 0;
   }
 
+  calculateStandart(payload: any) {
+    this.calculateValueStandartService.postCalculateValueStandart(payload).subscribe({
+      next: (data) => {
+        console.log("data", data)
+      },
+      error: (err) => {
+        alert(err);
+      }
+    })
+  }
+
   calculateTotal(item: OrcamentoItem): number {
     if (!item.produto || !item.valorUnitario || !item.quantidade) {
       return 0;
     }
     let total = item.valorUnitario * item.quantidade;
-    if (item.desconto > 0) {
-      total = total * (1 - (item.desconto / 100));
+    // if (item.desconto > 0) {
+    //   total = total * (1 - (item.desconto / 100));
+    // }
+    if (item.produto === 'Extratores') {
+      // this.calculateStandart()
     }
     return total;
   }
@@ -305,6 +350,12 @@ export class DynamicItemsTableComponent implements OnInit {
   onFieldChange(): void {
     if (this.formValidated) {
       this.validateForm();
+      this.itemsChanged$.next(this.items);
+      this.globalsChanged$.next({
+        desconto: this.descontoGlobal,
+        frete: this.valorFrete,
+        difal: this.valorDifal
+      });
     }
   }
   
