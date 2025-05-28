@@ -25,7 +25,7 @@
     <div *ngIf="isSidebarOpen" class="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden" (click)="toggleSidebar()"></div>
 
     <!-- Sidebar -->
-    <aside class="fixed top-16 bottom-0 left-0 z-30 w-64 transform bg-white shadow-lg transition-transform lg:static lg:translate-x-0 lg:h-auto"
+    <aside class="fixed top-16 bottom-0 left-0 z-30 w-1xl transform bg-white shadow-lg transition-transform lg:static lg:translate-x-0 lg:h-auto"
            [class.translate-x-0]="isSidebarOpen" [class.-translate-x-full]="!isSidebarOpen">
       <div class="flex flex-col h-full">
         <!-- Navigation -->

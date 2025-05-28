@@ -35,6 +35,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
   valorFrete: number = 0;
   valorDifal: number = 0;
   subtotal: number = 0;
+  subtotalCIPI: number = 0;
   grandTotal: number = 0;
   formValidated: boolean = false;
   formErrors: string[] = [];
@@ -76,6 +77,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
           modelo: item.modelo,
           quantidade: 1,
           valorUnitario: item.valorUnitario || 0,
+          valorUnitarioCIPI: item.valorUnitarioCIPI || 0,
           desconto: 0,
           categoria: item.categoria || '',
           espessura: item.espessura || 0,
@@ -123,6 +125,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
       modelo: '',
       quantidade: 0,
       valorUnitario: 0,
+      valorUnitarioCIPI: 0,
       desconto: 0,
       ncm: '',
       peso: 0,
@@ -208,6 +211,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     this.calculateValueStandartService.postCalculateValueStandart(payload).subscribe({
       next: (response) => {
         item.valorUnitario = response.valorUnitario || 0;
+        item.valorUnitarioCIPI = response.valorUnitarioCIPI || 0;
         item.total = response.total || 0;
         item.totalCIPI = response.totalCIPI || 0;
         item.pesoTotal = response.pesoTotal || 0;
@@ -253,7 +257,8 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
 
   public updateTotals(): void {
     this.subtotal = this.items.reduce((total, item) => total + (item.total || 0), 0);
-    let grandTotal = this.subtotal;
+    this.subtotalCIPI = this.items.reduce((totalCIPI, item) => totalCIPI + (item.totalCIPI || 0), 0);
+    let grandTotal = this.subtotalCIPI;
     if (this.descontoGlobal > 0) {
       grandTotal = grandTotal * (1 - (this.descontoGlobal / 100));
     }

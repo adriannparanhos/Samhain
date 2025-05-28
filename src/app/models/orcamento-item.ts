@@ -3,6 +3,7 @@ export interface OrcamentoItem {
   modelo: string;
   quantidade: number;
   valorUnitario: number;
+  valorUnitarioCIPI: number;
   desconto: number;
   ncm: string;
   peso: number;

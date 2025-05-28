@@ -6,6 +6,7 @@ export interface CalcResponse {
   subtotal: number;
   grandTotal: number;
   itensComTotais?: { total: number }[];
+  valorUnitarioCIPI: number;
   valorUnitario: number;
   total: number;
   totalCIPI: number;
