@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -7,35 +7,8 @@ import { FetchProductsService } from '../../services/fetchs/fetch-products.servi
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CalculateValueStandartService } from '../../services/calculations/calculate-value-standart.service';
-import { Subject, combineLatest } from 'rxjs';
-import { debounceTime, switchMap } from 'rxjs/operators';
-
-
-interface OrcamentoItem {
-  id?: string;
-  produto: string;
-  modelo: string;
-  quantidade: number;
-  largura?: number;
-  comprimento?: number;
-  valorUnitario: number;
-  desconto: number;
-  ipi?: number;
-  ncm: string;
-  peso: number;
-  categoria: string;
-
-  textClass?: string;
-  clienteForneceuDesenho?: boolean;
-  adicionarProjeto?: boolean;
-  adicionarArruela?: boolean;
-  adicionarTampao?: boolean;
-  valorDesenho?: number;
-  valorProjeto?: number;
-  valorArruela?: number;
-  valorTampao?: number;
-  isPanelVisible?: boolean;
-}
+import { Subscription } from 'rxjs';
+import { OrcamentoItem } from '../../models/orcamento-item';
 
 @Component({
   selector: 'app-dynamic-items-table',
@@ -50,29 +23,25 @@ interface OrcamentoItem {
   ],
   templateUrl: './dynamic-items-table.component.html',
 })
-export class DynamicItemsTableComponent implements OnInit {
-  private itemsChanged$ = new Subject<OrcamentoItem[]>();
-
-  // valores globais (descontoGlobal, frete, …) também podem entrar aqui
-  private globalsChanged$ = new Subject<{ desconto: number; frete: number; difal: number }>();
+export class DynamicItemsTableComponent implements OnInit, OnDestroy {
+  private subscription: Subscription = new Subscription();
 
   produtos: string[] = [];
   modelosMap: Record<string, string[]> = {};
-  ipiMap: Record<string, number> = {};
   valoresPadrao: Record<string, number> = {};
   items: OrcamentoItem[] = [];
   form!: FormGroup;
   descontoGlobal: number = 0;
   valorFrete: number = 0;
   valorDifal: number = 0;
-  subtotal = 0;
-  grandTotal = 0;
+  subtotal: number = 0;
+  grandTotal: number = 0;
   formValidated: boolean = false;
   formErrors: string[] = [];
   groupedItems: Record<string, OrcamentoItem[]> = {};
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     private fetchProductsService: FetchProductsService,
     private calculateValueStandartService: CalculateValueStandartService
   ) {}
@@ -84,64 +53,42 @@ export class DynamicItemsTableComponent implements OnInit {
       difal: [0, [Validators.min(0)]],
     });
 
-    this.form.valueChanges.subscribe(() => this.calculateAll());
+    this.form.valueChanges.subscribe(() => this.updateGlobalValues());
     this.addItem();
     this.getAllProducts();
-
-    combineLatest([
-      this.itemsChanged$.pipe(debounceTime(500)),
-      this.globalsChanged$.pipe(debounceTime(500))
-    ])
-    .pipe(
-      switchMap(([items, globals]) => {
-        const payload = { itens: items, ...globals };
-        return this.calculateValueStandartService.postCalculateValueStandart(payload);
-      })
-    )
-    .subscribe(result => {
-      // result deve trazer subtotal, grandTotal e, se quiser,
-      // totais individuais por item
-      this.subtotal = result.subtotal;
-      this.grandTotal = result.grandTotal;
-      // …etc.
-    });
   }
 
-  private extractType(modelo: string): string {
-    if (modelo.includes('BLACK')) return 'BLACK';
-    if (modelo.includes('NATURAL')) return 'NATURAL';
-    if (modelo.includes('ULTRA')) return 'ULTRA';
-    return '';
-  }
-
-  private extractThickness(modelo: string): number {
-    const match = modelo.match(/#(\d+)/);
-    return match ? parseInt(match[1], 10) : 0;
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   getAllProducts() {
-    this.fetchProductsService.getProducts().subscribe((data: any[]) => {
-      const filteredItems = data
-        .map(item => {
-          let produto = item.produto || 'Outros';
-          if (item.modelo.includes('HASTE')) {
-            produto = 'Extratores';
-          } else if (item.modelo.includes('PATOLÃO')) {
-            produto = 'Patolão';
-          }
-          return {
-            produto: produto,
-            modelo: item.modelo,
-            quantidade: 1,
-            valorUnitario: item.valorUnitario,
-            desconto: 0,
-            categoria: item.categoria,
-            espessura: item.espessura,
-            peso: item.peso,
-            ipi: item.ipi || 1,
-            ncm: item.ncm,
-          };
-        });
+    this.fetchProductsService.getProducts().subscribe((data: OrcamentoItem[]) => {
+      const filteredItems = data.map(item => {
+        let produto = item.produto || 'Outros';
+        if (item.modelo.includes('HASTE')) {
+          produto = 'Extratores';
+        } else if (item.modelo.includes('PATOLÃO')) {
+          produto = 'Patolão';
+        }
+        return {
+          produto: produto,
+          modelo: item.modelo,
+          quantidade: 1,
+          valorUnitario: item.valorUnitario || 0,
+          desconto: 0,
+          categoria: item.categoria || '',
+          espessura: item.espessura || 0,
+          peso: item.peso || 0,
+          ipi: item.ipi || 1,
+          ncm: item.ncm || '',
+          clienteForneceuDesenho: item.clienteForneceuDesenho || false,
+          adicionarProjeto: item.adicionarProjeto || false,
+          adicionarArruela: item.adicionarArruela || false,
+          adicionarTampao: item.adicionarTampao || false,
+          isPanelVisible: item.isPanelVisible || false
+        };
+      });
 
       this.groupedItems = filteredItems.reduce((acc, item) => {
         const family = item.produto || 'Outros';
@@ -152,37 +99,10 @@ export class DynamicItemsTableComponent implements OnInit {
         return acc;
       }, {} as Record<string, OrcamentoItem[]>);
 
-      // for (const family in this.groupedItems) {
-      //   this.groupedItems[family].sort((a, b) => {
-      //     const typeA = this.extractType(a.categoria);
-      //     const typeB = this.extractType(b.categoria);
-      //     const thicknessA = this.extractThickness(a.categoria);
-      //     const thicknessB = this.extractThickness(b.categoria);
-      //     const typeOrder = ['BLACK', 'NATURAL', 'ULTRA'];
-      //     const typeIndexA = typeOrder.indexOf(typeA);
-      //     const typeIndexB = typeOrder.indexOf(typeB);
-      //     if (typeIndexA !== typeIndexB) {
-      //       return typeIndexA - typeIndexB;
-      //     }
-      //     return thicknessA - thicknessB;
-      //   });
-      // }
-
       const chapas = this.groupedItems['Chapas semiacabadas'] || [];
       const chapas1220 = chapas.filter(i => i.modelo.includes('1220 x 3050'));
       const chapas1000 = chapas.filter(i => i.modelo.includes('1000 x 3000'));
       this.groupedItems['Chapas semiacabadas'] = [...chapas1220, ...chapas1000];
-
-      if (this.groupedItems['Chapas semiacabadas']) {
-        const revestimentos = this.groupedItems['Chapas semiacabadas'].map(item => {
-          return {
-            ...item,
-            familyDescription: 'Revestimento',
-            produto: 'Revestimento'
-          };
-        });
-        this.groupedItems['Revestimento'] = revestimentos;
-      }
 
       this.produtos = Object.keys(this.groupedItems);
       this.modelosMap = this.produtos.reduce((acc, family) => {
@@ -201,17 +121,21 @@ export class DynamicItemsTableComponent implements OnInit {
     this.items.push({
       produto: '',
       modelo: '',
-      quantidade: 1,
+      quantidade: 0,
       valorUnitario: 0,
       desconto: 0,
       ncm: '',
       peso: 0,
       categoria: '',
+      espessura: 0,
       clienteForneceuDesenho: false,
       adicionarProjeto: false,
       adicionarArruela: false,
       adicionarTampao: false,
-      isPanelVisible: false 
+      isPanelVisible: false,
+      total: 0,
+      totalCIPI: 0,
+      pesoTotal: 0
     });
     this.formValidated = false;
   }
@@ -223,41 +147,95 @@ export class DynamicItemsTableComponent implements OnInit {
   onProdutoChange(item: OrcamentoItem): void {
     item.modelo = '';
     item.valorUnitario = 0;
+    item.total = 0;
+    item.totalCIPI = 0;
+    item.pesoTotal = 0;
 
     if (item.produto === 'Peça usinada') {
       item.produto = 'Chapas semiacabadas';
-    } else {
-      item.produto = item.produto;
     }
 
     if (item.produto !== 'Peça usinada') {
       item.largura = undefined;
       item.comprimento = undefined;
-    }    
+    }
   }
 
   onModeloChange(item: OrcamentoItem): void {
-  if (!item.modelo) {
-    item.valorUnitario = 0;
-    return;
+    if (!item.modelo) {
+      item.valorUnitario = 0;
+      item.total = 0;
+      item.totalCIPI = 0;
+      item.pesoTotal = 0;
+      return;
+    }
+
+    const produto = item.produto === 'Peça usinada' ? 'Chapas semiacabadas' : item.produto;
+    const itemSelecionado = this.groupedItems[produto]?.find(apiItem => apiItem.modelo === item.modelo);
+
+    if (itemSelecionado) {
+      item.ipi = itemSelecionado.ipi || 0;
+      item.ncm = itemSelecionado.ncm || '';
+      item.peso = itemSelecionado.peso || 0;
+      item.categoria = itemSelecionado.categoria || '';
+      item.espessura = itemSelecionado.espessura || 0;
+    } else {
+      item.ipi = 0;
+      item.ncm = '';
+      item.peso = 0;
+      item.categoria = '';
+      item.espessura = 0;
+    }
+
+    if (this.shouldCalculateBackend(item)) {
+      this.calculateItemValue(item);
+    }
   }
 
-  const produto = item.produto === 'Peça usinada' ? 'Chapas semiacabadas' : item.produto;
-  const itemSelecionado = this.groupedItems[produto]?.find(apiItem => apiItem.modelo === item.modelo);
-  
-  if (itemSelecionado) {
-    item.valorUnitario = itemSelecionado.valorUnitario || 0;
-    item.ipi = itemSelecionado.ipi || 0;
-    item.ncm = itemSelecionado.ncm || '';
-    item.peso = itemSelecionado.peso || 0;
-    item.categoria = itemSelecionado.categoria || '';
-  } else {
-    item.valorUnitario = 0;
-    item.ipi = 0;
+  onFieldChange(item: OrcamentoItem): void {
+    if (this.shouldCalculateBackend(item)) {
+      this.calculateItemValue(item);
+    }
   }
-  
-  this.onFieldChange();
-}
+
+  private shouldCalculateBackend(item: OrcamentoItem): boolean {
+    return !!(item.produto && item.modelo && item.quantidade && item.quantidade > 0);
+  }
+
+  private calculateItemValue(item: OrcamentoItem): void {
+    const payload = this.createPayloadForItem(item);
+
+    this.calculateValueStandartService.postCalculateValueStandart(payload).subscribe({
+      next: (response) => {
+        item.valorUnitario = response.valorUnitario || 0;
+        item.total = response.total || 0;
+        item.totalCIPI = response.totalCIPI || 0;
+        item.pesoTotal = response.pesoTotal || 0;
+
+        this.updateTotals();
+        console.log('Valores calculados:', response);
+      },
+      error: (err) => {
+        console.error('Erro ao calcular valores:', err);
+        this.formErrors.push(`Erro ao calcular item: ${err.error?.errorMessage || 'Verifique os dados e tente novamente.'}`);
+      }
+    });
+  }
+
+  private createPayloadForItem(item: OrcamentoItem): any {
+    return {
+      produto: item.produto || '',
+      modelo: item.modelo || '',
+      quantidade: item.quantidade || 0,
+      largura: item.largura || 0,
+      comprimento: item.comprimento || 0,
+      desconto: item.desconto || 0,
+      desenho: item.clienteForneceuDesenho || false,
+      arruela: item.adicionarArruela || false,
+      tampao: item.adicionarTampao || false,
+      projeto: item.adicionarProjeto || false
+    };
+  }
 
   getModelosForProduto(produto: string): string[] {
     if (produto === 'Peça usinada') {
@@ -266,77 +244,37 @@ export class DynamicItemsTableComponent implements OnInit {
     return this.modelosMap[produto] || [];
   }
 
-  get totalIPI(): number {
-    return this.items.reduce((acc, item) => {
-      const ipi = this.getIPI(item);
-      if (!ipi) return acc;
-      const itemTotal = this.calculateTotal(item);
-      return acc + (itemTotal * (ipi / 100));
-    }, 0);
-  }
-
   removeItem(index: number): void {
-    if (this.items.length > 1) {
+    if (this.items.length > 0) {
       this.items.splice(index, 1);
-      this.onFieldChange();
+      this.updateTotals();
     }
   }
 
-  getIPI(item: OrcamentoItem): number {
-    return item.ipi || this.ipiMap[item.modelo] || 0;
-  }
-
-  calculateStandart(payload: any) {
-    this.calculateValueStandartService.postCalculateValueStandart(payload).subscribe({
-      next: (data) => {
-        console.log("data", data)
-      },
-      error: (err) => {
-        alert(err);
-      }
-    })
-  }
-
-  calculateTotal(item: OrcamentoItem): number {
-    if (!item.modelo || !item.valorUnitario || !item.quantidade) {
-      return 0;
-    }
-    let total = item.valorUnitario * item.quantidade;
-    // if (item.desconto > 0) {
-    //   total = total * (1 - (item.desconto / 100));
-    // }
-    if (item.produto === 'Extratores') {
-      // this.calculateStandart()
-    }
-    return total;
-  }
-
-  calculateSubtotal(): number {
-    return this.items.reduce((total, item) => {
-      return total + this.calculateTotal(item);
-    }, 0);
-  }
-
-  calculateGrandTotal(): number {
-    const subtotal = this.calculateSubtotal();
-    let total = subtotal;
+  public updateTotals(): void {
+    this.subtotal = this.items.reduce((total, item) => total + (item.total || 0), 0);
+    let grandTotal = this.subtotal;
     if (this.descontoGlobal > 0) {
-      total = total * (1 - (this.descontoGlobal / 100));
+      grandTotal = grandTotal * (1 - (this.descontoGlobal / 100));
     }
-    total += this.totalIPI;
-    total += this.valorFrete + this.valorDifal;
-    return total;
+    grandTotal += this.valorFrete + this.valorDifal;
+    this.grandTotal = grandTotal;
+  }
+
+  private updateGlobalValues(): void {
+    this.descontoGlobal = this.form.get('globalDiscount')?.value || 0;
+    this.valorFrete = this.form.get('shipping')?.value || 0;
+    this.valorDifal = this.form.get('difal')?.value || 0;
+    this.updateTotals();
   }
 
   isItemInvalid(item: OrcamentoItem): boolean {
     if (!this.formValidated) return false;
-    if (!item.produto || !item.quantidade || item.quantidade <= 0 ||
-      !item.valorUnitario || item.valorUnitario <= 0) {
+    if (!item.produto || !item.modelo || !item.quantidade || item.quantidade <= 0) {
       return true;
     }
-    if (!item.modelo) return true;
-    if (item.produto === 'Peça usinada' &&
-      (!item.largura || item.largura <= 0 || !item.comprimento || item.comprimento <= 0)) {
+    if (item.produto === 'Peça Usinada' &&
+        (!item.largura || item.largura <= 0 || !item.comprimento || item.comprimento <= 0)) {
       return true;
     }
     if (item.desconto < 0 || item.desconto > 100) return true;
@@ -368,18 +306,6 @@ export class DynamicItemsTableComponent implements OnInit {
     return this.formErrors.length === 0;
   }
 
-  onFieldChange(): void {
-    if (this.formValidated) {
-      this.validateForm();
-      this.itemsChanged$.next(this.items);
-      this.globalsChanged$.next({
-        desconto: this.descontoGlobal,
-        frete: this.valorFrete,
-        difal: this.valorDifal
-      });
-    }
-  }
-  
   public getItemsForPayload(): OrcamentoItem[] {
     return this.salvarItens();
   }
@@ -390,10 +316,4 @@ export class DynamicItemsTableComponent implements OnInit {
     }
     return [];
   }
-
-  calculateAll() {
-    this.subtotal = this.calculateSubtotal();
-    this.grandTotal = this.calculateGrandTotal();
-  }
-
 }

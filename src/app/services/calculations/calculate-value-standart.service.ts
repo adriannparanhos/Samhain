@@ -6,11 +6,15 @@ export interface CalcResponse {
   subtotal: number;
   grandTotal: number;
   itensComTotais?: { total: number }[];
+  valorUnitario: number;
+  total: number;
+  totalCIPI: number;
+  pesoTotal: number;
 }
 
 @Injectable({ providedIn: 'root' })
 export class CalculateValueStandartService {
-  private url = 'http://localhost:8080/api/calculations';
+  private url = 'http://localhost:8080/api/calculate-item';
 
   constructor(private http: HttpClient) { }
 

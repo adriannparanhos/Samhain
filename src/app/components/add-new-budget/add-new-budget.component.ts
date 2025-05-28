@@ -161,7 +161,7 @@ export class AddNewBudgetComponent {
         valorUnitario: item.valorUnitario,
         desconto: item.desconto,
         adicionais: {
-          desenho: item.valorDesenho || false,
+          desenho: item.clienteForneceuDesenho || false,
           projeto: item.adicionarProjeto || false,
           arruela: item.adicionarArruela || false,
           tampao: item.adicionarTampao || false

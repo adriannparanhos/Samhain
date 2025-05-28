@@ -42,7 +42,6 @@
             <select 
               [(ngModel)]="item.produto"
               (ngModelChange)="onProdutoChange(item)"
-              (change)="onFieldChange()"
               class="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               [class.border-red-500]="isItemInvalid(item) && !item.produto">
               <option value="" disabled selected>Selecione um produto</option>
@@ -74,7 +73,7 @@
             <input 
               type="number"
               [(ngModel)]="item.quantidade"
-              (ngModelChange)="onFieldChange()"
+              (ngModelChange)="onFieldChange(item)"
               class="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               [class.border-red-500]="isItemInvalid(item) && (!item.quantidade || item.quantidade <= 0)"
               min="1" />
@@ -89,7 +88,7 @@
                   <input 
                     type="number"
                     [(ngModel)]="item.largura"
-                    (ngModelChange)="onFieldChange()"
+                    (ngModelChange)="onFieldChange(item)"
                     class="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                     [class.border-red-500]="isItemInvalid(item) && (!item.largura || item.largura <= 0)"
                     placeholder="Larg" />
@@ -101,7 +100,7 @@
                   <input 
                     type="number"
                     [(ngModel)]="item.comprimento"
-                    (ngModelChange)="onFieldChange()"
+                    (ngModelChange)="onFieldChange(item)"
                     class="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                     [class.border-red-500]="isItemInvalid(item) && (!item.comprimento || item.comprimento <= 0)"
                     placeholder="Comp" />
@@ -123,37 +122,33 @@
               <input 
                 type="number"
                 [(ngModel)]="item.valorUnitario"
-                (ngModelChange)="onFieldChange()"
-                class="w-full rounded-md border border-gray-300 shadow-sm pl-10 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                [class.border-red-500]="isItemInvalid(item) && (!item.valorUnitario || item.valorUnitario <= 0)"
+                readonly
+                class="w-full rounded-md border border-gray-300 shadow-sm pl-10 py-2 bg-gray-50 text-sm focus:outline-none cursor-not-allowed"
                 step="0.01" min="0" />
             </div>
-            <p *ngIf="isItemInvalid(item) && (!item.valorUnitario || item.valorUnitario <= 0)" class="mt-1 text-xs text-red-500">
-              Valor obrigatório
-            </p>
           </td>
           <td class="px-4 py-3">
             <div class="relative">
               <input 
                 type="number"
                 [(ngModel)]="item.desconto"
-                (ngModelChange)="onFieldChange()"
+                (ngModelChange)="onFieldChange(item)"
                 class="w-full rounded-md border border-gray-300 shadow-sm pr-7 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                [class.border-red-500]="isItemInvalid(item) && item.desconto < 0"
+                [class.border-red-500]="isItemInvalid(item) && (item.desconto < 0 || item.desconto > 100)"
                 step="0.01" min="0" max="100" />
               <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                 <span class="text-gray-500">%</span>
               </div>
             </div>
-            <p *ngIf="isItemInvalid(item) && item.desconto < 0" class="mt-1 text-xs text-red-500">
-              Inválido
+            <p *ngIf="isItemInvalid(item) && (item.desconto < 0 || item.desconto > 100)" class="mt-1 text-xs text-red-500">
+              Desconto inválido
             </p>
           </td>
           <td class="px-4 py-3 font-medium">
-            {{ calculateTotal(item) | currency:'BRL':'symbol':'1.2-2' }}
+            {{ item.total | currency:'BRL':'symbol':'1.2-2' }}
           </td>
           <td class="px-4 py-3 text-blue-600 hover:text-blue-800">
-            <button *ngIf="item.produto === 'Peças Usinadas' || item.produto === 'Revestimento'" (click)="togglePanel(i)">
+            <button *ngIf="item.produto === 'Peça usinada' || item.produto === 'Revestimento'" (click)="togglePanel(i)">
               <lucide-icon name="info"></lucide-icon>
             </button>
           </td>
@@ -161,7 +156,6 @@
             <button 
               (click)="removeItem(i)"
               class="text-red-600 hover:text-red-800 p-1 rounded hover:bg-gray-100 transition-colors duration-200"
-              [disabled]="items.length <= 1"
               title="Excluir">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="3 6 5 6 21 6"></polyline>
@@ -172,32 +166,32 @@
             </button>
           </td>
         </tr>
-        <tr *ngIf="item.isPanelVisible && (item.produto === 'Peças Usinadas' || item.produto === 'Revestimento')">
+        <tr *ngIf="item.isPanelVisible && (item.produto === 'Peça usinada' || item.produto === 'Revestimento')">
           <td colspan="9">
             <mat-expansion-panel [expanded]="true">
               <mat-expansion-panel-header>
                 <mat-panel-title>Detalhes do Item</mat-panel-title>
               </mat-expansion-panel-header>
               <div class="p-4">
-                <div *ngIf="item.produto === 'Peças Usinadas'">
-                  <mat-checkbox [(ngModel)]="item.clienteForneceuDesenho" (ngModelChange)="onFieldChange()">
+                <div *ngIf="item.produto === 'Peça usinada'">
+                  <mat-checkbox [(ngModel)]="item.clienteForneceuDesenho" (ngModelChange)="onFieldChange(item)">
                     Cliente forneceu desenho?
                   </mat-checkbox>
-                  <mat-checkbox [(ngModel)]="item.adicionarArruela" (ngModelChange)="onFieldChange()">
+                  <mat-checkbox [(ngModel)]="item.adicionarArruela" (ngModelChange)="onFieldChange(item)">
                     Adicionar arruela?
                   </mat-checkbox>
-                  <mat-checkbox [(ngModel)]="item.adicionarTampao" (ngModelChange)="onFieldChange()">
+                  <mat-checkbox [(ngModel)]="item.adicionarTampao" (ngModelChange)="onFieldChange(item)">
                     Adicionar tampão?
                   </mat-checkbox>
                 </div>
                 <div *ngIf="item.produto === 'Revestimento'">
-                  <mat-checkbox [(ngModel)]="item.adicionarProjeto" (ngModelChange)="onFieldChange()">
+                  <mat-checkbox [(ngModel)]="item.adicionarProjeto" (ngModelChange)="onFieldChange(item)">
                     Adicionar projeto?
                   </mat-checkbox>
-                  <mat-checkbox [(ngModel)]="item.adicionarArruela" (ngModelChange)="onFieldChange()">
+                  <mat-checkbox [(ngModel)]="item.adicionarArruela" (ngModelChange)="onFieldChange(item)">
                     Adicionar arruela?
                   </mat-checkbox>
-                  <mat-checkbox [(ngModel)]="item.adicionarTampao" (ngModelChange)="onFieldChange()">
+                  <mat-checkbox [(ngModel)]="item.adicionarTampao" (ngModelChange)="onFieldChange(item)">
                     Adicionar tampão?
                   </mat-checkbox>
                 </div>
@@ -243,7 +237,7 @@
                 <input 
                   type="number" 
                   [(ngModel)]="descontoGlobal" 
-                  (ngModelChange)="calculateAll()"
+                  (ngModelChange)="updateTotals()"
                   class="w-full rounded-md border border-gray-300 shadow-sm pr-7 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   min="0" max="100" step="0.01"
                   [class.border-red-500]="descontoGlobal < 0 || descontoGlobal > 100">
@@ -264,7 +258,7 @@
                 <input 
                   type="number" 
                   [(ngModel)]="valorFrete" 
-                  (ngModelChange)="calculateAll()"
+                  (ngModelChange)="updateTotals()"
                   class="w-full rounded-md border border-gray-300 shadow-sm pl-10 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   min="0" step="0.01"
                   [class.border-red-500]="valorFrete < 0">
@@ -282,10 +276,10 @@
                 <input 
                   type="number" 
                   [(ngModel)]="valorDifal" 
-                  (ngModelChange)="calculateAll()"
+                  (ngModelChange)="updateTotals()"
                   class="w-full rounded-md border border-gray-300 shadow-sm pl-10 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   min="0" step="0.01"
-                  [class.border-red-500]="valorDifal < 0">    
+                  [class.border-red-505]="valorDifal < 0">    
               </div>
               <p *ngIf="valorDifal < 0" class="mt-1 text-xs text-red-500">
                 O valor do DIFAL não pode ser negativo
@@ -299,17 +293,13 @@
           <div class="space-y-2">
             <div class="flex justify-between">
               <span class="text-gray-600">Subtotal:</span>
-              <span class="font-medium">{{ calculateSubtotal() | currency:'BRL':'symbol':'1.2-2' }}</span>
+              <span class="font-medium">{{ subtotal | currency:'BRL':'symbol':'1.2-2' }}</span>
             </div>
             <div *ngIf="descontoGlobal > 0" class="flex justify-between">
               <span class="text-gray-600">Desconto Global ({{ descontoGlobal }}%):</span>
               <span class="font-medium text-red-600">
                 -{{ (subtotal * (descontoGlobal / 100)) | currency:'BRL':'symbol':'1.2-2' }}
               </span>
-            </div>
-            <div *ngIf="totalIPI > 0" class="flex justify-between">
-              <span class="text-gray-600">Total IPI:</span>
-              <span class="font-medium">{{ totalIPI | currency:'BRL':'symbol':'1.2-2' }}</span>
             </div>
             <div *ngIf="valorFrete > 0" class="flex justify-between">
               <span class="text-gray-600">Frete:</span>
@@ -321,7 +311,7 @@
             </div>
             <div class="flex justify-between pt-3 mt-2 border-t border-gray-200">
               <span class="font-bold text-gray-800">Total:</span>
-              <span class="font-bold text-green-600 text-lg">{{ calculateGrandTotal() | currency:'BRL':'symbol':'1.2-2' }}</span>
+              <span class="font-bold text-green-600 text-lg">{{ grandTotal | currency:'BRL':'symbol':'1.2-2' }}</span>
             </div>
           </div>
         </div>
