@@ -20,33 +20,54 @@ export interface ItemOrcamento {
   adicionais: AdicionaisItem; 
 }
 
+interface Enterprise {
+  email: string,
+  phone: string,
+  stateRegistration: string,
+  address: {
+    cep: string,
+    endereco: string,
+    endereco_numero: number,
+    bairro: string,
+    estado: string,
+    cidade: string
+  } 
+}
+
 export interface DadosOrcamento {
-  idOrcamento?: string;      
-  numeroProposta?: string;  
-  dataEmissao?: string;      
-  validadeProposta?: string;  
-  cnpj: string;
-  razaoSocial: string;
-  nomeContato?: string;     
-  emailContato?: string;      
-  telefoneContato?: string;  
-  
-  condicaoPagamento: string;
-  prazoEntrega?: string;    
-  tipoFrete?: string;       
-  
-  descricao?: string;     
-  status: string;            
-  
-  itens: ItemOrcamento[];    
-  
-  subtotalItens: number;    
-  descontoGlobal?: number;    
-  valorDoFrete?: number;
-  difal?: number;           
-  outrasTaxas?: number;      
-  grandTotal: number;     
-  
-  vendedorResponsavel?: string;
-  dataUltimaModificacao?: string;
+    idOrcamento?: string;      
+    numeroProposta?: string;  
+    dataEmissao?: string;      
+    validadeProposta?: string;  
+    cnpj: string;
+    razaoSocial: string;
+    nomeContato?: string;     
+    emailContato?: string;      
+    telefoneContato?: string;  
+
+    condicaoPagamento: string;
+    prazoEntrega?: string;    
+    tipoFrete?: string;       
+
+    descricao?: string;     
+    status: string;            
+
+    itens: ItemOrcamento[];    
+
+    subtotalItens: number;    
+    descontoGlobal?: number;    
+    valorDoFrete?: number;
+    difal?: number;           
+    outrasTaxas?: number;      
+    grandTotal: number;     
+
+    vendedorResponsavel?: string;
+    dataUltimaModificacao?: string;
+
+    cep: string | undefined,
+    endereco: string | undefined,
+    endereco_numero: string | number | undefined,
+    bairro: string | undefined,
+    estado: string | undefined,
+    cidade: string | undefined
 }

@@ -16,6 +16,7 @@ import { debounceTime, distinctUntilChanged, filter, switchMap, catchError } fro
 import { CpfCnpjMaskDirective } from '../../directive/cpf-cnpj-mask.directive';
 import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcamento.service';
 import { DadosOrcamento, AdicionaisItem, ItemOrcamento } from '../../models/interfaces/dados-orcamento';
+
 interface NewBudget {
   id: number;
   proposalNumber: string;
@@ -25,6 +26,20 @@ interface NewBudget {
   status: string;
   totalValue: number;
   acoes: string;
+}
+
+interface EnterpriseData {
+  address?: { 
+    cep: string | undefined;
+    endereco: string | undefined;
+    endereco_numero: number | string | undefined; 
+    bairro: string | undefined;
+    estado: string | undefined;
+    cidade: string | undefined;
+  };
+  email?: string | undefined;
+  phone?: string | undefined;
+  stateRegistration?: string | undefined;
 }
 
 @Component({
@@ -43,6 +58,7 @@ interface NewBudget {
 })
 export class AddNewBudgetComponent {
   @ViewChild(DynamicItemsTableComponent) table!: DynamicItemsTableComponent;
+  empresaSelecionada: EnterpriseData | null = null; 
 
   constructor(
     private router: Router, 
@@ -120,6 +136,7 @@ export class AddNewBudgetComponent {
           catchError(() => {
             this.cnpjError = 'Empresa não encontrada';
             this.form.get('razaoSocial')!.setValue('');
+            this.empresaSelecionada = null; 
             return of(null);
           })
         )
@@ -128,7 +145,12 @@ export class AddNewBudgetComponent {
       if (data) {
         this.cnpjError = '';
         this.form.get('razaoSocial')!.setValue(data.corporateName);
+        this.empresaSelecionada = data;
         console.log('Empresa encontrada:', data);
+      } else {
+        // Se data for null (erro no catchError ou API retornou null)
+        this.form.get('razaoSocial')!.setValue('');
+        this.empresaSelecionada = null;
       }
     });
   }
@@ -186,6 +208,12 @@ export class AddNewBudgetComponent {
       valorDoFrete: this.table.valorFrete || 0,
       difal: this.table.valorDifal || 0,
       grandTotal: this.table.grandTotal,
+      cep: this.empresaSelecionada?.address?.cep,
+      endereco: this.empresaSelecionada?.address?.endereco,
+      endereco_numero: String(this.empresaSelecionada?.address?.endereco_numero), // Convertendo para string se sua interface DadosOrcamento espera string
+      bairro: this.empresaSelecionada?.address?.bairro,
+      estado: this.empresaSelecionada?.address?.estado,
+      cidade: this.empresaSelecionada?.address?.cidade,
 
     };
 
