@@ -166,6 +166,10 @@ export class AddNewBudgetComponent {
         quantidade: Number(item.quantidade),
         valorUnitario: Number(item.valorUnitario),
         desconto: Number(item.desconto) || 0, 
+        ncm: item.ncm,
+        aliquota: item.ipi,
+        valorTotalItem: item.total,
+        valorTotalItemCIPI: item.totalCIPI,
         adicionais: adicionais,
       };
     });

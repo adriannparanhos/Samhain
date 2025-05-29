@@ -40,25 +40,49 @@
     <table class="min-w-full bg-white border border-gray-300">
       <thead>
         <tr class="bg-gray-200">
-          <th class="px-4 py-2 w-[3%]">Item</th>
-          <th class="px-4 py-2 w-[17%]">Descrição</th>
+          <th class="px-4 py-2 w-[2%]">Item</th>
+          <th class="px-4 py-2 w-[22%]">Descrição</th>
           <th class="px-4 py-2 w-[3%]">Qtd</th>
           <th class="px-4 py-2 w-[3%]">Un</th>
           <th class="px-4 py-2 w-[10%]">Preço Unit</th>
-          <th class="px-4 py-2 w-[10%]">Total sem IPI</th>
+          <th class="px-4 py-2 w-[8%]">Total sem IPI</th>
           <th class="px-4 py-2 w-[6%]">NCM</th>
-          <th class="px-4 py-2 w-[7%]">Alíquota</th>
-          <th class="px-4 py-2 w-[15%]">Total com IPI</th>
+          <th class="px-4 py-2 w-[4%]">Alíquota</th>
+          <th class="px-4 py-2 w-[8%]">Total com IPI</th>
         </tr>
       </thead>
-      <tbody>
-        <!-- Linhas dinâmicas aqui -->
-      </tbody>
+        <tbody class="text-xs">
+            <tr *ngFor="let item of orcamentoRecebido?.itens; let i = index">
+                <td class="px-4 py-2 border-t border-gray-300 text-center">{{ i + 1 }}</td>
+                <td class="px-4 py-2 border-t border-gray-300">
+                <span *ngIf="item.modelo">- {{ item.modelo }}</span>
+                <small *ngIf="item.descricaoDetalhada"><br>{{ item.descricaoDetalhada }}</small>
+                </td>
+                <td class="px-4 py-2 border-t border-gray-300 text-center">{{ item.quantidade }}</td>
+                <td class="px-4 py-2 border-t border-gray-300 text-center">{{ item.unidade || 'N/A' }}</td>
+                <td class="px-15 py-2 border-t border-gray-300 text-center">{{ item.valorUnitario  | currency:'BRL':'':'1.2-2':'pt-BR'}}</td>
+                
+                <td class="px-4 py-2 border-t border-gray-300 text-center">
+                {{ item.valorTotalItem | currency:'BRL':'':'1.2-2':'pt-BR' }}
+                </td>
+                
+                <td class="px-4 py-2 border-t border-gray-300 text-center">{{ item.ncm || 'N/A' }}</td>
+                <td class="px-4 py-2 border-t border-gray-300 text-center">{{ (item.aliquota -1 || 0) | percent: '1.2-2' }}</td>
+                
+                <td class="px-4 py-2 border-t border-gray-300 text-center">
+                {{ item.valorTotalItemCIPI | currency:'BRL':'':'1.2-2':'pt-BR' }}
+                </td>
+            </tr>
+            
+            <tr *ngIf="!orcamentoRecebido?.itens || orcamentoRecebido?.itens!.length === 0">
+                <td colspan="9" class="px-4 py-2 text-center border-t border-gray-300">Nenhum item adicionado ao orçamento.</td>
+            </tr>
+        </tbody>
     </table>
     <!-- Total dos produtos e total a pagar no canto inferior direito -->
     <div class="flex justify-end space-x-4 mt-4">
-      <p>Total dos produtos: <span class="font-medium">R$ {{subtotalItens}}</span></p>
-      <p>Total a pagar: <span class="font-medium">R$ {{grandTotal}}</span></p>
+      <p>Total dos produtos: <span class="font-medium text-emerald-600">{{subtotalItens | currency:'BRL':'symbol':'1.2-2':'pt-BR'}}</span></p>
+      <p>Total a pagar: <span class="font-medium text-emerald-600">{{grandTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR'}}</span></p>
     </div>
   </div>
 

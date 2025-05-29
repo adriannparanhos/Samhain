@@ -2,10 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcamento.service';
 import { DadosOrcamento } from '../../models/interfaces/dados-orcamento';
 import { Subscription } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { CurrencyPipe } from '@angular/common'; 
+
 
 @Component({
   selector: 'app-orcamento-pdf',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, CurrencyPipe],
   templateUrl: './orcamento-pdf.component.html',
   styleUrl: './orcamento-pdf.component.css'
 })
@@ -58,40 +62,71 @@ export class OrcamentoPdfComponent implements OnInit {
     this.orcamentoSubscription = this.dadosNovoOrcamentoService.orcamentoAtual$.subscribe(
       (dados: DadosOrcamento | null) => {
         this.orcamentoRecebido = dados;
-        console.log("Orçamento recebido: ", this.orcamentoRecebido);
+        console.log("Orçamento recebido no PDF Component: ", this.orcamentoRecebido);
+
+        if (this.orcamentoRecebido) {
+          this.preencherDadosGerais(); // Preenche os dados gerais do orçamento
+
+          // AQUI VOCÊ TEM ACESSO AOS ITENS:
+          const itensDoOrcamento = this.orcamentoRecebido.itens;
+          console.log("Itens do orçamento:", itensDoOrcamento);
+
+          // Você pode iterar sobre eles ou passá-los para o template
+          if (itensDoOrcamento && itensDoOrcamento.length > 0) {
+            // Exemplo de como processar cada item, se necessário:
+            itensDoOrcamento.forEach(item => {
+              console.log(`Produto: ${item.produto}, Qtd: ${item.quantidade}, Adicionais: `, item.adicionais);
+              this.modelo = item.modelo;
+              this.descricaoDetalhada = item.descricaoDetalhada
+              this.quantidade = item.quantidade
+              this.valorUnitario = item.valorUnitario
+              this.valorTotalItem = item.valorTotalItem
+            });
+          }
+        } else {
+          // Limpar os campos se o orçamento for nulo
+          this.limparDados();
+        }
       }
     );
+  }
 
-    if (this.orcamentoRecebido) {
-      this.fillHtml();
-    }
+  preencherDadosGerais(): void {
+    if (!this.orcamentoRecebido) return; // Guarda de segurança
+
+    this.numeroProposta = this.orcamentoRecebido.numeroProposta;
+    this.dataEmissao = this.orcamentoRecebido.dataEmissao;
+    this.validadeProposta = this.orcamentoRecebido.validadeProposta;
+    this.cnpj = this.orcamentoRecebido.cnpj;
+    this.razaoSocial = this.orcamentoRecebido.razaoSocial;
+    this.nomeContato = this.orcamentoRecebido.nomeContato;
+    this.emailContato = this.orcamentoRecebido.emailContato;
+    this.telefoneContato = this.orcamentoRecebido.telefoneContato;
+    this.condicaoPagamento = this.orcamentoRecebido.condicaoPagamento;
+    this.prazoEntrega = this.orcamentoRecebido.prazoEntrega;
+    this.tipoFrete = this.orcamentoRecebido.tipoFrete;
+    this.descricao = this.orcamentoRecebido.descricao;
+    this.status = this.orcamentoRecebido.status;
+    this.subtotalItens = this.orcamentoRecebido.subtotalItens;
+    this.descontoGlobal = this.orcamentoRecebido.descontoGlobal;
+    this.valorDoFrete = this.orcamentoRecebido.valorDoFrete;
+    this.difal = this.orcamentoRecebido.difal;
+    this.outrasTaxas = this.orcamentoRecebido.outrasTaxas;
+    this.grandTotal = this.orcamentoRecebido.grandTotal;
+    this.vendedorResponsavel = this.orcamentoRecebido.vendedorResponsavel;
+    this.dataUltimaModificacao = this.orcamentoRecebido.dataUltimaModificacao;
+  }
+
+  limparDados(): void {
+    this.numeroProposta = undefined;
+    this.dataEmissao = undefined;
+    // ... limpar todas as outras propriedades ...
+    this.grandTotal = undefined;
   }
 
   ngOnDestroy(): void {
     if (this.orcamentoSubscription) {
       this.orcamentoSubscription.unsubscribe();
     }
-  }
-
-  fillHtml(): void {
-    this.cnpj = this.orcamentoRecebido?.cnpj;
-    this.razaoSocial = this.orcamentoRecebido?.razaoSocial;
-    this.nomeContato = this.orcamentoRecebido?.nomeContato;
-    this.emailContato = this.orcamentoRecebido?.emailContato;
-    this.telefoneContato = this.orcamentoRecebido?.telefoneContato;
-    this.condicaoPagamento = this.orcamentoRecebido?.condicaoPagamento;
-    this.prazoEntrega = this.orcamentoRecebido?.prazoEntrega;
-    this.tipoFrete = this.orcamentoRecebido?.tipoFrete;
-    this.descricao = this.orcamentoRecebido?.descricao;
-    this.status = this.orcamentoRecebido?.status;
-    this.subtotalItens = this.orcamentoRecebido?.subtotalItens;
-    this.descontoGlobal = this.orcamentoRecebido?.descontoGlobal;
-    this.valorDoFrete = this.orcamentoRecebido?.valorDoFrete;
-    this.difal = this.orcamentoRecebido?.difal;
-    this.outrasTaxas = this.orcamentoRecebido?.outrasTaxas;
-    this.grandTotal = this.orcamentoRecebido?.grandTotal;
-    this.vendedorResponsavel = this.orcamentoRecebido?.vendedorResponsavel;
-    this.dataUltimaModificacao = this.orcamentoRecebido?.dataUltimaModificacao;
-
   }
 }

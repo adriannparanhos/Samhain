@@ -14,6 +14,9 @@ export interface ItemOrcamento {
   unidade?: string;        
   desconto?: number;      
   valorTotalItem?: number; 
+  valorTotalItemCIPI: number;
+  ncm: string,
+  aliquota: number,
   adicionais: AdicionaisItem; 
 }
 
