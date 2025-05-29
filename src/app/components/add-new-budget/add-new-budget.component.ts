@@ -143,6 +143,9 @@ export class AddNewBudgetComponent {
       return;
     }
 
+    this.router.navigate(['budget/pdf']);
+
+
     const payload = {
       cnpj: this.form.value.cnpj,
       razaoSocial: this.form.value.razaoSocial,

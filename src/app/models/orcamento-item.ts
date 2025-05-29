@@ -14,10 +14,10 @@ export interface OrcamentoItem {
   adicionarArruela: boolean;
   adicionarTampao: boolean;
   isPanelVisible: boolean;
-  total?: number; // Total retornado pelo backend
-  totalCIPI?: number; // Total com IPI retornado pelo backend
-  pesoTotal?: number; // Peso total retornado pelo backend
-  largura?: number; // Para Peça Usinada
-  comprimento?: number; // Para Peça Usinada
-  ipi?: number; // IPI do produto
+  total?: number;
+  totalCIPI?: number; 
+  pesoTotal?: number; 
+  largura?: number; 
+  comprimento?: number; 
+  ipi?: number; 
 }

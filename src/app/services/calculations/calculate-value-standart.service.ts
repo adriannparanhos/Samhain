@@ -20,7 +20,6 @@ export class CalculateValueStandartService {
   constructor(private http: HttpClient) { }
 
   postCalculateValueStandart(payload: any): Observable<CalcResponse> {
-    // repare no <CalcResponse> aqui
     return this.http.post<CalcResponse>(this.url, payload);
   }
 }

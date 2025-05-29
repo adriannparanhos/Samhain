@@ -6,6 +6,7 @@ import { BudgetsComponent } from './components/budgets/budgets.component';
 import { AddNewEnterpriseComponent } from './components/add-new-enterprise/add-new-enterprise.component';
 import { AddNewProductComponent } from './components/add-new-product/add-new-product.component';
 import { AddNewBudgetComponent } from './components/add-new-budget/add-new-budget.component';
+import { OrcamentoPdfComponent } from './components/orcamento-pdf/orcamento-pdf.component';
 
 export const routes: Routes = [
     {path: 'dashboard', component: DashboardComponent},
@@ -15,5 +16,6 @@ export const routes: Routes = [
     {path: 'enterprises/add', component: AddNewEnterpriseComponent},
     {path: 'products/add', component: AddNewProductComponent},
     {path: 'budgets/add', component: AddNewBudgetComponent},
+    {path: 'budget/pdf', component: OrcamentoPdfComponent}
 ];
 
