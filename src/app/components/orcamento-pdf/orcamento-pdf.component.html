@@ -1,1 +1,102 @@
-<p>orcamento-pdf works!</p>
+<body>
+    <header>
+        <img src="../../assets/images/headerBaron.png" alt="">
+    </header>
+
+    <div>
+        <p>Proposta comercial nº: </p> <!--O numero da proposta deve esta na mesma linha horizontal-->
+    </div>
+    
+    <div> <!-- Separar a div em duas partes na vertical-->
+        <div> <!--Essa parte ocupa uns 60%-->
+            <p>Vendedor: </p>
+            <p>Revisão: </p>
+            <h3>Dados do cliente: </h3>
+            <p>CNPJ: </p> <!--O CNPJ vem na frente-->
+            <p>Razão Social: </p>
+            <p>Endereço: </p> <!--Definir um width fixo, se passar, quebrar a linha-->
+        </div>
+
+        <div> <!--Conteudo um abaixo do outro-->
+            <p>A/C: </p> <!--Aqui vai receber o conteudo de outro componente de deve ser apresentado na mesma linha horizontal-->
+            <p>Fine: </p> <!--Aqui vai receber o conteudo de outro componente de deve ser apresentado na mesma linha horizontal-->
+            <p>E-mail: </p> <!--Aqui vai receber o conteudo de outro componente de deve ser apresentado na mesma linha horizontal-->
+        </div>
+    </div>
+
+    <div>
+        <p>Produto(s)</p> <!--O conteudo deve ficar centralizado, background cinza, altura fixa de 20px, ou use rem para responsividade-->
+    </div>
+
+    <div>
+        <!--Aqui, fazer uma tabela, com os haeders, item, descrição, qtd, un, Preço Unit, 
+        Total sem IPI, NCM, Aliquota, Total com IPI
+        -->
+
+        <!-- Na mesma direção, paralelo ao header, outro componente vai enviar os dados
+         que serão apenas exibidos aqui. esta parte vai mostrar os itens do orcamento
+         e podem ser varios itens, cada item deve ficar abaixo do outro numerados de 1 a 
+         quantidade de itens
+        -->
+
+        <!--O campo total deve ser a quantidade de itens mais alguns pixels fixo-->
+
+        <!--Total dos produtos:  e total a pagar: tambem serão recebidos por outro componente
+        e devem ficar no campo inferior a direita desta div-->
+    </div>
+
+    <div>
+        <p>Condições gerais de fornecimento</p> <!--Centralizar, background cinza, altura fixa de 20px, ou use rem para responsividade-->
+    </div>
+
+    <div> <!--Separar e 4 partes iguais, todas as divs devem estar alinhadas na mesma horizontal, altura fixa de 20px, ou use rem para responsividade -->
+        <div>
+            <p>Data de envio da Proposta: </p>
+            <p>Condição de pagamento: </p>
+            <p>Prazo de entrega: </p>
+        </div>
+
+        <div class="supply-conditions-results">
+            <p>Data atual</p> <!--Função para sempre pegar a data atual-->
+            <p></p> <!--Aqui vai pegar a condição de pagamento de outro componente-->
+            <p></p> <!--Aqui vai o prazo de entrega-->
+        </div>
+
+        <div>
+            <p>Validade da proposta: </p>
+            <p>Frete: </p>
+        </div>
+
+        <div>
+            <p>15 dias</p>
+            <p></p> <!-- Aqui vai o tipo de frete que é recebido de outro componente-->
+        </div>
+    </div>
+
+    <div>
+        <p>Observações complementares</p> <!--Centralizado, background cinza, altura fixa de 20px, ou use rem para responsividade-->
+    </div>
+
+    <div>
+        <p>1- </p> <!-- Impostos inclusos, depende do estado que é recebido de outro componente e escolhe a partir de um map-->
+        <p>2- Informar a transportadora no ato do fechamento do pedido.</p>
+        <p>3- Para pedidos de peças específicas conforme projetos do cliente, não aceitamos o cancelamento do pedido após o envio da ordem de compra ou na sua
+            confirmação
+        </p>
+    </div>
+
+    <div>
+        <p>Condições gerais de venda</p><!--Centralizado, background cinza, altura fixa de 20px, ou use rem para responsividade-->
+    </div>
+
+    <div> <!--Separar em metades de 50% verticalmente para cada div-->
+        <div>
+            <p></p> <!--O conteudo vai ser plotado pelo arquivo type para não poluir o html-->
+        </div>
+
+        <div>
+            <p></p> <!--O conteudo vai ser plotado pelo arquivo type para não poluir o html-->
+        </div>
+    </div>
+
+</body>
