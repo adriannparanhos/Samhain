@@ -14,7 +14,8 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, switchMap, catchError } from 'rxjs/operators';
 import { CpfCnpjMaskDirective } from '../../directive/cpf-cnpj-mask.directive';
-
+import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcamento.service';
+import { DadosOrcamento, AdicionaisItem, ItemOrcamento } from '../../models/interfaces/dados-orcamento';
 interface NewBudget {
   id: number;
   proposalNumber: string;
@@ -47,6 +48,7 @@ export class AddNewBudgetComponent {
     private router: Router, 
     private fetchEnterpriseService: FetchEnterpriseService,
     private fb: FormBuilder,
+    private dadosNovoOrcamentoService: DadosNovoOrcamentoService
     
   ) {}
 
@@ -134,44 +136,60 @@ export class AddNewBudgetComponent {
   onSave() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      console.warn('Formulário inválido:', this.form.errors);
+      Object.keys(this.form.controls).forEach(key => {
+        const controlErrors = this.form.get(key)?.errors;
+        if (controlErrors != null) {
+          console.error('Controle inválido:', key, controlErrors);
+        }
+      });
+      alert('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
 
-    const itens = this.table.getItemsForPayload();
-    if (itens.length === 0) {
+    const itensFromTable = this.table.getItemsForPayload(); 
+    if (itensFromTable.length === 0) {
       alert('Adicione ao menos um item válido ao orçamento.');
       return;
     }
 
-    this.router.navigate(['budget/pdf']);
-
-
-    const payload = {
-      cnpj: this.form.value.cnpj,
-      razaoSocial: this.form.value.razaoSocial,
-      condicaoPagamento: this.form.value.condicaoPagamento,
-      descricao: this.form.value.descricao,
-      descontoGlobal: this.table.descontoGlobal,
-      valorDoFrete: this.table.valorFrete,
-      difal: this.table.valorDifal,
-      grandTotal: this.table.grandTotal,
-      subtotal: this.table.subtotal,
-      status: this.form.value.status,
-      itens: itens.map(item => ({
+    const itensOrcamento: ItemOrcamento[] = itensFromTable.map((item: any) => {
+      const adicionais: AdicionaisItem = {
+        desenho: item.clienteForneceuDesenho === 'Sim' || item.clienteForneceuDesenho === true, 
+        projeto: item.adicionarProjeto === 'Sim' || item.adicionarProjeto === true,
+        arruela: item.adicionarArruela === 'Sim' || item.adicionarArruela === true,
+        tampao: item.adicionarTampao === 'Sim' || item.adicionarTampao === true
+      };
+      return {
         produto: item.produto,
         modelo: item.modelo,
-        quantidade: item.quantidade,
-        valorUnitario: item.valorUnitario,
-        desconto: item.desconto,
-        adicionais: {
-          desenho: item.clienteForneceuDesenho || false,
-          projeto: item.adicionarProjeto || false,
-          arruela: item.adicionarArruela || false,
-          tampao: item.adicionarTampao || false
-        }
-      }))
+        quantidade: Number(item.quantidade),
+        valorUnitario: Number(item.valorUnitario),
+        desconto: Number(item.desconto) || 0, 
+        adicionais: adicionais,
+      };
+    });
+
+    const orcamentoPayload: DadosOrcamento = {
+      cnpj: this.form.get('cnpj')?.value,
+      razaoSocial: this.form.get('razaoSocial')?.value,
+      condicaoPagamento: this.form.get('condicaoPagamento')?.value,
+      descricao: this.form.get('descricao')?.value || '',
+      status: this.form.get('status')?.value,
+      itens: itensOrcamento,
+      subtotalItens: this.table.subtotal, 
+      descontoGlobal: this.table.descontoGlobal || 0,
+      valorDoFrete: this.table.valorFrete || 0,
+      difal: this.table.valorDifal || 0,
+      grandTotal: this.table.grandTotal,
+
     };
-    console.log('Payload:', payload);
+
+    console.log('Payload para o service:', orcamentoPayload);
+
+    this.dadosNovoOrcamentoService.setOrcamento(orcamentoPayload);
+
+    this.router.navigate(['budget/pdf']);
   }
 
 }

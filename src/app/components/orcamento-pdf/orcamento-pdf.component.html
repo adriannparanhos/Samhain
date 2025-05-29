@@ -1,102 +1,117 @@
-<body>
-    <header>
-        <img src="../../assets/images/headerBaron.png" alt="">
+<body class="font-sans m-0 p-0 box-border">
+    <header class="w-[1300px] h-[180px] bg-gray-200 flex justify-end items-center bg-[url('/assets/images/baron-header-img-removebg-preview.png'),url('/assets/images/ISO-removebg-preview.png')] bg-no-repeat bg-[position:left_top,center]">
+        <div class="flex flex-col text-right mr-4">
+            <p>CNPJ 10.633.565/0001-60 - Insc. Est. 637161884113</p>
+            <p>Telefone: (16) 3378-0335</p>
+            <p>Rua Bela Cintra, 999 - CEP.: 13.578-000</p>
+            <p>Centro - Água Vermelha, São Carlos - SP</p>
+        </div>
     </header>
 
+  <div class="text-lg font-medium">
+    <p>Proposta comercial nº: </p>
+  </div>
+
+  <!-- Separar a div em duas partes na vertical -->
+  <div class="flex flex-col md:flex-row gap-4">
+    <!-- Essa parte ocupa uns 60% -->
+    <div class="md:w-3/5">
+      <p class="font-medium">Vendedor: </p>
+      <p class="font-medium">Revisão: </p>
+      <h3 class="text-xl font-medium">Dados do cliente: </h3>
+      <p>CNPJ: </p>
+      <p>Razão Social: </p>
+      <p class="w-[300px] break-words">Endereço: </p> <!-- Width fixo e quebra de linha -->
+    </div>
+
+    <div class="md:w-2/5">
+      <p>A/C: </p>
+      <p>Fine: </p>
+      <p>E-mail: </p>
+    </div>
+  </div>
+
+  <!-- Centralizado, background cinza, altura fixa -->
+  <div class="bg-gray-200 text-center py-2 h-[20px] flex items-center justify-center">
+    <p class="font-medium">Produto(s)</p>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white border border-gray-300">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="px-4 py-2 w-[3%]">Item</th>
+          <th class="px-4 py-2 w-[17%]">Descrição</th>
+          <th class="px-4 py-2 w-[3%]">Qtd</th>
+          <th class="px-4 py-2 w-[3%]">Un</th>
+          <th class="px-4 py-2 w-[10%]">Preço Unit</th>
+          <th class="px-4 py-2 w-[10%]">Total sem IPI</th>
+          <th class="px-4 py-2 w-[6%]">NCM</th>
+          <th class="px-4 py-2 w-[7%]">Alíquota</th>
+          <th class="px-4 py-2 w-[15%]">Total com IPI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Linhas dinâmicas aqui -->
+      </tbody>
+    </table>
+    <!-- Total dos produtos e total a pagar no canto inferior direito -->
+    <div class="flex justify-end space-x-4 mt-4">
+      <p>Total dos produtos: <span class="font-medium">R$ 0,00</span></p>
+      <p>Total a pagar: <span class="font-medium">R$ 0,00</span></p>
+    </div>
+  </div>
+
+  <!-- Centralizado, background cinza, altura fixa -->
+  <div class="bg-gray-200 text-center py-2 h-[20px] flex items-center justify-center">
+    <p class="font-medium">Condições gerais de fornecimento</p>
+  </div>
+
+  <!-- Separar em 4 partes iguais, alinhadas horizontalmente -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
     <div>
-        <p>Proposta comercial nº: </p> <!--O numero da proposta deve esta na mesma linha horizontal-->
+      <p>Data de envio da Proposta: </p>
+      <p>Condição de pagamento: </p>
+      <p>Prazo de entrega: </p>
     </div>
-    
-    <div> <!-- Separar a div em duas partes na vertical-->
-        <div> <!--Essa parte ocupa uns 60%-->
-            <p>Vendedor: </p>
-            <p>Revisão: </p>
-            <h3>Dados do cliente: </h3>
-            <p>CNPJ: </p> <!--O CNPJ vem na frente-->
-            <p>Razão Social: </p>
-            <p>Endereço: </p> <!--Definir um width fixo, se passar, quebrar a linha-->
-        </div>
-
-        <div> <!--Conteudo um abaixo do outro-->
-            <p>A/C: </p> <!--Aqui vai receber o conteudo de outro componente de deve ser apresentado na mesma linha horizontal-->
-            <p>Fine: </p> <!--Aqui vai receber o conteudo de outro componente de deve ser apresentado na mesma linha horizontal-->
-            <p>E-mail: </p> <!--Aqui vai receber o conteudo de outro componente de deve ser apresentado na mesma linha horizontal-->
-        </div>
+    <div class="supply-conditions-results">
+      <p>a</p> <!-- Data atual via Angular -->
+      <p>a</p>
+      <p>a</p>
     </div>
-
     <div>
-        <p>Produto(s)</p> <!--O conteudo deve ficar centralizado, background cinza, altura fixa de 20px, ou use rem para responsividade-->
+      <p>Validade da proposta: </p>
+      <p>Frete: </p>
     </div>
-
     <div>
-        <!--Aqui, fazer uma tabela, com os haeders, item, descrição, qtd, un, Preço Unit, 
-        Total sem IPI, NCM, Aliquota, Total com IPI
-        -->
-
-        <!-- Na mesma direção, paralelo ao header, outro componente vai enviar os dados
-         que serão apenas exibidos aqui. esta parte vai mostrar os itens do orcamento
-         e podem ser varios itens, cada item deve ficar abaixo do outro numerados de 1 a 
-         quantidade de itens
-        -->
-
-        <!--O campo total deve ser a quantidade de itens mais alguns pixels fixo-->
-
-        <!--Total dos produtos:  e total a pagar: tambem serão recebidos por outro componente
-        e devem ficar no campo inferior a direita desta div-->
+      <p>15 dias</p>
+      <p>aaa</p>
     </div>
+  </div>
 
+  <!-- Centralizado, background cinza, altura fixa -->
+  <div class="bg-gray-200 text-center py-2 h-[20px] flex items-center justify-center">
+    <p class="font-medium">Observações complementares</p>
+  </div>
+
+  <div class="mt-2">
+    <p>1- </p>
+    <p>2- Informar a transportadora no ato do fechamento do pedido.</p>
+    <p>3- Para pedidos de peças específicas conforme projetos do cliente, não aceitamos o cancelamento do pedido após o envio da ordem de compra ou na sua confirmação</p>
+  </div>
+
+  <!-- Centralizado, background cinza, altura fixa -->
+  <div class="bg-gray-200 text-center py-2 h-[20px] flex items-center justify-center">
+    <p class="font-medium">Condições gerais de venda</p>
+  </div>
+
+  <!-- Separar em metades de 50% verticalmente -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
     <div>
-        <p>Condições gerais de fornecimento</p> <!--Centralizar, background cinza, altura fixa de 20px, ou use rem para responsividade-->
+      <p></p>
     </div>
-
-    <div> <!--Separar e 4 partes iguais, todas as divs devem estar alinhadas na mesma horizontal, altura fixa de 20px, ou use rem para responsividade -->
-        <div>
-            <p>Data de envio da Proposta: </p>
-            <p>Condição de pagamento: </p>
-            <p>Prazo de entrega: </p>
-        </div>
-
-        <div class="supply-conditions-results">
-            <p>Data atual</p> <!--Função para sempre pegar a data atual-->
-            <p></p> <!--Aqui vai pegar a condição de pagamento de outro componente-->
-            <p></p> <!--Aqui vai o prazo de entrega-->
-        </div>
-
-        <div>
-            <p>Validade da proposta: </p>
-            <p>Frete: </p>
-        </div>
-
-        <div>
-            <p>15 dias</p>
-            <p></p> <!-- Aqui vai o tipo de frete que é recebido de outro componente-->
-        </div>
-    </div>
-
     <div>
-        <p>Observações complementares</p> <!--Centralizado, background cinza, altura fixa de 20px, ou use rem para responsividade-->
+      <p></p>
     </div>
-
-    <div>
-        <p>1- </p> <!-- Impostos inclusos, depende do estado que é recebido de outro componente e escolhe a partir de um map-->
-        <p>2- Informar a transportadora no ato do fechamento do pedido.</p>
-        <p>3- Para pedidos de peças específicas conforme projetos do cliente, não aceitamos o cancelamento do pedido após o envio da ordem de compra ou na sua
-            confirmação
-        </p>
-    </div>
-
-    <div>
-        <p>Condições gerais de venda</p><!--Centralizado, background cinza, altura fixa de 20px, ou use rem para responsividade-->
-    </div>
-
-    <div> <!--Separar em metades de 50% verticalmente para cada div-->
-        <div>
-            <p></p> <!--O conteudo vai ser plotado pelo arquivo type para não poluir o html-->
-        </div>
-
-        <div>
-            <p></p> <!--O conteudo vai ser plotado pelo arquivo type para não poluir o html-->
-        </div>
-    </div>
-
+  </div>
 </body>

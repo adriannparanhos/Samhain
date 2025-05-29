@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { AuthService } from '../../services/auth.service';
-import { DataService } from '../../services/data.service';
 
 interface NavItem {
   name: string;
@@ -20,7 +19,6 @@ interface NavItem {
     LucideAngularModule
   ],
   providers: [
-    DataService
   ],
   templateUrl: './app-layout.component.html',
   styleUrls: ['./app-layout.component.css']
@@ -38,8 +36,7 @@ export class AppLayoutComponent {
 
   constructor(
     private auth: AuthService,
-    private router: Router,
-    public data: DataService
+    private router: Router
   ) {
     this.user = this.auth.currentUser;
   }
