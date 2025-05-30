@@ -20,6 +20,8 @@ export class OrcamentoPdfComponent implements OnInit {
   orcamentoRecebido: DadosOrcamento | null = null;
   private orcamentoSubscription: Subscription | undefined;
   dataAtual: Date;
+  taxInformation: string = '1- ';
+
   CONDICOES_GERAL_VENDA_PART1: string = `Nossos produtos são fornecidos 
   de acordo com a ABNT NBR 14.922, para peças semiacabadas. 
   Para peças usinadas, devido ao UHMW ser um material flexível, 
@@ -142,6 +144,8 @@ export class OrcamentoPdfComponent implements OnInit {
         }
       }
     );
+
+    this.estadoSelecionado();
   }
 
   ngOnDestroy(): void {
@@ -188,6 +192,53 @@ export class OrcamentoPdfComponent implements OnInit {
     this.dataEmissao = undefined;
     this.grandTotal = undefined;
   }
+
+  estadoSelecionado(): void {
+    const state = String(this.orcamentoRecebido?.estado);
+    const taxes = this.stateTaxes[state];
+    
+    if (this.orcamentoRecebido?.estado === 'SP') {
+      this.taxInformation = `1- Impostos incluídos: ICMS <span>18%</span>; PIS <span>${taxes.PIS}</span>; COFINS <span>${taxes.COFINS}</span>; CSLL <span>${taxes.CSLL}</span>; IRPJ <span>${taxes.IRPJ}</span>`;
+
+    } else if (taxes) {
+      this.taxInformation = `1- Impostos incluídos: ICMS <span>${taxes.ICMS}%</span>; PIS <span>${taxes.PIS}</span>; COFINS <span>${taxes.COFINS}</span>; CSLL <span>${taxes.CSLL}</span>; IRPJ <span>${taxes.IRPJ}</span>`;
+
+    } else {
+      this.taxInformation = '1- Impostos incluídos: Informações não disponíveis para o estado selecionado.';
+    }
+    
+  }
+
+  stateTaxes: { [key: string]: { ICMS: string; PIS: string; COFINS: string; CSLL: string; IRPJ: string } } = {
+    SP: { ICMS: '12%', PIS: '0,65%', COFINS: '3%', CSLL: '1,08%', IRPJ: '1,20%' },
+    REV: { ICMS: '18%', PIS: '0,65%', COFINS: '3%', CSLL: '1,08%', IRPJ: '1,20%' },
+
+    MG: { ICMS: '12%', PIS: '0,65%', COFINS: '3%', CSLL: '1,08%', IRPJ: '1,20%' },
+    RJ: { ICMS: '12%', PIS: '0,65%', COFINS: '3%', CSLL: '1,08%', IRPJ: '1,20%' },
+    PR: { ICMS: '12%', PIS: '0,65%', COFINS: '3%', CSLL: '1,08%', IRPJ: '1,20%' },
+    SC: { ICMS: '12%', PIS: '0,65%', COFINS: '3%', CSLL: '1,08%', IRPJ: '1,20%' },
+    RS: { ICMS: '12%', PIS: '0,65%', COFINS: '3%', CSLL: '1,08%', IRPJ: '1,20%' },
+
+    AC: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    AL: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    AP: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    BA: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    CE: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    DF: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    ES: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    MA: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    MT: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    MS: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    PA: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    PB: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    PE: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    PI: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    RN: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    RO: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    RR: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    SE: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    TO: { ICMS: '10%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+  };
 
   returnPage() {
     this.router.navigate(['budgets/add']);

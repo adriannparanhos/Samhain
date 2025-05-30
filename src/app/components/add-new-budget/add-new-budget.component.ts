@@ -16,6 +16,7 @@ import { debounceTime, distinctUntilChanged, filter, switchMap, catchError } fro
 import { CpfCnpjMaskDirective } from '../../directive/cpf-cnpj-mask.directive';
 import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcamento.service';
 import { DadosOrcamento, AdicionaisItem, ItemOrcamento } from '../../models/interfaces/dados-orcamento';
+import { SendOrcamentoPayloadService } from '../../services/database/send-orcamento-payload.service';
 
 interface NewBudget {
   id: number;
@@ -73,7 +74,8 @@ export class AddNewBudgetComponent {
     private router: Router, 
     private fetchEnterpriseService: FetchEnterpriseService,
     private fb: FormBuilder,
-    private dadosNovoOrcamentoService: DadosNovoOrcamentoService
+    private dadosNovoOrcamentoService: DadosNovoOrcamentoService,
+    private sendOrcamentoPayloadService: SendOrcamentoPayloadService
     
   ) {}
 
@@ -237,6 +239,7 @@ export class AddNewBudgetComponent {
     console.log('Payload para o service:', orcamentoPayload);
 
     this.dadosNovoOrcamentoService.setOrcamento(orcamentoPayload);
+    this.sendOrcamentoPayloadService.sendPayload(orcamentoPayload)
 
     this.router.navigate(['budget/pdf']);
   }
