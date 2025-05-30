@@ -5,12 +5,14 @@ import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { CurrencyPipe } from '@angular/common'; 
 import { TelefonePipe } from '../../pipes/telefone.pipe';
+import { ReturnArrowComponent } from '../return-arrow/return-arrow.component';
+import { Router } from '@angular/router';
 
 
 @Component({
   selector: 'app-orcamento-pdf',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, TelefonePipe],
+  imports: [CommonModule, CurrencyPipe, TelefonePipe, ReturnArrowComponent],
   templateUrl: './orcamento-pdf.component.html',
   styleUrl: './orcamento-pdf.component.css'
 })
@@ -18,6 +20,48 @@ export class OrcamentoPdfComponent implements OnInit {
   orcamentoRecebido: DadosOrcamento | null = null;
   private orcamentoSubscription: Subscription | undefined;
   dataAtual: Date;
+  CONDICOES_GERAL_VENDA_PART1: string = `Nossos produtos são fornecidos 
+  de acordo com a ABNT NBR 14.922, para peças semiacabadas. 
+  Para peças usinadas, devido ao UHMW ser um material flexível, 
+  a classe de tolerância dimensional utilizada, será de acordo com a DIN 2768. 
+  Para que a ordem de compra seja aceita, é obrigatório a indicação e conferência 
+  da transportadora, ou outro meio de envio registrado, para que a coleta dos 
+  produtos fornecidos, seja feita no ato do faturamento. 
+  A Baron reserva o direito de faturar os produtos adquiridos antes da data 
+  prevista para a entrega. Após o recebimento da ordem de compra, o 
+  pedido estará sujeito à análise de crédito pelo Departamento Financeiro. 
+  Forma de pagamento, prazo, e informações do responsável pelo financeiro da 
+  empresa contratante, são imprescindíveis para a validação da ordem de compra. 
+  As condições de prazo de entrega serão verificadas de acordo com a posição atual 
+  de estoque de materiais, podendo ser reposicionado pela fábrica, o qual será 
+  imediatamente informado ao cliente. O prazo de entrega somente começara a ser 
+  contabilizado a partir do aceite pela fábrica da respectiva ordem de compra, 
+  via e-mail de confirmação enviado ao cliente. Caso haja algum imprevisto 
+  quanto a atrasos em pagamentos, favor informar a Baron o quanto antes, 
+  para que providências sejam tomadas previamente. Caso o pagamento não seja 
+  efetuado nas datas constantes da ordem de compra, será acrescido aos valores, 
+  2% referente a multa por atraso, de 5% ao mês, referentes a juros de mora, 
+  contados a partir da data de vencimento`;
+
+  CONDICOES_GERAL_VENDA_PART2: string = `Procedimento de Devolução: 
+  Após detectado uma anomalia, o cliente deverá entrar em contato 
+  imediatamente com a Baron, pelo telefone: +55 16 3378-0335; ou 
+  pelo e-mail, sac@baron.com.br e informar o ocorrido. Posteriormente, 
+  deverá fazer uma nota fiscal de devolução e reenviar o pedido integral ou 
+  parcial à Baron. As despesas referentes ao frete de devolução serão 
+  custeadas pelo cliente e poderão ser reembolsadas pela Baron, somente após 
+  constatada a não conformidade ocasionada pela Baron, através do Relatório de 
+  Não Conformidade (RNC). Todas as trocas deverão estar na mesma embalagem a qual 
+  foi enviada ao cliente, e embaladas da mesma forma, sob o risco da não conformidade 
+  ser constatada pela má qualidade da embalagem de devolução. Após recebido a mercadoria 
+  integral e/ou parcial, pelo Departamento de Qualidade da Baron, serão realizadas as 
+  inspeções de embalagem e da não conformidade relatada pelo cliente. 
+  Após a abertura da RNC pela Baron, o Departamento de Qualidade tem o prazo 
+  de 5 dias úteis para emitir o RNC correspondente. Após o recebimento da RNC, o 
+  Departamento Comercial será responsável pela divulgação e ações corretivas e 
+  todas as informações de procedimentos adotados para a garantia de satisfação do 
+  cliente e ainda, se for o caso, a reparação do pedido, incluindo eventuais 
+  reembolsos financeiros, cancelamentos de cobranças, trocas e/ou reparos`
 
 
   numeroProposta?: string | undefined = '';  
@@ -55,7 +99,6 @@ export class OrcamentoPdfComponent implements OnInit {
   desconto?: number | undefined;      
   valorTotalItem?: number | undefined; 
 
-  // ADICIONAR AS PROPRIEDADES PARA A EMPRESA, CEP, ENDERECO, ENDERECO_NUMERO, BAIRRO, ESTADO, CIDADE
   cep: string | undefined = '';
   endereco: string | undefined = '';
   endereco_numero: string | number | undefined = '';
@@ -64,7 +107,8 @@ export class OrcamentoPdfComponent implements OnInit {
   cidade: string | undefined = '';
 
   constructor(
-    private dadosNovoOrcamentoService: DadosNovoOrcamentoService
+    private dadosNovoOrcamentoService: DadosNovoOrcamentoService,
+    private router: Router
 
   ) {
     this.dataAtual = new Date();
@@ -78,15 +122,12 @@ export class OrcamentoPdfComponent implements OnInit {
         console.log("Orçamento recebido no PDF Component: ", this.orcamentoRecebido);
 
         if (this.orcamentoRecebido) {
-          this.preencherDadosGerais(); // Preenche os dados gerais do orçamento
+          this.preencherDadosGerais(); 
 
-          // AQUI VOCÊ TEM ACESSO AOS ITENS:
           const itensDoOrcamento = this.orcamentoRecebido.itens;
           console.log("Itens do orçamento:", itensDoOrcamento);
 
-          // Você pode iterar sobre eles ou passá-los para o template
           if (itensDoOrcamento && itensDoOrcamento.length > 0) {
-            // Exemplo de como processar cada item, se necessário:
             itensDoOrcamento.forEach(item => {
               console.log(`Produto: ${item.produto}, Qtd: ${item.quantidade}, Adicionais: `, item.adicionais);
               this.modelo = item.modelo;
@@ -101,6 +142,12 @@ export class OrcamentoPdfComponent implements OnInit {
         }
       }
     );
+  }
+
+  ngOnDestroy(): void {
+    if (this.orcamentoSubscription) {
+      this.orcamentoSubscription.unsubscribe();
+    }
   }
 
   preencherDadosGerais(): void {
@@ -139,13 +186,10 @@ export class OrcamentoPdfComponent implements OnInit {
   limparDados(): void {
     this.numeroProposta = undefined;
     this.dataEmissao = undefined;
-    // ... limpar todas as outras propriedades ...
     this.grandTotal = undefined;
   }
 
-  ngOnDestroy(): void {
-    if (this.orcamentoSubscription) {
-      this.orcamentoSubscription.unsubscribe();
-    }
+  returnPage() {
+    this.router.navigate(['budgets/add']);
   }
 }
