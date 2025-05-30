@@ -4,18 +4,21 @@ import { DadosOrcamento } from '../../models/interfaces/dados-orcamento';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { CurrencyPipe } from '@angular/common'; 
+import { TelefonePipe } from '../../pipes/telefone.pipe';
 
 
 @Component({
   selector: 'app-orcamento-pdf',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe],
+  imports: [CommonModule, CurrencyPipe, TelefonePipe],
   templateUrl: './orcamento-pdf.component.html',
   styleUrl: './orcamento-pdf.component.css'
 })
 export class OrcamentoPdfComponent implements OnInit {
   orcamentoRecebido: DadosOrcamento | null = null;
   private orcamentoSubscription: Subscription | undefined;
+  dataAtual: Date;
+
 
   numeroProposta?: string | undefined = '';  
   dataEmissao?: string | undefined = '';      
@@ -52,10 +55,20 @@ export class OrcamentoPdfComponent implements OnInit {
   desconto?: number | undefined;      
   valorTotalItem?: number | undefined; 
 
+  // ADICIONAR AS PROPRIEDADES PARA A EMPRESA, CEP, ENDERECO, ENDERECO_NUMERO, BAIRRO, ESTADO, CIDADE
+  cep: string | undefined = '';
+  endereco: string | undefined = '';
+  endereco_numero: string | number | undefined = '';
+  bairro: string | undefined = '';
+  estado: string | undefined = '';
+  cidade: string | undefined = '';
+
   constructor(
     private dadosNovoOrcamentoService: DadosNovoOrcamentoService
 
-  ) {}
+  ) {
+    this.dataAtual = new Date();
+  }
 
 
   ngOnInit(): void {
@@ -84,7 +97,6 @@ export class OrcamentoPdfComponent implements OnInit {
             });
           }
         } else {
-          // Limpar os campos se o orçamento for nulo
           this.limparDados();
         }
       }
@@ -92,7 +104,7 @@ export class OrcamentoPdfComponent implements OnInit {
   }
 
   preencherDadosGerais(): void {
-    if (!this.orcamentoRecebido) return; // Guarda de segurança
+    if (!this.orcamentoRecebido) return; 
 
     this.numeroProposta = this.orcamentoRecebido.numeroProposta;
     this.dataEmissao = this.orcamentoRecebido.dataEmissao;
@@ -115,6 +127,13 @@ export class OrcamentoPdfComponent implements OnInit {
     this.grandTotal = this.orcamentoRecebido.grandTotal;
     this.vendedorResponsavel = this.orcamentoRecebido.vendedorResponsavel;
     this.dataUltimaModificacao = this.orcamentoRecebido.dataUltimaModificacao;
+    this.cep = this.orcamentoRecebido.cep;
+    this.endereco = this.orcamentoRecebido.endereco;
+    this.endereco_numero = this.orcamentoRecebido.endereco_numero;
+    this.bairro = this.orcamentoRecebido.bairro;
+    this.estado = this.orcamentoRecebido.estado;
+    this.cidade = this.orcamentoRecebido.cidade;
+
   }
 
   limparDados(): void {

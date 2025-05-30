@@ -4,10 +4,11 @@ img  {
 }
 
 header {
-    width: 1200px;
+    width: 1210px;
     height: 120px;
     background-image: url(../../../assets/images/baron-header-img-removebg-preview.png), url(../../../assets/images/ISO-removebg-preview.png);
     background-position: left top, center;
     background-repeat: no-repeat, no-repeat;
     background-size: 500px, 200px;
+    margin-bottom: 1rem;
 }

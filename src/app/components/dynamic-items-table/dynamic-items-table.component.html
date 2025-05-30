@@ -74,10 +74,16 @@
             <input 
               type="number"
               [(ngModel)]="item.quantidade"
-              (ngModelChange)="onFieldChange(item)"
+              (ngModelChange)="onFieldChange(item); verificarHabilitacaoQuantidade(item)"
               class="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               [class.border-red-500]="isItemInvalid(item) && (!item.quantidade || item.quantidade <= 0)"
-              min="1" />
+              [ngClass]="{
+                'border-red-300 bg-red-50 text-red-700 placeholder-red-400 focus:ring-red-500 focus:border-red-500': deveDesabilitarQuantidade(item) && item.produto === 'Peça Usinada', 
+                'border-gray-300': !deveDesabilitarQuantidade(item) || item.produto !== 'Peça Usinada',
+                'border-red-500 bg-red-50': isItemInvalid(item) && (!item.quantidade || item.quantidade <= 0) && !(deveDesabilitarQuantidade(item) && item.produto === 'Peça Usinada')
+              }"
+              min="1" 
+              [disabled]="deveDesabilitarQuantidade(item)"/>
             <p *ngIf="isItemInvalid(item) && (!item.quantidade || item.quantidade <= 0)" class="mt-1 text-xs text-red-500">
               Quantidade inválida
             </p>
@@ -89,7 +95,7 @@
                   <input 
                     type="number"
                     [(ngModel)]="item.largura"
-                    (ngModelChange)="onFieldChange(item)"
+                    (ngModelChange)="onFieldChange(item); verificarHabilitacaoQuantidade(item)"
                     class="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                     [class.border-red-500]="isItemInvalid(item) && (!item.largura || item.largura <= 0)"
                     placeholder="Larg" />
@@ -101,7 +107,7 @@
                   <input 
                     type="number"
                     [(ngModel)]="item.comprimento"
-                    (ngModelChange)="onFieldChange(item)"
+                    (ngModelChange)="onFieldChange(item); verificarHabilitacaoQuantidade(item)"
                     class="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                     [class.border-red-500]="isItemInvalid(item) && (!item.comprimento || item.comprimento <= 0)"
                     placeholder="Comp" />

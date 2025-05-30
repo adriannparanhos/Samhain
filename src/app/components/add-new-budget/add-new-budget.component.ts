@@ -42,6 +42,14 @@ interface EnterpriseData {
   stateRegistration?: string | undefined;
 }
 
+interface Cliente {
+  nomeContato?: string | undefined;
+  emailContato?: string | undefined;
+  telefoneContato?: string | undefined;
+  prazoEntrega: string | undefined;
+  tipoFrete: string | undefined;
+}
+
 @Component({
   selector: 'app-add-new-budget',
   imports: [ReturnArrowComponent, 
@@ -59,6 +67,7 @@ interface EnterpriseData {
 export class AddNewBudgetComponent {
   @ViewChild(DynamicItemsTableComponent) table!: DynamicItemsTableComponent;
   empresaSelecionada: EnterpriseData | null = null; 
+  clienteSeleconado : Cliente | null = null;
 
   constructor(
     private router: Router, 
@@ -101,6 +110,10 @@ export class AddNewBudgetComponent {
     { name: 'razaoSocial', label: 'Razão Social', type: 'text', placeholder: 'Razão Social da empresa', disabled: true },
     { name: 'condicaoPagamento', label: 'Condição de Pagamento', type: 'select', options: [{ label: '15 DDL', value: '15 DDL' }, { label: '28 DDL', value: '28 DDL' }, { label: '28/42 DDL', value: '28/42 DDL' }, { label: '28/42/56 DDL', value: '28/42/56 DDL' }, { label: 'Pagamento a vista', value: 'Pagamento a vista' }, { label: 'Pagamento para 30 dias', value: 'pagamento para 30 dias' }] },
     { name: 'status', label: 'Status', type: 'select', options: [{ label: 'Aprovado', value: 'Aprovado' }, { label: 'Pendente', value: 'Pendente' }, { label: 'Reprovado', value: 'Reprovado' }] },
+    { name: 'nomeContato', label: 'Contato', type: 'text', placeholder: 'Nome do contato'},
+    { name: 'emailContato', label: 'Email', type: 'email', placeholder: 'contato@example.com'},
+    { name: 'telefoneContato', label: 'Telefone', type: 'text', placeholder: 'Nome do contato'},
+    { name: 'tipoFrete', label: 'Frete', type: 'select', options: [{ label: 'FOB', value: 'FOB' }, { label: 'CIF', value: 'CIF' }] },
     { name: 'descricao', label: 'Descrição', type: 'textarea', placeholder: 'Descrição do orçamento' }
   ];
 
@@ -148,7 +161,6 @@ export class AddNewBudgetComponent {
         this.empresaSelecionada = data;
         console.log('Empresa encontrada:', data);
       } else {
-        // Se data for null (erro no catchError ou API retornou null)
         this.form.get('razaoSocial')!.setValue('');
         this.empresaSelecionada = null;
       }
@@ -210,10 +222,15 @@ export class AddNewBudgetComponent {
       grandTotal: this.table.grandTotal,
       cep: this.empresaSelecionada?.address?.cep,
       endereco: this.empresaSelecionada?.address?.endereco,
-      endereco_numero: String(this.empresaSelecionada?.address?.endereco_numero), // Convertendo para string se sua interface DadosOrcamento espera string
+      endereco_numero: String(this.empresaSelecionada?.address?.endereco_numero), 
       bairro: this.empresaSelecionada?.address?.bairro,
       estado: this.empresaSelecionada?.address?.estado,
       cidade: this.empresaSelecionada?.address?.cidade,
+      nomeContato: this.form.get('nomeContato')?.value,
+      emailContato: this.form.get('emailContato')?.value,
+      telefoneContato: this.form.get('telefoneContato')?.value,
+      prazoEntrega: this.form.get('prazoEntrega')?.value,
+      tipoFrete: this.form.get('tipoFrete')?.value,      
 
     };
 

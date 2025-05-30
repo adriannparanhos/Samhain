@@ -63,6 +63,23 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  deveDesabilitarQuantidade(item: any): boolean {
+    if (item.produto === 'Peça Usinada') {
+      const larguraValida = item.largura && Number(item.largura) > 0;
+      const comprimentoValido = item.comprimento && Number(item.comprimento) > 0;
+      return !(larguraValida && comprimentoValido);
+    }
+    return false;
+  }
+
+  verificarHabilitacaoQuantidade(item: any): void {
+    if (item.produto === 'Peça Usinada') {
+      if (this.deveDesabilitarQuantidade(item)) {
+      }
+    }
+    this.onFieldChange(item);
+  }
+
   getAllProducts() {
     this.fetchProductsService.getProducts().subscribe((data: OrcamentoItem[]) => {
       const filteredItems = data.map(item => {

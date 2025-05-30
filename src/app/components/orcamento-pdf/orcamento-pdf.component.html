@@ -21,13 +21,13 @@
       <h3 class="text-xl font-medium">Dados do cliente: </h3>
       <p>CNPJ: {{cnpj}}</p>
       <p>Razão Social: {{razaoSocial}}</p>
-      <p class="w-[300px] break-words">Endereço: </p> <!-- Width fixo e quebra de linha -->
+      <p class="w-[300px] break-words">Endereço: {{endereco}}, {{endereco_numero}}, {{bairro}}, {{estado}}, {{cidade}}</p> <!-- Width fixo e quebra de linha -->
     </div>
 
     <div class="md:w-2/5">
-      <p>A/C: </p>
-      <p>Fine: </p>
-      <p>E-mail: </p>
+      <p>A/C: {{nomeContato}}</p>
+      <p>Fone: {{telefoneContato | telefone}}</p>
+      <p>E-mail: {{emailContato}}</p>
     </div>
   </div>
 
@@ -99,7 +99,7 @@
       <p>Prazo de entrega: </p>
     </div>
     <div class="supply-conditions-results">
-      <p>a</p> <!-- Data atual via Angular -->
+      <p>{{ dataAtual | date:'dd/MM/yyyy' }}</p>
       <p>{{condicaoPagamento}}</p>
       <p>{{prazoEntrega}}</p>
     </div>
@@ -109,7 +109,7 @@
     </div>
     <div>
       <p>15 dias</p>
-      <p>aaa</p>
+      <p>{{tipoFrete}}</p>
     </div>
   </div>
 
