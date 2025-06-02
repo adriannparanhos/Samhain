@@ -211,6 +211,11 @@ export class AddNewBudgetComponent {
     });
 
     const orcamentoPayload: DadosOrcamento = {
+      proposta: 'temp-prop-1234', 
+      dataEmissao: new Date().toISOString().split('T')[0], 
+      validadeProposta: this.form.get('validadeProposta')?.value || '30 dias',
+      vendedorResponsavel: 'Vendedor Padrão', 
+      dataUltimaModificacao: new Date().toISOString().split('T')[0], 
       cnpj: this.form.get('cnpj')?.value,
       razaoSocial: this.form.get('razaoSocial')?.value,
       condicaoPagamento: this.form.get('condicaoPagamento')?.value,
@@ -236,12 +241,22 @@ export class AddNewBudgetComponent {
 
     };
 
-    console.log('Payload para o service:', orcamentoPayload);
+    console.log('Payload ANTES do Interceptor:', orcamentoPayload);
 
-    this.dadosNovoOrcamentoService.setOrcamento(orcamentoPayload);
     this.sendOrcamentoPayloadService.sendPayload(orcamentoPayload)
+      .subscribe({
+        next: (response) => {
+          console.log('Orçamento salvo com sucesso!', response);
+          this.dadosNovoOrcamentoService.setOrcamento(orcamentoPayload);
+          this.router.navigate(['budget/pdf']);
+        },
+        error: (error) => {
+          console.error('Erro ao salvar orçamento:', error);
+          alert('Erro ao salvar orçamento. Verifique o console para detalhes.');
+        }
+      });
+    this.dadosNovoOrcamentoService.setOrcamento(orcamentoPayload);
 
-    this.router.navigate(['budget/pdf']);
   }
 
 }

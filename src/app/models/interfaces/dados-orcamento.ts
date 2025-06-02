@@ -35,6 +35,7 @@ interface Enterprise {
 }
 
 export interface DadosOrcamento {
+    proposta: string;
     idOrcamento?: string;      
     numeroProposta?: string;  
     dataEmissao?: string;      

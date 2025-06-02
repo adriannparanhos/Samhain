@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core'; // Adicionado OnInit
 import { ButtonComponent } from '../button/button.component';
 import { SearchComponent } from '../search/search.component';
 import { TableColumn, TableInfoComponent } from '../table-info/table-info.component';
 import { Router } from '@angular/router';
+import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
 
 interface Budget {
   id: number;
@@ -12,7 +13,7 @@ interface Budget {
   date: Date;
   status: string;
   totalValue: number;
-  acoes: string;
+  acoes: string; // Embora 'acoes' não esteja sendo mapeado no loadBudgets, ele está na interface.
 }
 
 @Component({
@@ -22,8 +23,8 @@ interface Budget {
   templateUrl: './budgets.component.html',
   styleUrl: './budgets.component.css'
 })
-export class BudgetsComponent {
-  constructor(private router: Router) {}
+export class BudgetsComponent implements OnInit { // Implementado OnInit
+  constructor(private router: Router, private fetchBudgetsService: FetchBudgetsService) {}
 
   budgets: Budget[] = [];
   isDeleting: boolean = false;
@@ -37,20 +38,56 @@ export class BudgetsComponent {
   ];
 
   ngOnInit() {
-    this.budgets = [
-      { id: 1, proposalNumber: '12345', enterprise: 'Empresa A', type: 'Tipo A', date: new Date('2023-01-01'), status: 'Aprovado', totalValue: 1000, acoes: '' },
-      { id: 2, proposalNumber: '67890', enterprise: 'Empresa B', type: 'Tipo B', date: new Date('2023-02-01'), status: 'Pendente', totalValue: 2000, acoes: '' },
-      { id: 3, proposalNumber: '54321', enterprise: 'Empresa C', type: 'Tipo C', date: new Date('2023-03-01'), status: 'Cancelado', totalValue: 3000, acoes: '' }
-    ];
+    this.loadBudgets(); // Chamar loadBudgets aqui para carregar os dados ao iniciar o componente
+  }
+
+  private loadBudgets() {
+    this.fetchBudgetsService.getBudgets().subscribe({
+      next: (data: any[]) => { // 'data' é o que vem da API
+        this.budgets = data.map(e => ({
+          id: e.id, // Certifique-se de que o id está vindo do backend
+          proposalNumber: e.proposalNumber,
+          enterprise: e.razaoSocial, // Assumindo que 'razaoSocial' do backend mapeia para 'enterprise'
+          type: e.type || '', // Adicione um valor padrão ou trate se 'type' não vier
+          date: new Date(e.data), // Converte a string de data para objeto Date
+          status: e.status,
+          totalValue: e.valorTotal,
+          acoes: '' // Adicione um valor padrão para 'acoes' ou trate conforme necessário
+        }));
+      },
+      error: (error) => { // 'error' é o erro do observable
+        console.error('Erro ao carregar orçamentos:', error);
+        // Aqui você pode adicionar lógica para mostrar uma mensagem de erro na UI
+      }
+    });
   }
 
   onEdit(budget: Budget) {
     console.log('editar', budget);
+    // Exemplo: Navegar para a rota de edição
+    this.router.navigate(['budgets/edit', budget.id]);
   }
 
   onDelete(budget: Budget) {
     if (!confirm(`Excluir ${budget.proposalNumber}?`)) return;
     this.isDeleting = true;
+
+    // Idealmente, você chamaria um serviço para deletar no backend aqui
+    // this.fetchBudgetsService.deleteBudget(budget.id).subscribe({
+    //   next: () => {
+    //     this.budgets = this.budgets.filter(b => b.id !== budget.id);
+    //     this.isDeleting = false;
+    //     console.log('Orçamento deletado com sucesso!');
+    //     // Opcional: mostrar uma notificação de sucesso
+    //   },
+    //   error: (error) => {
+    //     console.error('Erro ao deletar orçamento:', error);
+    //     this.isDeleting = false;
+    //     // Opcional: mostrar uma notificação de erro
+    //   }
+    // });
+
+    // Mantendo o setTimeout para simular a exclusão local por enquanto:
     setTimeout(() => {
       this.budgets = this.budgets.filter(b => b.id !== budget.id);
       this.isDeleting = false;
@@ -60,6 +97,4 @@ export class BudgetsComponent {
   openAddBudget() {
     this.router.navigate(['budgets/add']);
   }
-
-
 }
