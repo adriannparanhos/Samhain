@@ -7,6 +7,10 @@ export interface TableColumn<T> {
   field: keyof T;
   type?: 'text' | 'currency' | 'date' | 'number';
   width?: string;
+  currencyCode?: string;        
+  currencyDisplay?: 'symbol' | 'code' | 'symbol-narrow' | string | boolean; 
+  currencyDigitsInfo?: string;  
+  currencyLocale?: string;      
 }
 
 @Component({
@@ -35,20 +39,23 @@ export interface TableColumn<T> {
               <td *ngFor="let col of columns; let lastCol = last"
                   class="p-3 border-r border-gray-100"
                   [class.border-r-0]="lastCol">
-                <ng-container [ngSwitch]="col.field">
-                  <span *ngSwitchCase="'status'"
-                        class="inline-block px-2 py-1 rounded-md text-white transition duration-150 ease-in-out"
-                        [ngClass]="getStatusClasses(getValue(row, col.field))">
-                    {{ getValue(row, col.field) }}
-                  </span>
+                <ng-container [ngSwitch]="col.type">
                   <span *ngSwitchCase="'currency'" class="block">
-                    {{ getNumberValue(row, col.field) | currency:'BRL':'symbol':'1.2-2' }}
+                    {{ getNumberValue(row, col.field) | currency:col.currencyCode:col.currencyDisplay:col.currencyDigitsInfo:col.currencyLocale }}
                   </span>
                   <span *ngSwitchCase="'date'" class="block">
                     {{ getValue(row, col.field) | date:'dd/MM/yyyy' }}
                   </span>
                   <span *ngSwitchDefault class="block">
-                    {{ getValue(row, col.field) }}
+                    <ng-container *ngIf="col.field === 'status'; else defaultText">
+                      <span class="inline-block px-2 py-1 rounded-md text-white transition duration-150 ease-in-out"
+                            [ngClass]="getStatusClasses(getValue(row, col.field))">
+                        {{ getValue(row, col.field) }}
+                      </span>
+                    </ng-container>
+                    <ng-template #defaultText>
+                      {{ getValue(row, col.field) }}
+                    </ng-template>
                   </span>
                 </ng-container>
               </td>
@@ -106,7 +113,7 @@ export class TableInfoComponent<T> {
         return 'bg-green-400 text-green-600 hover:bg-green-300 rounded-full px-3 py-0.5 font-medium';
       case 'Pendente':
         return 'bg-yellow-400 text-yellow-600 hover:bg-yellow-300 rounded-full px-3 py-0.5 font-medium';
-      case 'Cancelado':
+      case 'Reprovado':
         return 'bg-red-400 text-red-600 hover:bg-red-300 rounded-full px-3 py-0.5 font-medium';
       default:
         return 'bg-gray-400 text-gray-600 hover:bg-gray-300 rounded-full px-3 py-0.5 font-medium';

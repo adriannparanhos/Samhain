@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'; // Adicionado OnInit
+import { Component, OnInit } from '@angular/core'; 
 import { ButtonComponent } from '../button/button.component';
 import { SearchComponent } from '../search/search.component';
 import { TableColumn, TableInfoComponent } from '../table-info/table-info.component';
@@ -6,14 +6,13 @@ import { Router } from '@angular/router';
 import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
 
 interface Budget {
-  id: number;
-  proposalNumber: string;
-  enterprise: string;
+  proposta: string;
+  razaoSocial: string;
   type: string;
   date: Date;
   status: string;
   totalValue: number;
-  acoes: string; // Embora 'acoes' não esteja sendo mapeado no loadBudgets, ele está na interface.
+  acoes: string; 
 }
 
 @Component({
@@ -23,41 +22,47 @@ interface Budget {
   templateUrl: './budgets.component.html',
   styleUrl: './budgets.component.css'
 })
-export class BudgetsComponent implements OnInit { // Implementado OnInit
+export class BudgetsComponent implements OnInit { 
   constructor(private router: Router, private fetchBudgetsService: FetchBudgetsService) {}
 
   budgets: Budget[] = [];
   isDeleting: boolean = false;
 
   columns: TableColumn<Budget>[] = [
-    { header: 'Número da Proposta', field: 'proposalNumber' },
-    { header: 'Razão Social', field: 'enterprise' },
+    { header: 'Número da Proposta', field: 'proposta' },
+    { header: 'Razão Social', field: 'razaoSocial' },
     { header: 'Data', field: 'date', type: 'date' },
     { header: 'Status', field: 'status' },
-    { header: 'Valor Total', field: 'totalValue', type: 'currency' }
+    {
+      header: 'Valor Total',
+      field: 'totalValue',
+      type: 'currency',
+      currencyCode: 'BRL',         
+      currencyDisplay: 'symbol',   
+      currencyDigitsInfo: '1.2-2', 
+      currencyLocale: 'pt-BR'      
+    }
   ];
 
   ngOnInit() {
-    this.loadBudgets(); // Chamar loadBudgets aqui para carregar os dados ao iniciar o componente
+    this.loadBudgets(); 
   }
 
   private loadBudgets() {
     this.fetchBudgetsService.getBudgets().subscribe({
-      next: (data: any[]) => { // 'data' é o que vem da API
+      next: (data: any[]) => { 
         this.budgets = data.map(e => ({
-          id: e.id, // Certifique-se de que o id está vindo do backend
-          proposalNumber: e.proposalNumber,
-          enterprise: e.razaoSocial, // Assumindo que 'razaoSocial' do backend mapeia para 'enterprise'
-          type: e.type || '', // Adicione um valor padrão ou trate se 'type' não vier
-          date: new Date(e.data), // Converte a string de data para objeto Date
-          status: e.status,
-          totalValue: e.valorTotal,
-          acoes: '' // Adicione um valor padrão para 'acoes' ou trate conforme necessário
+          proposta: e.proposta || 'Proposta invalida',
+          razaoSocial: e.razaoSocial || 'Razão Social não informada', 
+          type: e.type || '', 
+          date: new Date(e.data) || 'Data inválida', 
+          status: e.status || 'Status não informado',
+          totalValue: e.grandTotal || 0,
+          acoes: '' 
         }));
       },
-      error: (error) => { // 'error' é o erro do observable
+      error: (error) => { 
         console.error('Erro ao carregar orçamentos:', error);
-        // Aqui você pode adicionar lógica para mostrar uma mensagem de erro na UI
       }
     });
   }
@@ -65,11 +70,11 @@ export class BudgetsComponent implements OnInit { // Implementado OnInit
   onEdit(budget: Budget) {
     console.log('editar', budget);
     // Exemplo: Navegar para a rota de edição
-    this.router.navigate(['budgets/edit', budget.id]);
+    this.router.navigate(['budgets/edit', budget.proposta]);
   }
 
   onDelete(budget: Budget) {
-    if (!confirm(`Excluir ${budget.proposalNumber}?`)) return;
+    if (!confirm(`Excluir ${budget.proposta}?`)) return;
     this.isDeleting = true;
 
     // Idealmente, você chamaria um serviço para deletar no backend aqui
@@ -89,7 +94,7 @@ export class BudgetsComponent implements OnInit { // Implementado OnInit
 
     // Mantendo o setTimeout para simular a exclusão local por enquanto:
     setTimeout(() => {
-      this.budgets = this.budgets.filter(b => b.id !== budget.id);
+      this.budgets = this.budgets.filter(b => b.proposta !== budget.proposta);
       this.isDeleting = false;
     }, 500);
   }
