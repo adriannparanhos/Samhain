@@ -66,7 +66,7 @@ export class OrcamentoPdfComponent implements OnInit {
   reembolsos financeiros, cancelamentos de cobranças, trocas e/ou reparos`
 
 
-  numeroProposta?: string | undefined = '';  
+  proposta?: string | undefined | null= '';  
   dataEmissao?: string | undefined = '';      
   validadeProposta?: string | undefined = '';  
   cnpj: string | undefined = '';
@@ -90,7 +90,7 @@ export class OrcamentoPdfComponent implements OnInit {
   grandTotal: number | undefined;     
   
   vendedorResponsavel?: string;
-  dataUltimaModificacao?: string;
+  dataUltimaModificacao?: string | null;
 
   produto: string | undefined = '';       
   modelo: string | undefined = '';        
@@ -117,35 +117,24 @@ export class OrcamentoPdfComponent implements OnInit {
   }
 
 
-  ngOnInit(): void {
+   ngOnInit(): void {
     this.orcamentoSubscription = this.dadosNovoOrcamentoService.orcamentoAtual$.subscribe(
       (dados: DadosOrcamento | null) => {
         this.orcamentoRecebido = dados;
         console.log("Orçamento recebido no PDF Component: ", this.orcamentoRecebido);
 
         if (this.orcamentoRecebido) {
-          this.preencherDadosGerais(); 
+          this.preencherDadosGerais();
+          this.estadoSelecionado(); 
 
           const itensDoOrcamento = this.orcamentoRecebido.itens;
           console.log("Itens do orçamento:", itensDoOrcamento);
 
-          if (itensDoOrcamento && itensDoOrcamento.length > 0) {
-            itensDoOrcamento.forEach(item => {
-              console.log(`Produto: ${item.produto}, Qtd: ${item.quantidade}, Adicionais: `, item.adicionais);
-              this.modelo = item.modelo;
-              this.descricaoDetalhada = item.descricaoDetalhada
-              this.quantidade = item.quantidade
-              this.valorUnitario = item.valorUnitario
-              this.valorTotalItem = item.valorTotalItem
-            });
-          }
         } else {
           this.limparDados();
         }
       }
     );
-
-    this.estadoSelecionado();
   }
 
   ngOnDestroy(): void {
@@ -157,7 +146,7 @@ export class OrcamentoPdfComponent implements OnInit {
   preencherDadosGerais(): void {
     if (!this.orcamentoRecebido) return; 
 
-    this.numeroProposta = this.orcamentoRecebido.numeroProposta;
+    this.proposta = this.orcamentoRecebido.proposta;
     this.dataEmissao = this.orcamentoRecebido.dataEmissao;
     this.validadeProposta = this.orcamentoRecebido.validadeProposta;
     this.cnpj = this.orcamentoRecebido.cnpj;
@@ -188,7 +177,7 @@ export class OrcamentoPdfComponent implements OnInit {
   }
 
   limparDados(): void {
-    this.numeroProposta = undefined;
+    this.proposta = undefined;
     this.dataEmissao = undefined;
     this.grandTotal = undefined;
   }
@@ -196,7 +185,7 @@ export class OrcamentoPdfComponent implements OnInit {
   estadoSelecionado(): void {
     const state = String(this.orcamentoRecebido?.estado);
     const taxes = this.stateTaxes[state];
-    
+
     if (this.orcamentoRecebido?.estado === 'SP') {
       this.taxInformation = `1- Impostos incluídos: ICMS <span>18%</span>; PIS <span>${taxes.PIS}</span>; COFINS <span>${taxes.COFINS}</span>; CSLL <span>${taxes.CSLL}</span>; IRPJ <span>${taxes.IRPJ}</span>`;
 

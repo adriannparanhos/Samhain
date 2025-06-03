@@ -35,7 +35,7 @@ interface Enterprise {
 }
 
 export interface DadosOrcamento {
-    proposta: string;
+    proposta: string | null;
     idOrcamento?: string;      
     numeroProposta?: string;  
     dataEmissao?: string;      
@@ -63,7 +63,7 @@ export interface DadosOrcamento {
     grandTotal: number;     
 
     vendedorResponsavel?: string;
-    dataUltimaModificacao?: string;
+    dataUltimaModificacao?: string | null;
 
     cep: string | undefined,
     endereco: string | undefined,

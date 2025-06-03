@@ -53,6 +53,7 @@ interface Cliente {
 
 @Component({
   selector: 'app-add-new-budget',
+  standalone: true,
   imports: [ReturnArrowComponent, 
     AddNewFormComponent, 
     LucideAngularModule, 
@@ -211,11 +212,11 @@ export class AddNewBudgetComponent {
     });
 
     const orcamentoPayload: DadosOrcamento = {
-      proposta: 'temp-prop-1234', 
+      proposta: null, 
       dataEmissao: new Date().toISOString().split('T')[0], 
       validadeProposta: this.form.get('validadeProposta')?.value || '30 dias',
       vendedorResponsavel: 'Vendedor Padrão', 
-      dataUltimaModificacao: new Date().toISOString().split('T')[0], 
+      dataUltimaModificacao: null, 
       cnpj: this.form.get('cnpj')?.value,
       razaoSocial: this.form.get('razaoSocial')?.value,
       condicaoPagamento: this.form.get('condicaoPagamento')?.value,
@@ -245,9 +246,10 @@ export class AddNewBudgetComponent {
 
     this.sendOrcamentoPayloadService.sendPayload(orcamentoPayload)
       .subscribe({
-        next: (response) => {
-          console.log('Orçamento salvo com sucesso!', response);
-          this.dadosNovoOrcamentoService.setOrcamento(orcamentoPayload);
+        next: (orcamentoRetornadoPeloBackend: DadosOrcamento) => {
+          console.log('Orçamento salvo com sucesso!', orcamentoRetornadoPeloBackend);
+          
+          this.dadosNovoOrcamentoService.setOrcamento(orcamentoRetornadoPeloBackend); 
           this.router.navigate(['budget/pdf']);
         },
         error: (error) => {
