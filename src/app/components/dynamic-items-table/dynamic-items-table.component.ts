@@ -25,6 +25,7 @@ import { OrcamentoItem } from '../../models/orcamento-item';
 })
 export class DynamicItemsTableComponent implements OnInit, OnDestroy {
   private subscription: Subscription = new Subscription();
+  taxInformation: string = '1- Impostos incluídos: Selecione um estado para visualizar.';
 
   produtos: string[] = [];
   modelosMap: Record<string, string[]> = {};

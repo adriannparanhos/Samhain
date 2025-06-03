@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { ReturnArrowComponent } from '../return-arrow/return-arrow.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AddNewFormComponent } from '../add-new-form/add-new-form.component';
 import { ButtonComponent } from '../button/button.component';
 import { LucideAngularModule } from 'lucide-angular';
@@ -17,6 +17,7 @@ import { CpfCnpjMaskDirective } from '../../directive/cpf-cnpj-mask.directive';
 import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcamento.service';
 import { DadosOrcamento, AdicionaisItem, ItemOrcamento } from '../../models/interfaces/dados-orcamento';
 import { SendOrcamentoPayloadService } from '../../services/database/send-orcamento-payload.service';
+import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
 
 interface NewBudget {
   id: number;
@@ -71,12 +72,20 @@ export class AddNewBudgetComponent {
   empresaSelecionada: EnterpriseData | null = null; 
   clienteSeleconado : Cliente | null = null;
 
+  // Variável para armazenar o orçamento selecionado
+  modoEdicao: boolean = false;
+  propostaAtual: string | null = null;
+  isLoading: boolean = true;
+  private orcamentoCarregado: DadosOrcamento | null = null;
+
   constructor(
     private router: Router, 
     private fetchEnterpriseService: FetchEnterpriseService,
     private fb: FormBuilder,
     private dadosNovoOrcamentoService: DadosNovoOrcamentoService,
-    private sendOrcamentoPayloadService: SendOrcamentoPayloadService
+    private sendOrcamentoPayloadService: SendOrcamentoPayloadService,
+    private activatedRoute: ActivatedRoute,
+    private fetchBudgetsService: FetchBudgetsService
     
   ) {}
 
@@ -248,7 +257,7 @@ export class AddNewBudgetComponent {
       .subscribe({
         next: (orcamentoRetornadoPeloBackend: DadosOrcamento) => {
           console.log('Orçamento salvo com sucesso!', orcamentoRetornadoPeloBackend);
-          
+
           this.dadosNovoOrcamentoService.setOrcamento(orcamentoRetornadoPeloBackend); 
           this.router.navigate(['budget/pdf']);
         },

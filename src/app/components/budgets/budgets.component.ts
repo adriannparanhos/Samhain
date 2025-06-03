@@ -69,30 +69,12 @@ export class BudgetsComponent implements OnInit {
 
   onEdit(budget: Budget) {
     console.log('editar', budget);
-    // Exemplo: Navegar para a rota de edição
     this.router.navigate(['budgets/edit', budget.proposta]);
   }
 
   onDelete(budget: Budget) {
     if (!confirm(`Excluir ${budget.proposta}?`)) return;
     this.isDeleting = true;
-
-    // Idealmente, você chamaria um serviço para deletar no backend aqui
-    // this.fetchBudgetsService.deleteBudget(budget.id).subscribe({
-    //   next: () => {
-    //     this.budgets = this.budgets.filter(b => b.id !== budget.id);
-    //     this.isDeleting = false;
-    //     console.log('Orçamento deletado com sucesso!');
-    //     // Opcional: mostrar uma notificação de sucesso
-    //   },
-    //   error: (error) => {
-    //     console.error('Erro ao deletar orçamento:', error);
-    //     this.isDeleting = false;
-    //     // Opcional: mostrar uma notificação de erro
-    //   }
-    // });
-
-    // Mantendo o setTimeout para simular a exclusão local por enquanto:
     setTimeout(() => {
       this.budgets = this.budgets.filter(b => b.proposta !== budget.proposta);
       this.isDeleting = false;

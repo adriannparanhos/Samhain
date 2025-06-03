@@ -135,20 +135,6 @@
             </div>
           </td>
 
-          <!-- <td class="px-4 py-3">
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span class="text-gray-500">R$</span>
-              </div>
-              <input 
-                type="number"
-                [(ngModel)]="item.ipi"
-                readonly
-                class="w-full rounded-md border border-gray-300 shadow-sm pl-10 py-2 bg-gray-50 text-sm focus:outline-none cursor-not-allowed"
-                step="0.01" min="0" />
-            </div>
-          </td> -->
-
           <td class="px-4 py-3 font-medium">
             {{ (item.ipi! - 1) | percent:'1.2-2' }}
           </td>

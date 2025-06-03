@@ -18,4 +18,9 @@ export class FetchBudgetsService {
     const url = 'http://localhost:8080/api/orcamentos/listar';
     return this.http.get<DadosOrcamento[]>(url);
   }
+
+   getBudgetByProposta(proposta: string): Observable<DadosOrcamento> {
+    const apiUrl = 'http://localhost:8080/api/orcamentos';
+    return this.http.get<DadosOrcamento>(`${apiUrl}/listarOrcamento`, { params: { proposta } });
+  }
 }
