@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { ReturnArrowComponent } from '../return-arrow/return-arrow.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AddNewFormComponent } from '../add-new-form/add-new-form.component';
@@ -67,16 +67,18 @@ interface Cliente {
   templateUrl: './add-new-budget.component.html',
   styleUrl: './add-new-budget.component.css'
 })
-export class AddNewBudgetComponent {
+export class AddNewBudgetComponent implements OnInit {
+
   @ViewChild(DynamicItemsTableComponent) table!: DynamicItemsTableComponent;
   empresaSelecionada: EnterpriseData | null = null; 
   clienteSeleconado : Cliente | null = null;
 
-  // Variável para armazenar o orçamento selecionado
-  modoEdicao: boolean = false;
-  propostaAtual: string | null = null;
-  isLoading: boolean = true;
   private orcamentoCarregado: DadosOrcamento | null = null;
+
+  isEditMode: boolean = false;
+  editingPropostaId: string | null = null;
+  pageTitle: string = 'Novo Orçamento'; 
+  isLoading: boolean = false;
 
   constructor(
     private router: Router, 
@@ -98,13 +100,22 @@ export class AddNewBudgetComponent {
   enterprise: {} = {};
   
   ngOnInit() {
-    this.form = this.fb.group({
-      cnpj: ['', [Validators.required]],
-      'Razão Social': ['', [Validators.required]],
-      'Condição de pagamento': ['', Validators.required],
-      descricao: [''],
-      status: ['', Validators.required]
+    this.activatedRoute.paramMap.subscribe(params => {
+      const proposta = params.get('proposta');
+      if (proposta) {
+        this.isEditMode = true;
+        this.editingPropostaId = proposta;
+        this.pageTitle = 'Editar Orçamento';
+        console.log('Editando orçamento:', proposta);
+      } else {
+        this.isEditMode = false;
+        this.editingPropostaId = null;
+        this.pageTitle = 'Novo Orçamento';
+        console.log('Criando novo orçamento');
+      }
     });
+
+    this.form = this.fb.group({});
   }
 
   onFormSubmit(formData: any) {
@@ -147,36 +158,114 @@ export class AddNewBudgetComponent {
   }
 
   onFormReady(formGroup: FormGroup) {
+    console.log("Form ready, isEditMode:", this.isEditMode, "proposta", this.editingPropostaId)
     this.form = formGroup;
 
-    this.form.get('cnpj')!.valueChanges.pipe(
-      debounceTime(1000),
-      distinctUntilChanged(),
-      filter(value => {
-        const digits = value.replace(/\D/g, '');
-        return digits.length === 11 || digits.length === 14; 
-      }),
-      switchMap(value =>
-        this.fetchEnterpriseService.getEnterpriseByCnpj(value).pipe(
-          catchError(() => {
-            this.cnpjError = 'Empresa não encontrada';
-            this.form.get('razaoSocial')!.setValue('');
-            this.empresaSelecionada = null; 
-            return of(null);
-          })
-        )
-      )
-    ).subscribe(data => {
-      if (data) {
-        this.cnpjError = '';
-        this.form.get('razaoSocial')!.setValue(data.corporateName);
-        this.empresaSelecionada = data;
-        console.log('Empresa encontrada:', data);
-      } else {
-        this.form.get('razaoSocial')!.setValue('');
-        this.empresaSelecionada = null;
+    if (this.isEditMode && this.editingPropostaId) {
+      this.loadBudgetForEditing(this.editingPropostaId);
+    } else {
+      this.configureCnpjListenerForAppForm(this.form);
+      this.isLoading = false; 
+    }
+
+
+    if (!this.isEditMode && this.form.get('cnpj')) {
+      this.configureCnpjListenerForAppForm(formGroup);
+    }
+  }
+
+  loadBudgetForEditing(propostaId: string): void {
+    this.isLoading = true;
+    this.fetchBudgetsService.getBudgetByProposta(propostaId).subscribe({
+      next: (budgetData: DadosOrcamento) => {
+
+        this.form.patchValue({
+          cnpj: budgetData.cnpj,
+          razaoSocial: budgetData.razaoSocial, 
+          condicaoPagamento: budgetData.condicaoPagamento,
+          status: budgetData.status,
+          nomeContato: budgetData.nomeContato,
+          emailContato: budgetData.emailContato,
+          telefoneContato: budgetData.telefoneContato,
+          prazoEntrega: budgetData.prazoEntrega, 
+          validadeProposta: budgetData.validadeProposta, 
+          tipoFrete: budgetData.tipoFrete,
+          descricao: budgetData.descricao
+        });
+
+        const cnpjControl = this.form.get('cnpj');
+        if (cnpjControl) {
+          cnpjControl.disable();
+        }
+        const razaoSocialControl = this.form.get('razaoSocial');
+        if (razaoSocialControl) {
+          razaoSocialControl.disable();
+        }
+
+        this.empresaSelecionada = {
+          address: {
+            cep: budgetData.cep,
+            endereco: budgetData.endereco,
+            endereco_numero: budgetData.endereco_numero,
+            bairro: budgetData.bairro,
+            estado: budgetData.estado,
+            cidade: budgetData.cidade
+          },
+        };
+
+        if (this.table) { 
+          this.table.setLoadedData({
+            items: budgetData.itens,
+            descontoGlobal: budgetData.descontoGlobal,
+            valorFrete: budgetData.valorDoFrete,
+            valorDifal: budgetData.difal
+          });
+        } else {
+          console.warn('DynamicItemsTableComponent (this.table) não estava pronta ao carregar dados.');
+        }
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar dados do orçamento:', err);
+        this.isLoading = false;
+        this.router.navigate(['/budgets']); 
+        alert(`Erro ao carregar orçamento: ${err.message || 'Verifique o console.'}`);
       }
     });
+  }
+
+  configureCnpjListenerForAppForm(formGroup: FormGroup) {
+    const cnpjControl = formGroup.get('cnpj');
+    if (cnpjControl && !this.isEditMode) {
+      cnpjControl.valueChanges.pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        filter(value => {
+          const digits = value.replace(/\D/g, '');
+          return digits.length === 11 || digits.length === 14; 
+        }),
+        switchMap(value => 
+          this.fetchEnterpriseService.getEnterpriseByCnpj(value).pipe(
+            catchError(() => {
+              this.cnpjError = 'Empresa não encontrada';
+              formGroup.get('razaoSocial')?.setValue('');
+              this.empresaSelecionada = null; 
+              return of(null);
+            })
+          )
+        )
+      ).subscribe(data => {
+        if (data) {
+          this.cnpjError = '';
+          formGroup.get('razaoSocial')?.setValue(data.corporateName);
+          this.empresaSelecionada = data;
+          console.log('Empresa encontrada:', data);
+        } else {
+          formGroup.get('razaoSocial')?.setValue('');
+          this.empresaSelecionada = null;
+        }
+      });
+    }
   }
 
   onSave() {

@@ -9,6 +9,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CalculateValueStandartService } from '../../services/calculations/calculate-value-standart.service';
 import { Subscription } from 'rxjs';
 import { OrcamentoItem } from '../../models/orcamento-item';
+import { ItemOrcamento as BackendItemOrcamento, AdicionaisItem } from '../../models/interfaces/dados-orcamento';
 
 @Component({
   selector: 'app-dynamic-items-table',
@@ -62,6 +63,55 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  public setLoadedData(data: { items: BackendItemOrcamento[], descontoGlobal?: number, valorFrete?: number, valorDifal?: number }): void {
+    this.items = []; 
+
+    data.items.forEach(backendItem => {
+
+      const newItem: OrcamentoItem = {
+        produto: backendItem.produto,
+        modelo: backendItem.modelo,
+        quantidade: backendItem.quantidade,
+        valorUnitario: backendItem.valorUnitario, 
+        desconto: backendItem.desconto || 0,
+        ncm: backendItem.ncm,
+        ipi: backendItem.aliquota, 
+        clienteForneceuDesenho: backendItem.adicionais?.desenho || false,
+        adicionarProjeto: backendItem.adicionais?.projeto || false,
+        adicionarArruela: backendItem.adicionais?.arruela || false,
+        adicionarTampao: backendItem.adicionais?.tampao || false,
+
+        valorUnitarioCIPI: backendItem.valorTotalItemCIPI && backendItem.quantidade ? backendItem.valorTotalItemCIPI / backendItem.quantidade : 0, // Estimativa
+        total: backendItem.valorTotalItem || 0,
+        totalCIPI: backendItem.valorTotalItemCIPI, 
+
+        peso: 0, 
+        categoria: '', 
+        espessura: 0, 
+        isPanelVisible: false,
+        pesoTotal: 0,
+        // largura, comprimento para 'Peça usinada' - precisariam vir do backendItem se aplicável
+      };
+      this.items.push(newItem);
+    });
+
+    if (this.form) { 
+      this.form.patchValue({
+        globalDiscount: data.descontoGlobal || 0,
+        shipping: data.valorFrete || 0,
+        difal: data.valorDifal || 0
+      });
+    } else {
+      this.descontoGlobal = data.descontoGlobal || 0;
+      this.valorFrete = data.valorFrete || 0;
+      this.valorDifal = data.valorDifal || 0;
+    }
+
+
+    this.updateTotals(); 
+    this.formValidated = false; 
   }
 
   deveDesabilitarQuantidade(item: any): boolean {
