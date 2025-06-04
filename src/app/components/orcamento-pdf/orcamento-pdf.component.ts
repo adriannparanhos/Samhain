@@ -103,7 +103,7 @@ export class OrcamentoPdfComponent implements OnInit {
 
   cep: string | undefined = '';
   endereco: string | undefined = '';
-  endereco_numero: string | number | undefined = '';
+  endereco_numero: string | number | undefined | null = '';
   bairro: string | undefined = '';
   estado: string | undefined = '';
   cidade: string | undefined = '';

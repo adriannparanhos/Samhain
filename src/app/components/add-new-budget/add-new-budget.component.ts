@@ -10,12 +10,11 @@ import { Item } from '../../models/constantes';
 import { TableInfoComponent } from '../table-info/table-info.component';
 import { DynamicItemsTableComponent } from '../dynamic-items-table/dynamic-items-table.component';
 import { FetchEnterpriseService } from '../../services/fetchs/fetch-enterprise.service';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, switchMap, catchError } from 'rxjs/operators';
-import { CpfCnpjMaskDirective } from '../../directive/cpf-cnpj-mask.directive';
 import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcamento.service';
-import { DadosOrcamento, AdicionaisItem, ItemOrcamento } from '../../models/interfaces/dados-orcamento';
+import { DadosOrcamento } from '../../models/interfaces/dados-orcamento';
 import { SendOrcamentoPayloadService } from '../../services/database/send-orcamento-payload.service';
 import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
 
@@ -34,7 +33,7 @@ interface EnterpriseData {
   address?: { 
     cep: string | undefined;
     endereco: string | undefined;
-    endereco_numero: number | string | undefined; 
+    endereco_numero: number | string | undefined | null; 
     bairro: string | undefined;
     estado: string | undefined;
     cidade: string | undefined;
@@ -63,7 +62,7 @@ interface Cliente {
     ButtonFormComponent, 
     TableInfoComponent, 
     DynamicItemsTableComponent,
-    CpfCnpjMaskDirective],
+  ],
   templateUrl: './add-new-budget.component.html',
   styleUrl: './add-new-budget.component.css'
 })
@@ -72,8 +71,6 @@ export class AddNewBudgetComponent implements OnInit {
   @ViewChild(DynamicItemsTableComponent) table!: DynamicItemsTableComponent;
   empresaSelecionada: EnterpriseData | null = null; 
   clienteSeleconado : Cliente | null = null;
-
-  private orcamentoCarregado: DadosOrcamento | null = null;
 
   isEditMode: boolean = false;
   editingPropostaId: string | null = null;
@@ -288,13 +285,13 @@ export class AddNewBudgetComponent implements OnInit {
       return;
     }
 
-    const itensOrcamento: ItemOrcamento[] = itensFromTable.map((item: any) => {
-      const adicionais: AdicionaisItem = {
-        desenho: item.clienteForneceuDesenho === 'Sim' || item.clienteForneceuDesenho === true, 
-        projeto: item.adicionarProjeto === 'Sim' || item.adicionarProjeto === true,
-        arruela: item.adicionarArruela === 'Sim' || item.adicionarArruela === true,
-        tampao: item.adicionarTampao === 'Sim' || item.adicionarTampao === true
-      };
+    const itensParaPayloadBackend = itensFromTable.map((item: any) => {
+      console.log('--- DEBUG onSave - Item Recebido da Tabela ---');
+      console.log('Item completo:', JSON.parse(JSON.stringify(item)));
+      console.log('item.clienteForneceuDesenho:', item.clienteForneceuDesenho, '(Tipo:', typeof item.clienteForneceuDesenho, ')');
+      console.log('item.adicionarProjeto:', item.adicionarProjeto, '(Tipo:', typeof item.adicionarProjeto, ')');
+      console.log('item.adicionarArruela:', item.adicionarArruela, '(Tipo:', typeof item.adicionarArruela, ')');
+      console.log('item.adicionarTampao:', item.adicionarTampao, '(Tipo:', typeof item.adicionarTampao, ')');
       return {
         produto: item.produto,
         modelo: item.modelo,
@@ -305,7 +302,13 @@ export class AddNewBudgetComponent implements OnInit {
         aliquota: item.ipi,
         valorTotalItem: item.total,
         valorTotalItemCIPI: item.totalCIPI,
-        adicionais: adicionais,
+        desenho: !!item.clienteForneceuDesenho, 
+        projeto: !!item.adicionarProjeto,
+        arruela: !!item.adicionarArruela,
+        tampao: !!item.adicionarTampao,
+
+        largura: item.largura ? Number(item.largura) : undefined,
+        comprimento: item.comprimento ? Number(item.comprimento) : undefined,
       };
     });
 
@@ -320,7 +323,7 @@ export class AddNewBudgetComponent implements OnInit {
       condicaoPagamento: this.form.get('condicaoPagamento')?.value,
       descricao: this.form.get('descricao')?.value || '',
       status: this.form.get('status')?.value,
-      itens: itensOrcamento,
+      itens: itensParaPayloadBackend,
       subtotalItens: this.table.subtotal, 
       descontoGlobal: this.table.descontoGlobal || 0,
       valorDoFrete: this.table.valorFrete || 0,

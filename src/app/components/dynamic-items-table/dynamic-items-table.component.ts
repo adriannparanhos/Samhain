@@ -8,8 +8,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CalculateValueStandartService } from '../../services/calculations/calculate-value-standart.service';
 import { Subscription } from 'rxjs';
-import { OrcamentoItem } from '../../models/orcamento-item';
-import { ItemOrcamento as BackendItemOrcamento, AdicionaisItem } from '../../models/interfaces/dados-orcamento';
+import { OrcamentoItemNaTabela } from '../../models/orcamento-item';
+import { ItemOrcamentoPayload as BackendItemOrcamentoPayload } from '../../models/interfaces/dados-orcamento';
 
 @Component({
   selector: 'app-dynamic-items-table',
@@ -31,7 +31,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
   produtos: string[] = [];
   modelosMap: Record<string, string[]> = {};
   valoresPadrao: Record<string, number> = {};
-  items: OrcamentoItem[] = [];
+  items: OrcamentoItemNaTabela[] = [];
   form!: FormGroup;
   descontoGlobal: number = 0;
   valorFrete: number = 0;
@@ -41,7 +41,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
   grandTotal: number = 0;
   formValidated: boolean = false;
   formErrors: string[] = [];
-  groupedItems: Record<string, OrcamentoItem[]> = {};
+  groupedItems: Record<string, OrcamentoItemNaTabela[]> = {};
 
   constructor(
     private fb: FormBuilder,
@@ -65,12 +65,12 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  public setLoadedData(data: { items: BackendItemOrcamento[], descontoGlobal?: number, valorFrete?: number, valorDifal?: number }): void {
+  public setLoadedData(data: { items: BackendItemOrcamentoPayload[], descontoGlobal?: number, valorFrete?: number, valorDifal?: number }): void {
     this.items = []; 
 
     data.items.forEach(backendItem => {
 
-      const newItem: OrcamentoItem = {
+      const newItem: OrcamentoItemNaTabela = {
         produto: backendItem.produto,
         modelo: backendItem.modelo,
         quantidade: backendItem.quantidade,
@@ -78,21 +78,22 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
         desconto: backendItem.desconto || 0,
         ncm: backendItem.ncm,
         ipi: backendItem.aliquota, 
-        clienteForneceuDesenho: backendItem.adicionais?.desenho || false,
-        adicionarProjeto: backendItem.adicionais?.projeto || false,
-        adicionarArruela: backendItem.adicionais?.arruela || false,
-        adicionarTampao: backendItem.adicionais?.tampao || false,
+        clienteForneceuDesenho: backendItem.desenho || false,
+        adicionarProjeto: backendItem.projeto || false,
+        adicionarArruela: backendItem.arruela || false,
+        adicionarTampao: backendItem.tampao || false,
 
         valorUnitarioCIPI: backendItem.valorTotalItemCIPI && backendItem.quantidade ? backendItem.valorTotalItemCIPI / backendItem.quantidade : 0, // Estimativa
         total: backendItem.valorTotalItem || 0,
         totalCIPI: backendItem.valorTotalItemCIPI, 
+        largura: backendItem.largura || undefined,
+        comprimento: backendItem.comprimento || undefined,
 
         peso: 0, 
         categoria: '', 
         espessura: 0, 
         isPanelVisible: false,
         pesoTotal: 0,
-        // largura, comprimento para 'Peça usinada' - precisariam vir do backendItem se aplicável
       };
       this.items.push(newItem);
     });
@@ -132,7 +133,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
   }
 
   getAllProducts() {
-    this.fetchProductsService.getProducts().subscribe((data: OrcamentoItem[]) => {
+    this.fetchProductsService.getProducts().subscribe((data: OrcamentoItemNaTabela[]) => {
       const filteredItems = data.map(item => {
         let produto = item.produto || 'Outros';
         if (item.modelo.includes('HASTE')) {
@@ -167,7 +168,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
         }
         acc[family].push(item);
         return acc;
-      }, {} as Record<string, OrcamentoItem[]>);
+      }, {} as Record<string, OrcamentoItemNaTabela[]>);
 
       const chapas = this.groupedItems['Chapas semiacabadas'] || [];
       const chapas1220 = chapas.filter(i => i.modelo.includes('1220 x 3050'));
@@ -215,7 +216,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     this.items[index].isPanelVisible = !this.items[index].isPanelVisible;
   }
 
-  onProdutoChange(item: OrcamentoItem): void {
+  onProdutoChange(item: OrcamentoItemNaTabela): void {
     item.modelo = '';
     item.valorUnitario = 0;
     item.total = 0;
@@ -232,7 +233,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  onModeloChange(item: OrcamentoItem): void {
+  onModeloChange(item: OrcamentoItemNaTabela): void {
     if (!item.modelo) {
       item.valorUnitario = 0;
       item.total = 0;
@@ -263,17 +264,17 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  onFieldChange(item: OrcamentoItem): void {
+  onFieldChange(item: OrcamentoItemNaTabela): void {
     if (this.shouldCalculateBackend(item)) {
       this.calculateItemValue(item);
     }
   }
 
-  private shouldCalculateBackend(item: OrcamentoItem): boolean {
+  private shouldCalculateBackend(item: OrcamentoItemNaTabela): boolean {
     return !!(item.produto && item.modelo && item.quantidade && item.quantidade > 0);
   }
 
-  private calculateItemValue(item: OrcamentoItem): void {
+  private calculateItemValue(item: OrcamentoItemNaTabela): void {
     const payload = this.createPayloadForItem(item);
 
     this.calculateValueStandartService.postCalculateValueStandart(payload).subscribe({
@@ -294,7 +295,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     });
   }
 
-  private createPayloadForItem(item: OrcamentoItem): any {
+  private createPayloadForItem(item: OrcamentoItemNaTabela): any {
     return {
       produto: item.produto || '',
       modelo: item.modelo || '',
@@ -341,7 +342,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     this.updateTotals();
   }
 
-  isItemInvalid(item: OrcamentoItem): boolean {
+  isItemInvalid(item: OrcamentoItemNaTabela): boolean {
     if (!this.formValidated) return false;
     if (!item.produto || !item.modelo || !item.quantidade || item.quantidade <= 0) {
       return true;
@@ -379,11 +380,11 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     return this.formErrors.length === 0;
   }
 
-  public getItemsForPayload(): OrcamentoItem[] {
+  public getItemsForPayload(): OrcamentoItemNaTabela[] {
     return this.salvarItens();
   }
 
-  salvarItens(): OrcamentoItem[] {
+  salvarItens(): OrcamentoItemNaTabela[] {
     if (this.validateForm()) {
       return [...this.items];
     }
