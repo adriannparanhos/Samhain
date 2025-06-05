@@ -4,15 +4,15 @@ import { SearchComponent } from '../search/search.component';
 import { TableColumn, TableInfoComponent } from '../table-info/table-info.component';
 import { Router } from '@angular/router';
 import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
+import { ListarOrcamentosDTOBackend } from '../../models/interfaces/dados-orcamento';
 
-interface Budget {
+
+interface BudgetParaTabela { 
   proposta: string;
   razaoSocial: string;
-  type: string;
-  date: Date;
+  date: Date | null; 
   status: string;
   totalValue: number;
-  acoes: string; 
 }
 
 @Component({
@@ -25,10 +25,11 @@ interface Budget {
 export class BudgetsComponent implements OnInit { 
   constructor(private router: Router, private fetchBudgetsService: FetchBudgetsService) {}
 
-  budgets: Budget[] = [];
+  budgets: BudgetParaTabela[] = [];
   isDeleting: boolean = false;
+  isLoading: boolean = false;
 
-  columns: TableColumn<Budget>[] = [
+  columns: TableColumn<BudgetParaTabela>[] = [
     { header: 'Número da Proposta', field: 'proposta' },
     { header: 'Razão Social', field: 'razaoSocial' },
     { header: 'Data', field: 'date', type: 'date' },
@@ -45,34 +46,35 @@ export class BudgetsComponent implements OnInit {
   ];
 
   ngOnInit() {
-    this.loadBudgets(); 
+    this.loadFilteredBudgets(); 
   }
 
-  private loadBudgets() {
-    this.fetchBudgetsService.getBudgets().subscribe({
-      next: (data: any[]) => { 
+  private loadFilteredBudgets() {
+    this.isLoading = true;
+    this.fetchBudgetsService.getOrcamentosPendentes().subscribe({
+      next: (data: ListarOrcamentosDTOBackend[]) => { 
         this.budgets = data.map(e => ({
-          proposta: e.proposta || 'Proposta invalida',
-          razaoSocial: e.razaoSocial || 'Razão Social não informada', 
-          type: e.type || '', 
-          date: new Date(e.data) || 'Data inválida', 
+          proposta: e.proposta || 'Proposta inválida',
+          razaoSocial: e.razaoSocial || 'Razão Social não informada',
+          date: e.data ? new Date(e.data) : null, 
           status: e.status || 'Status não informado',
           totalValue: e.grandTotal || 0,
-          acoes: '' 
         }));
+        this.isLoading = false;
       },
-      error: (error) => { 
-        console.error('Erro ao carregar orçamentos:', error);
+      error: (error) => {
+        console.error('Erro ao carregar orçamentos pendentes:', error);
+        this.isLoading = false;
       }
     });
   }
 
-  onEdit(budget: Budget) {
+  onEdit(budget: BudgetParaTabela) {
     console.log('editar', budget);
     this.router.navigate(['budgets/edit', budget.proposta]);
   }
 
-  onDelete(budget: Budget) {
+  onDelete(budget: BudgetParaTabela) {
     if (!confirm(`Excluir ${budget.proposta}?`)) return;
     this.isDeleting = true;
     setTimeout(() => {

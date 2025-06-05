@@ -82,3 +82,11 @@ export interface ItemOrcamentoPayload {
   largura?: number;
   comprimento?: number;
 }
+
+export interface ListarOrcamentosDTOBackend {
+  proposta: string;
+  razaoSocial: string;
+  data: string; // Backend envia como string (ex: "YYYY-MM-DD")
+  status: string;
+  grandTotal: number;
+}

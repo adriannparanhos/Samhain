@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DadosOrcamento } from '../../models/interfaces/dados-orcamento';
+import { ListarOrcamentosDTOBackend } from '../../models/interfaces/dados-orcamento';
 
 @Injectable({
   providedIn: 'root'
@@ -19,4 +20,29 @@ export class FetchBudgetsService {
   getBudgetByProposta(proposta: string): Observable<DadosOrcamento> {
     return this.http.get<DadosOrcamento>(`${this.apiUrlOrcamentos}/listarOrcamento`, { params: { proposta } });
   }
+
+  // ---------------------------------------------------------------------------------------------------------
+  getFilteredBudgets(status: string[], sortField: string = 'dataEmissao', sortDirection: string = 'desc', secondarySortField: string = 'proposta', secondarySortDirection: string = 'asc'): Observable<ListarOrcamentosDTOBackend[]> {
+    let params = new HttpParams();
+    status.forEach(s => {
+      params = params.append('status', s);
+    });
+    params = params.append('sort', `${sortField},${sortDirection}`);
+    params = params.append('sort', `${secondarySortField},${secondarySortDirection}`); 
+
+    return this.http.get<ListarOrcamentosDTOBackend[]>(`${this.apiUrlOrcamentos}/listar`, { params });
+  }
+
+  getPedidosAprovados(): Observable<ListarOrcamentosDTOBackend[]> {
+    return this.getFilteredBudgets(['Aprovado'], 'dataEmissao', 'desc', 'proposta', 'asc');
+  }
+
+  getOrcamentosPendentes(): Observable<ListarOrcamentosDTOBackend[]> {
+    return this.getFilteredBudgets(['Pendente'], 'dataEmissao', 'desc', 'proposta', 'asc');
+  }
+
+  getOrcamentosPendentesEReprovados(): Observable<ListarOrcamentosDTOBackend[]> {
+    return this.getFilteredBudgets(['Pendente', 'Reprovado'], 'dataEmissao', 'desc', 'proposta', 'asc');
+  }
+
 }
