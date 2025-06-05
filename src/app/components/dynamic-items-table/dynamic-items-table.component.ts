@@ -223,9 +223,9 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     item.totalCIPI = 0;
     item.pesoTotal = 0;
 
-    if (item.produto === 'Peça usinada') {
-      item.produto = 'Chapas semiacabadas';
-    }
+    // if (item.produto === 'Peça usinada') {
+    //   item.produto = 'Chapas semiacabadas';
+    // }
 
     if (item.produto !== 'Peça usinada') {
       item.largura = undefined;
