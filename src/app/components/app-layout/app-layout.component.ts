@@ -31,7 +31,8 @@ export class AppLayoutComponent {
     { name: 'Dashboard', path: '/dashboard', icon: 'home'      },
     { name: 'Empresas',  path: '/enterprises', icon: 'building-2'},
     { name: 'Produtos',  path: '/products',  icon: 'package'   },
-    { name: 'Orçamentos',path: '/budgets',   icon: 'file-text' }
+    { name: 'Orçamentos',path: '/budgets',   icon: 'file-text' },
+    { name: 'Pedidos', path: '/orders',    icon: 'file-check' },
   ];
 
   constructor(

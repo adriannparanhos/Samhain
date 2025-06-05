@@ -313,11 +313,11 @@ export class AddNewBudgetComponent implements OnInit {
     });
 
     const orcamentoPayload: DadosOrcamento = {
-      proposta: null, 
+      proposta: this.isEditMode ? this.editingPropostaId : null,
       dataEmissao: new Date().toISOString().split('T')[0], 
       validadeProposta: this.form.get('validadeProposta')?.value || '30 dias',
       vendedorResponsavel: 'Vendedor Padrão', 
-      dataUltimaModificacao: null, 
+      dataUltimaModificacao: this.isEditMode ? new Date().toISOString().split('T')[0] : null,
       cnpj: this.form.get('cnpj')?.value,
       razaoSocial: this.form.get('razaoSocial')?.value,
       condicaoPagamento: this.form.get('condicaoPagamento')?.value,
