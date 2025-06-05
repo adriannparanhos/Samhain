@@ -47,4 +47,7 @@ export interface OrcamentoItemNaTabela {
   totalCIPI?: number;
   pesoTotal?: number;
   isPanelVisible?: boolean; 
+
+  quantidadeConjuntos?: number; 
+
 }

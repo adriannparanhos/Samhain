@@ -56,11 +56,15 @@
             <tr *ngFor="let item of orcamentoRecebido?.itens; let i = index">
                 <td class="px-4 py-2 border-t border-gray-300 text-center">{{ i + 1 }}</td>
                 <td class="px-4 py-2 border-t border-gray-300">
-                <span *ngIf="item.modelo">- {{ item.modelo }}</span>
-                <small *ngIf="item.descricaoDetalhada"><br>{{ item.descricaoDetalhada }}</small>
+                <span *ngIf="item.modelo || (item.produto === 'Revestimento' && (item.quantidadeConjuntos ?? 1) > 1)">
+                    {{ getDescricaoPrincipalParaItem(item) }}
+                </span>
+                <small *ngIf="getDescricaoDetalhadaParaPdf(item) as descDetalhada">
+                    <br>{{ descDetalhada }}
+                </small>
                 </td>
-                <td class="px-4 py-2 border-t border-gray-300 text-center">{{ item.quantidade }}</td>
-                <td class="px-4 py-2 border-t border-gray-300 text-center">{{ item.unidade || 'N/A' }}</td>
+                <td class="px-4 py-2 border-t border-gray-300 text-center">{{ getQuantidadeDisplay(item) }}</td>
+                <td class="px-4 py-2 border-t border-gray-300 text-center">{{ determinarUnidadeParaItem(item) || 'N/A' }}</td>
                 <td class="px-15 py-2 border-t border-gray-300 text-center">{{ item.valorUnitario  | currency:'BRL':'':'1.2-2':'pt-BR'}}</td>
                 
                 <td class="px-4 py-2 border-t border-gray-300 text-center">

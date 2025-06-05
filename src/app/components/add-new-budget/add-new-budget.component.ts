@@ -282,6 +282,7 @@ export class AddNewBudgetComponent implements OnInit {
 
         largura: item.largura ? Number(item.largura) : undefined,
         comprimento: item.comprimento ? Number(item.comprimento) : undefined,
+        quantidadeConjuntos: item.quantidadeConjuntos,
       };
     });
 

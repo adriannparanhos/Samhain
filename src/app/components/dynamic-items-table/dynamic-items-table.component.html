@@ -206,12 +206,12 @@
                   <mat-checkbox [(ngModel)]="item.adicionarTampao" (ngModelChange)="onFieldChange(item)">
                     Adicionar tampão?
                   </mat-checkbox>
-                  <label for="" class="ml-10">Quantidade de conjuntos</label>
-                  <input 
-                    (ngModelChange)="onFieldChange(item)"
-                    type="number"
-                    class="w-24 rounded-md ml-5 border border-gray-300 shadow-sm pr-7 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                    step="1" min="0" max="100" />
+                  <div class="mt-2 flex items-center"> <label for="quantidadeConjuntos-{{i}}" class="text-sm text-gray-700 mr-2">Qtd. Conjuntos:</label>
+                      <input
+                          id="quantidadeConjuntos-{{i}}" type="number"
+                          [(ngModel)]="item.quantidadeConjuntos" (ngModelChange)="onFieldChange(item)"   class="w-24 rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                          step="1" min="0" max="100" />
+                  </div>
                 </div>
               </div>
             </mat-expansion-panel>

@@ -82,6 +82,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
         adicionarProjeto: backendItem.projeto || false,
         adicionarArruela: backendItem.arruela || false,
         adicionarTampao: backendItem.tampao || false,
+        quantidadeConjuntos: backendItem.quantidadeConjuntos || 1,
 
         valorUnitarioCIPI: backendItem.valorTotalItemCIPI && backendItem.quantidade ? backendItem.valorTotalItemCIPI / backendItem.quantidade : 0, // Estimativa
         total: backendItem.valorTotalItem || 0,
@@ -207,7 +208,8 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
       isPanelVisible: false,
       total: 0,
       totalCIPI: 0,
-      pesoTotal: 0
+      pesoTotal: 0,
+      quantidadeConjuntos: 1
     });
     this.formValidated = false;
   }
@@ -223,9 +225,9 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     item.totalCIPI = 0;
     item.pesoTotal = 0;
 
-    // if (item.produto === 'Peça usinada') {
-    //   item.produto = 'Chapas semiacabadas';
-    // }
+    if (item.produto === 'Peça usinada') {
+      item.produto = 'Chapas semiacabadas';
+    }
 
     if (item.produto !== 'Peça usinada') {
       item.largura = undefined;
@@ -279,6 +281,8 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
 
     this.calculateValueStandartService.postCalculateValueStandart(payload).subscribe({
       next: (response) => {
+        console.log('Frontend: Recebido do cálculo no backend:', response); 
+
         item.valorUnitario = response.valorUnitario || 0;
         item.valorUnitarioCIPI = response.valorUnitarioCIPI || 0;
         item.total = response.total || 0;
@@ -306,7 +310,8 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
       desenho: item.clienteForneceuDesenho || false,
       arruela: item.adicionarArruela || false,
       tampao: item.adicionarTampao || false,
-      projeto: item.adicionarProjeto || false
+      projeto: item.adicionarProjeto || false,
+      quantidadeConjuntos: item.quantidadeConjuntos || 1,
     };
   }
 

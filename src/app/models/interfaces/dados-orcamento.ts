@@ -1,27 +1,3 @@
-// export interface AdicionaisItem {
-//   desenho: boolean;
-//   projeto: boolean;
-//   arruela: boolean;
-//   tampao: boolean;
-// }
-
-// export interface ItemOrcamento {
-//   produto: string;       
-//   modelo: string;        
-//   descricaoDetalhada?: string;
-//   quantidade: number;
-//   valorUnitario: number;
-//   unidade?: string;        
-//   desconto?: number;      
-//   valorTotalItem?: number; 
-//   valorTotalItemCIPI: number;
-//   ncm: string,
-//   aliquota: number,
-//   largura?: number;
-//   comprimento?: number;
-// }
-
-
 export interface DadosOrcamento {
   proposta: string | null; 
   idOrcamento?: string; 
@@ -81,6 +57,7 @@ export interface ItemOrcamentoPayload {
 
   largura?: number;
   comprimento?: number;
+  quantidadeConjuntos?: number;
 }
 
 export interface ListarOrcamentosDTOBackend {

@@ -7,6 +7,7 @@ import { CurrencyPipe } from '@angular/common';
 import { TelefonePipe } from '../../pipes/telefone.pipe';
 import { ReturnArrowComponent } from '../return-arrow/return-arrow.component';
 import { Router } from '@angular/router';
+import { ItemOrcamentoPayload } from '../../models/interfaces/dados-orcamento';
 
 
 @Component({
@@ -125,8 +126,7 @@ export class OrcamentoPdfComponent implements OnInit {
 
         if (this.orcamentoRecebido) {
           this.preencherDadosGerais();
-          this.estadoSelecionado(); 
-
+          this.calcularInformacaoImposto();
           const itensDoOrcamento = this.orcamentoRecebido.itens;
           console.log("Itens do orçamento:", itensDoOrcamento);
 
@@ -174,6 +174,7 @@ export class OrcamentoPdfComponent implements OnInit {
     this.estado = this.orcamentoRecebido.estado;
     this.cidade = this.orcamentoRecebido.cidade;
 
+
   }
 
   limparDados(): void {
@@ -182,33 +183,75 @@ export class OrcamentoPdfComponent implements OnInit {
     this.grandTotal = undefined;
   }
 
-  estadoSelecionado(): void {
-    const state = String(this.orcamentoRecebido?.estado);
+  determinarUnidadeParaItem(item: ItemOrcamentoPayload): string {
+    if (item.produto === 'Revestimento' && (item.quantidadeConjuntos ?? 1) <= 1) {
+      return 'm²';
+    }
+
+    if (item.produto === 'Revestimento' && (item.quantidadeConjuntos ?? 1) > 1) {
+      return 'Cj';
+    }
+    
+    return item.unidade || 'UN'; 
+  }
+
+  getQuantidadeDisplay(item: ItemOrcamentoPayload): number | string {
+    if (item.produto === 'Revestimento' && (item.quantidadeConjuntos ?? 0) > 1) {
+      return item.quantidadeConjuntos ?? 0; 
+    }
+    return item.quantidade; 
+  }
+
+   getDescricaoPrincipalParaItem(item: ItemOrcamentoPayload): string {
+    if (item.produto === 'Revestimento' && (item.quantidadeConjuntos ?? 1) > 1) {
+      return `Conjunto de ${item.modelo || ''} ${item.quantidade} m²`;
+    }
+    return item.modelo || '';
+  }
+
+  getDescricaoDetalhadaParaPdf(item: ItemOrcamentoPayload): string | undefined {
+    return item.descricaoDetalhada || undefined;
+  }
+
+
+  calcularInformacaoImposto(): void {
+    if (!this.orcamentoRecebido || !this.orcamentoRecebido.estado) {
+      this.taxInformation = '1- Impostos incluídos: Informações de estado não disponíveis.';
+      return;
+    }
+    const state = this.orcamentoRecebido.estado;
     const taxes = this.stateTaxes[state];
 
-    if (this.orcamentoRecebido?.estado === 'SP') {
-      this.taxInformation = `1- Impostos incluídos: ICMS <span>18%</span>; PIS <span>${taxes.PIS}</span>; COFINS <span>${taxes.COFINS}</span>; CSLL <span>${taxes.CSLL}</span>; IRPJ <span>${taxes.IRPJ}</span>`;
+    const temRevestimento = this.orcamentoRecebido.itens?.some(i => i.produto === 'Revestimento');
 
+    if (state === 'SP' || temRevestimento) { 
+        if (taxes) { 
+            const currentTaxes = this.stateTaxes[state] || this.stateTaxes['SP']; 
+             if(currentTaxes) {
+                this.taxInformation = `1- Impostos incluídos: ICMS <span>${currentTaxes.ICMS}</span>; PIS <span>${currentTaxes.PIS}</span>; COFINS <span>${currentTaxes.COFINS}</span>; CSLL <span>${currentTaxes.CSLL}</span>; IRPJ <span>${currentTaxes.IRPJ}</span>`;
+             } else {
+                this.taxInformation = '1- Impostos incluídos: Configuração de impostos para o estado não encontrada.';
+             }
+        } else {
+             this.taxInformation = '1- Impostos incluídos: Configuração de impostos para o estado não encontrada.';
+        }
     } else if (taxes) {
       this.taxInformation = `1- Impostos incluídos: ICMS <span>${taxes.ICMS}%</span>; PIS <span>${taxes.PIS}</span>; COFINS <span>${taxes.COFINS}</span>; CSLL <span>${taxes.CSLL}</span>; IRPJ <span>${taxes.IRPJ}</span>`;
-
     } else {
       this.taxInformation = '1- Impostos incluídos: Informações não disponíveis para o estado selecionado.';
     }
-    
   }
 
   stateTaxes: { [key: string]: { ICMS: string; PIS: string; COFINS: string; CSLL: string; IRPJ: string } } = {
     SP: { ICMS: '12%', PIS: '0,65%', COFINS: '3%', CSLL: '1,08%', IRPJ: '1,20%' },
-    REV: { ICMS: '18%', PIS: '0,65%', COFINS: '3%', CSLL: '1,08%', IRPJ: '1,20%' },
-
     MG: { ICMS: '12%', PIS: '0,65%', COFINS: '3%', CSLL: '1,08%', IRPJ: '1,20%' },
     RJ: { ICMS: '12%', PIS: '0,65%', COFINS: '3%', CSLL: '1,08%', IRPJ: '1,20%' },
     PR: { ICMS: '12%', PIS: '0,65%', COFINS: '3%', CSLL: '1,08%', IRPJ: '1,20%' },
     SC: { ICMS: '12%', PIS: '0,65%', COFINS: '3%', CSLL: '1,08%', IRPJ: '1,20%' },
     RS: { ICMS: '12%', PIS: '0,65%', COFINS: '3%', CSLL: '1,08%', IRPJ: '1,20%' },
-
+    
     AC: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    GO: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,08%', IRPJ: '1,20%' },
     AL: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
     AP: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
     BA: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
