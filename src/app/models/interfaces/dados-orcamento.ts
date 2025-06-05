@@ -90,3 +90,11 @@ export interface ListarOrcamentosDTOBackend {
   status: string;
   grandTotal: number;
 }
+
+export interface BudgetParaTabela { 
+  proposta: string;
+  razaoSocial: string;
+  date: Date | null; 
+  status: string;
+  totalValue: number;
+}

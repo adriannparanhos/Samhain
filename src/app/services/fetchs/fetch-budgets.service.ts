@@ -22,7 +22,7 @@ export class FetchBudgetsService {
   }
 
   // ---------------------------------------------------------------------------------------------------------
-  getFilteredBudgets(status: string[], sortField: string = 'dataEmissao', sortDirection: string = 'desc', secondarySortField: string = 'proposta', secondarySortDirection: string = 'asc'): Observable<ListarOrcamentosDTOBackend[]> {
+  getFilteredBudgets(status: string[], sortField: string = 'dataEmissao', sortDirection: string = 'desc', secondarySortField: string = 'proposta', secondarySortDirection: string = 'desc'): Observable<ListarOrcamentosDTOBackend[]> {
     let params = new HttpParams();
     status.forEach(s => {
       params = params.append('status', s);
@@ -34,15 +34,15 @@ export class FetchBudgetsService {
   }
 
   getPedidosAprovados(): Observable<ListarOrcamentosDTOBackend[]> {
-    return this.getFilteredBudgets(['Aprovado'], 'dataEmissao', 'desc', 'proposta', 'asc');
+    return this.getFilteredBudgets(['Aprovado'], 'dataEmissao', 'desc', 'proposta', 'desc');
   }
 
   getOrcamentosPendentes(): Observable<ListarOrcamentosDTOBackend[]> {
-    return this.getFilteredBudgets(['Pendente'], 'dataEmissao', 'desc', 'proposta', 'asc');
+    return this.getFilteredBudgets(['Pendente'], 'dataEmissao', 'desc', 'proposta', 'desc');
   }
 
   getOrcamentosPendentesEReprovados(): Observable<ListarOrcamentosDTOBackend[]> {
-    return this.getFilteredBudgets(['Pendente', 'Reprovado'], 'dataEmissao', 'desc', 'proposta', 'asc');
+    return this.getFilteredBudgets(['Pendente', 'Reprovado'], 'dataEmissao', 'desc', 'proposta', 'desc');
   }
 
 }
