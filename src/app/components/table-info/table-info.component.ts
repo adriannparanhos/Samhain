@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
+import { SimpleChanges } from '@angular/core';
 
 export interface TableColumn<T> {
   header: string;
@@ -59,25 +60,19 @@ export interface TableColumn<T> {
                   </span>
                 </ng-container>
               </td>
-              <td class="p-3">
+              <td *ngIf="displayActionsColumn" class="p-3">
                 <div class="flex space-x-2">
-                  <button (click)="edit.emit(row)"
-                          class="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-gray-100 transition"
-                          title="Visualizar">
-                    <lucide-icon [name]="'eye'" class="w-5 h-5"></lucide-icon>
-                  </button>
-                  <button (click)="edit.emit(row)"
-                          class="text-yellow-600 hover:text-yellow-800 p-1 rounded hover:bg-gray-100 transition"
-                          title="Editar">
-                    <lucide-icon [name]="'pencil'" class="w-5 h-5"></lucide-icon>
-                  </button>
-                  <button (click)="delete.emit(row)"
-                          class="text-red-600 hover:text-red-800 p-1 rounded hover:bg-gray-100 transition"
-                          title="Excluir">
-                    <lucide-icon [name]="'trash-2'" class="w-5 h-5"></lucide-icon>
-                  </button>
+                    <button *ngIf="showViewAction" (click)="view.emit(row)" title="Visualizar" class="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-gray-100 transition">
+                        <lucide-icon [name]="'eye'" class="w-5 h-5"></lucide-icon>
+                    </button>
+                    <button *ngIf="showEditAction" (click)="edit.emit(row)" title="Editar" class="text-yellow-600 hover:text-yellow-800 p-1 rounded hover:bg-gray-100 transition">
+                        <lucide-icon [name]="'pencil'" class="w-5 h-5"></lucide-icon>
+                    </button>
+                    <button *ngIf="showDeleteAction" (click)="delete.emit(row)" title="Excluir" class="text-red-600 hover:text-red-800 p-1 rounded hover:bg-gray-100 transition">
+                        <lucide-icon [name]="'trash-2'" class="w-5 h-5"></lucide-icon>
+                    </button>
                 </div>
-              </td>
+            </td>
             </tr>
             <tr *ngIf="data.length === 0">
               <td [attr.colspan]="columns.length + 1"
@@ -95,8 +90,17 @@ export class TableInfoComponent<T> {
   @Input() data:     T[]             = [];
   @Input() isLoading: boolean        = false;
 
+  @Output() view = new EventEmitter<T>();
   @Output() edit   = new EventEmitter<T>();
   @Output() delete = new EventEmitter<T>();
+
+  @Input() showViewAction: boolean = true;   
+  @Input() showEditAction: boolean = true;   
+  @Input() showDeleteAction: boolean = true; 
+
+  get displayActionsColumn(): boolean {
+    return this.showViewAction || this.showEditAction || this.showDeleteAction;
+  }
 
   getValue(item: T, field: keyof T): any {
     return item[field];
@@ -118,5 +122,18 @@ export class TableInfoComponent<T> {
       default:
         return 'bg-gray-400 text-gray-600 hover:bg-gray-300 rounded-full px-3 py-0.5 font-medium';
     }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['showViewAction']) {
+      console.log('TableInfo: showViewAction mudou para', this.showViewAction);
+    }
+    if (changes['showEditAction']) {
+      console.log('TableInfo: showEditAction mudou para', this.showEditAction);
+    }
+    if (changes['showDeleteAction']) {
+      console.log('TableInfo: showDeleteAction mudou para', this.showDeleteAction);
+    }
+    console.log('TableInfo: displayActionsColumn é', this.displayActionsColumn);
   }
 }

@@ -6,6 +6,8 @@ import { BudgetParaTabela } from '../../models/interfaces/dados-orcamento';
 import { Router } from '@angular/router';
 import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
 import { ListarOrcamentosDTOBackend } from '../../models/interfaces/dados-orcamento';
+import { DadosOrcamento } from '../../models/interfaces/dados-orcamento';
+import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcamento.service';
 
 
 @Component({
@@ -17,7 +19,11 @@ import { ListarOrcamentosDTOBackend } from '../../models/interfaces/dados-orcame
 })
 export class PedidosComponent implements OnInit {
 
-  constructor(private router: Router, private fetchBudgetsService: FetchBudgetsService) {}
+  constructor(
+    private router: Router, 
+    private fetchBudgetsService: FetchBudgetsService,
+    private dadosNovoOrcamentoService: DadosNovoOrcamentoService
+  ) {}
 
   pedidos: BudgetParaTabela[] = [];
   isDeleting: boolean = false;
@@ -62,6 +68,34 @@ export class PedidosComponent implements OnInit {
       }
     });
 
+  }
+
+  onViewPedido(pedido: BudgetParaTabela): void {
+    console.log('Visualizar Pedido (resumo):', pedido);
+    if (!pedido || !pedido.proposta) {
+      console.error('Dados do pedido inválidos para visualização do PDF.');
+      alert('Não foi possível obter o número da proposta para visualizar o PDF.');
+      return;
+    }
+
+    this.isLoading = true; 
+    this.fetchBudgetsService.getBudgetByProposta(pedido.proposta).subscribe({
+      next: (dadosCompletosDoOrcamento: DadosOrcamento) => {
+        this.isLoading = false;
+        if (dadosCompletosDoOrcamento) {
+          this.dadosNovoOrcamentoService.setOrcamento(dadosCompletosDoOrcamento);
+          this.router.navigate(['budget/pdf']);
+        } else {
+          console.error('Não foram encontrados dados completos para a proposta:', pedido.proposta);
+          alert('Detalhes do pedido não encontrados para gerar o PDF.');
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error(`Erro ao buscar dados completos da proposta ${pedido.proposta}:`, err);
+        alert('Erro ao buscar detalhes do pedido para o PDF.');
+      }
+    });
   }
 
 }

@@ -11,6 +11,10 @@
     </div>
     <app-table-info
         [columns]="columns"
-        [data]="pedidos">
+        [data]="pedidos"
+        [showViewAction]="true"   
+        [showEditAction]="false"  
+        [showDeleteAction]="false" 
+        (view)="onViewPedido($event)" >>
     </app-table-info>
 </div>
