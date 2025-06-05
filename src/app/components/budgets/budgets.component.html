@@ -15,6 +15,9 @@
         [columns]="columns"
         [data]="budgets"
         [isLoading]="isDeleting"
+        [showViewAction]="false"   
+        [showEditAction]="true"  
+        [showDeleteAction]="true" 
         (edit)="onEdit($event)"
         (delete)="onDelete($event)">
     </app-table-info>

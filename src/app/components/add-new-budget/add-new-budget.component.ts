@@ -17,39 +17,7 @@ import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcam
 import { DadosOrcamento } from '../../models/interfaces/dados-orcamento';
 import { SendOrcamentoPayloadService } from '../../services/database/send-orcamento-payload.service';
 import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
-
-interface NewBudget {
-  id: number;
-  proposalNumber: string;
-  enterprise: string;
-  type: string;
-  date: Date;
-  status: string;
-  totalValue: number;
-  acoes: string;
-}
-
-interface EnterpriseData {
-  address?: { 
-    cep: string | undefined;
-    endereco: string | undefined;
-    endereco_numero: number | string | undefined | null; 
-    bairro: string | undefined;
-    estado: string | undefined;
-    cidade: string | undefined;
-  };
-  email?: string | undefined;
-  phone?: string | undefined;
-  stateRegistration?: string | undefined;
-}
-
-interface Cliente {
-  nomeContato?: string | undefined;
-  emailContato?: string | undefined;
-  telefoneContato?: string | undefined;
-  prazoEntrega: string | undefined;
-  tipoFrete: string | undefined;
-}
+import { NewBudget, EnterpriseData, Cliente } from '../../models/interfaces/dados-orcamento';
 
 @Component({
   selector: 'app-add-new-budget',
@@ -58,9 +26,7 @@ interface Cliente {
     AddNewFormComponent, 
     LucideAngularModule, 
     ReactiveFormsModule,
-    ButtonComponent, 
-    ButtonFormComponent, 
-    TableInfoComponent, 
+    ButtonFormComponent,  
     DynamicItemsTableComponent,
   ],
   templateUrl: './add-new-budget.component.html',
@@ -165,9 +131,16 @@ export class AddNewBudgetComponent implements OnInit {
       this.isLoading = false; 
     }
 
-
     if (!this.isEditMode && this.form.get('cnpj')) {
       this.configureCnpjListenerForAppForm(formGroup);
+    }
+
+    const statusControl = this.form.get('status');
+    if (statusControl) {
+      statusControl.setValue('Pendente');
+      console.log('Status definido como Pendente para novo orçamento.');
+    } else {
+      console.warn("Controle 'status' não encontrado no formulário ao tentar definir valor padrão.");
     }
   }
 

@@ -98,3 +98,36 @@ export interface BudgetParaTabela {
   status: string;
   totalValue: number;
 }
+
+export interface NewBudget {
+  id: number;
+  proposalNumber: string;
+  enterprise: string;
+  type: string;
+  date: Date;
+  status: string;
+  totalValue: number;
+  acoes: string;
+}
+
+export interface EnterpriseData {
+  address?: { 
+    cep: string | undefined;
+    endereco: string | undefined;
+    endereco_numero: number | string | undefined | null; 
+    bairro: string | undefined;
+    estado: string | undefined;
+    cidade: string | undefined;
+  };
+  email?: string | undefined;
+  phone?: string | undefined;
+  stateRegistration?: string | undefined;
+}
+
+export interface Cliente {
+  nomeContato?: string | undefined;
+  emailContato?: string | undefined;
+  telefoneContato?: string | undefined;
+  prazoEntrega: string | undefined;
+  tipoFrete: string | undefined;
+}
