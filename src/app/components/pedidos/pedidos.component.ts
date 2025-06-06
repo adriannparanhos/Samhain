@@ -13,7 +13,7 @@ import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcam
 @Component({
   selector: 'app-pedidos',
   standalone: true,
-  imports: [CommonModule, TableInfoComponent, SearchComponent],
+  imports: [CommonModule, TableInfoComponent, SearchComponent, CommonModule],
   templateUrl: './pedidos.component.html',
   styleUrl: './pedidos.component.css'
 })
@@ -26,8 +26,12 @@ export class PedidosComponent implements OnInit {
   ) {}
 
   pedidos: BudgetParaTabela[] = [];
+  pagedPedidos: BudgetParaTabela[] = [];
   isDeleting: boolean = false;
   isLoading: boolean = false;
+  pageSize = 10;
+  currentPage = 1;
+  totalPages = 1;
 
   columns: TableColumn<BudgetParaTabela>[] = [
     { header: 'Número da Proposta', field: 'proposta' },
@@ -61,6 +65,7 @@ export class PedidosComponent implements OnInit {
           totalValue: e.grandTotal || 0
         }));
         this.isLoading = false;
+        this.setupPagination();
       },
       error: (err) => {
         console.error('Erro ao carregar pedidos aprovados:', err);
@@ -68,6 +73,23 @@ export class PedidosComponent implements OnInit {
       }
     });
 
+  }
+
+  private setupPagination() {
+    this.totalPages = Math.ceil(this.pedidos.length / this.pageSize);
+    this.currentPage = 1;
+    this.updatePaged();
+  }
+
+  private updatePaged() {
+    const start = (this.currentPage - 1) * this.pageSize;
+    this.pagedPedidos = this.pedidos.slice(start, start + this.pageSize);
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.updatePaged();
   }
 
   onEdit(budget: BudgetParaTabela) {
