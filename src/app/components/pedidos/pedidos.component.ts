@@ -2,36 +2,28 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableColumn, TableInfoComponent } from '../table-info/table-info.component';
 import { SearchComponent } from '../search/search.component';
-import { BudgetParaTabela } from '../../models/interfaces/dados-orcamento';
+import { BudgetParaTabela, ListarOrcamentosDTOBackend, DadosOrcamento } from '../../models/interfaces/dados-orcamento';
 import { Router } from '@angular/router';
 import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
-import { ListarOrcamentosDTOBackend } from '../../models/interfaces/dados-orcamento';
-import { DadosOrcamento } from '../../models/interfaces/dados-orcamento';
 import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcamento.service';
-
 
 @Component({
   selector: 'app-pedidos',
   standalone: true,
-  imports: [CommonModule, TableInfoComponent, SearchComponent, CommonModule],
+  imports: [CommonModule, TableInfoComponent, SearchComponent],
   templateUrl: './pedidos.component.html',
   styleUrl: './pedidos.component.css'
 })
 export class PedidosComponent implements OnInit {
 
-  constructor(
-    private router: Router, 
-    private fetchBudgetsService: FetchBudgetsService,
-    private dadosNovoOrcamentoService: DadosNovoOrcamentoService
-  ) {}
-
-  pedidos: BudgetParaTabela[] = [];
-  pagedPedidos: BudgetParaTabela[] = [];
-  isDeleting: boolean = false;
+  allPedidos: BudgetParaTabela[] = [];    
+  pagedPedidos: BudgetParaTabela[] = [];  
   isLoading: boolean = false;
-  pageSize = 10;
+
+  searchTerm: string = '';
   currentPage = 1;
-  totalPages = 1;
+  pageSize = 10;
+  totalFilteredItems = 0;
 
   columns: TableColumn<BudgetParaTabela>[] = [
     { header: 'Número da Proposta', field: 'proposta' },
@@ -49,47 +41,70 @@ export class PedidosComponent implements OnInit {
     }
   ];
 
+  constructor(
+    private fetchBudgetsService: FetchBudgetsService,
+    private dadosNovoOrcamentoService: DadosNovoOrcamentoService,
+    private router: Router
+  ) {}
+
   ngOnInit() {
-    this.loadPedidosAprovados();
+    this.loadAllPedidos();
   }
 
-  private loadPedidosAprovados() {
+  get totalPages(): number {
+    if (this.totalFilteredItems === 0) return 1; 
+    return Math.ceil(this.totalFilteredItems / this.pageSize);
+  }
+
+  private loadAllPedidos() {
     this.isLoading = true;
     this.fetchBudgetsService.getPedidosAprovados().subscribe({
       next: (data: ListarOrcamentosDTOBackend[]) => {
-        this.pedidos = data.map(e => ({
+        this.allPedidos = data.map(e => ({
           proposta: e.proposta || 'Proposta inválida',
           razaoSocial: e.razaoSocial || 'Razão Social não informada',
           date: e.data ? new Date(e.data) : null,
           status: e.status || 'Status não informado',
           totalValue: e.grandTotal || 0
         }));
+        this.updateView(); 
         this.isLoading = false;
-        this.setupPagination();
       },
       error: (err) => {
         console.error('Erro ao carregar pedidos aprovados:', err);
         this.isLoading = false;
       }
     });
-
   }
 
-  private setupPagination() {
-    this.totalPages = Math.ceil(this.pedidos.length / this.pageSize);
-    this.currentPage = 1;
-    this.updatePaged();
+  onSearchChange(term: string): void {
+    this.searchTerm = term;
+    this.currentPage = 1; 
+    this.updateView();
   }
 
-  private updatePaged() {
-    const start = (this.currentPage - 1) * this.pageSize;
-    this.pagedPedidos = this.pedidos.slice(start, start + this.pageSize);
-  }
-
-  goToPage(page: number) {
-    if (page < 1 || page > this.totalPages) return;
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) {
+      return;
+    }
     this.currentPage = page;
-    this.updatePaged();
+    this.updateView();
+  }
+
+  private updateView(): void {
+    let filtered = this.allPedidos;
+    if (this.searchTerm && this.searchTerm.trim() !== '') {
+      const lowerCaseSearchTerm = this.searchTerm.toLowerCase();
+      filtered = this.allPedidos.filter(pedido =>
+        pedido.proposta.toLowerCase().includes(lowerCaseSearchTerm) ||
+        pedido.razaoSocial.toLowerCase().includes(lowerCaseSearchTerm)
+      );
+    }
+
+    this.totalFilteredItems = filtered.length;
+
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    this.pagedPedidos = filtered.slice(startIndex, startIndex + this.pageSize);
   }
 
   onEdit(budget: BudgetParaTabela) {
@@ -124,5 +139,5 @@ export class PedidosComponent implements OnInit {
       }
     });
   }
-
+  
 }

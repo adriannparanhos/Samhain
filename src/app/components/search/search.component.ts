@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
@@ -22,6 +22,7 @@ import { LucideAngularModule } from 'lucide-angular';
                focus:ring-blue-500 focus:border-transparent"
             [placeholder]="placeholder"
             [(ngModel)]="searchTerm"
+            (input)="onSearchInput($event)"
             (ngModelChange)="handleSearch($event)"
           />
         </div>
@@ -32,9 +33,15 @@ import { LucideAngularModule } from 'lucide-angular';
 })
 export class SearchComponent {
   @Input() placeholder = 'Buscar '; 
+  @Output() searchChange = new EventEmitter<string>();
   searchTerm = '';
 
   handleSearch(term: string) {
     console.log('Busca:', term);
+  }
+
+  onSearchInput(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    this.searchChange.emit(inputElement.value);
   }
 }

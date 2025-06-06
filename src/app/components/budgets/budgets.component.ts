@@ -1,20 +1,12 @@
-import { Component, OnInit } from '@angular/core'; 
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
 import { SearchComponent } from '../search/search.component';
 import { TableColumn, TableInfoComponent } from '../table-info/table-info.component';
 import { Router } from '@angular/router';
 import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
-import { ListarOrcamentosDTOBackend } from '../../models/interfaces/dados-orcamento';
+import { ListarOrcamentosDTOBackend, BudgetParaTabela, DadosOrcamento } from '../../models/interfaces/dados-orcamento';
 import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcamento.service';
-import { CommonModule } from '@angular/common';
-
-interface BudgetParaTabela { 
-  proposta: string;
-  razaoSocial: string;
-  date: Date | null; 
-  status: string;
-  totalValue: number;
-}
 
 @Component({
   selector: 'app-budgets',
@@ -23,19 +15,18 @@ interface BudgetParaTabela {
   templateUrl: './budgets.component.html',
   styleUrl: './budgets.component.css'
 })
-export class BudgetsComponent implements OnInit { 
-  constructor(
-    private router: Router, 
-    private fetchBudgetsService: FetchBudgetsService, 
-    private dadosNovoOrcamentoService: DadosNovoOrcamentoService) {}
+export class BudgetsComponent implements OnInit {
 
-  budgets: BudgetParaTabela[] = [];
-  pagedBudgets: BudgetParaTabela[] = [];
-  isDeleting: boolean = false;
+  allBudgets: BudgetParaTabela[] = [];   
+  pagedBudgets: BudgetParaTabela[] = [];  
   isLoading: boolean = false;
-  pageSize = 10;
+
+  searchTerm: string = '';
   currentPage = 1;
-  totalPages = 1;
+  pageSize = 10;
+  totalFilteredItems = 0;
+
+  isDeleting: boolean = false; 
 
   columns: TableColumn<BudgetParaTabela>[] = [
     { header: 'Número da Proposta', field: 'proposta' },
@@ -46,53 +37,75 @@ export class BudgetsComponent implements OnInit {
       header: 'Valor Total',
       field: 'totalValue',
       type: 'currency',
-      currencyCode: 'BRL',         
-      currencyDisplay: 'symbol',   
-      currencyDigitsInfo: '1.2-2', 
-      currencyLocale: 'pt-BR'      
+      currencyCode: 'BRL',
+      currencyDisplay: 'symbol',
+      currencyDigitsInfo: '1.2-2',
+      currencyLocale: 'pt-BR'
     }
   ];
 
+  constructor(
+    private router: Router,
+    private fetchBudgetsService: FetchBudgetsService,
+    private dadosNovoOrcamentoService: DadosNovoOrcamentoService
+  ) {}
+
   ngOnInit() {
-    this.loadFilteredBudgets(); 
+    this.loadFilteredBudgets();
+  }
+
+  get totalPages(): number {
+    if (this.totalFilteredItems === 0) return 1;
+    return Math.ceil(this.totalFilteredItems / this.pageSize);
   }
 
   private loadFilteredBudgets() {
     this.isLoading = true;
     this.fetchBudgetsService.getOrcamentosPendentesEReprovados().subscribe({
-      next: (data: ListarOrcamentosDTOBackend[]) => { 
-        this.budgets = data.map(e => ({
+      next: (data: ListarOrcamentosDTOBackend[]) => {
+        this.allBudgets = data.map(e => ({
           proposta: e.proposta || 'Proposta inválida',
           razaoSocial: e.razaoSocial || 'Razão Social não informada',
-          date: e.data ? new Date(e.data) : null, 
+          date: e.data ? new Date(e.data) : null,
           status: e.status || 'Status não informado',
           totalValue: e.grandTotal || 0,
         }));
+        this.updateView(); 
         this.isLoading = false;
-        this.setupPagination();
       },
       error: (error) => {
-        console.error('Erro ao carregar orçamentos pendentes:', error);
+        console.error('Erro ao carregar orçamentos:', error);
         this.isLoading = false;
       }
     });
   }
 
-  private setupPagination() {
-    this.totalPages = Math.ceil(this.budgets.length / this.pageSize);
-    this.currentPage = 1;
-    this.updatePaged();
-  }
-
-  private updatePaged() {
-    const start = (this.currentPage - 1) * this.pageSize;
-    this.pagedBudgets = this.budgets.slice(start, start + this.pageSize);
+  onSearchChange(term: string): void {
+    this.searchTerm = term;
+    this.currentPage = 1; 
+    this.updateView();
   }
 
   goToPage(page: number) {
     if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
-    this.updatePaged();
+    this.updateView();
+  }
+
+  private updateView() {
+    let filtered = this.allBudgets;
+    if (this.searchTerm && this.searchTerm.trim() !== '') {
+      const lowerCaseSearchTerm = this.searchTerm.toLowerCase();
+      filtered = this.allBudgets.filter(budget =>
+        budget.proposta.toLowerCase().includes(lowerCaseSearchTerm) ||
+        budget.razaoSocial.toLowerCase().includes(lowerCaseSearchTerm)
+      );
+    }
+
+    this.totalFilteredItems = filtered.length;
+
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    this.pagedBudgets = filtered.slice(startIndex, startIndex + this.pageSize);
   }
 
   onEdit(budget: BudgetParaTabela) {
@@ -103,9 +116,11 @@ export class BudgetsComponent implements OnInit {
   onDelete(budget: BudgetParaTabela) {
     if (!confirm(`Excluir ${budget.proposta}?`)) return;
     this.isDeleting = true;
+    
     setTimeout(() => {
-      this.budgets = this.budgets.filter(b => b.proposta !== budget.proposta);
-      this.isDeleting = false;
+        this.allBudgets = this.allBudgets.filter(b => b.proposta !== budget.proposta);
+        this.updateView(); 
+        this.isDeleting = false;
     }, 500);
   }
 

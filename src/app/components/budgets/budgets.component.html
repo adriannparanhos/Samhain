@@ -9,7 +9,8 @@
         </div>
     </div>
     <div class="mt-5">
-        <app-search placeholder="Buscar orçamento..."></app-search>
+        <app-search placeholder="Buscar por proposta ou razão social..."
+        (searchChange)="onSearchChange($event)"></app-search>
     </div>
     <app-table-info
         [columns]="columns"
