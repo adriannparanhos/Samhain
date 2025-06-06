@@ -317,6 +317,8 @@ export class AddNewBudgetComponent implements OnInit {
 
     };
 
+    const statusFinal = orcamentoPayload.status; 
+
     console.log('Payload ANTES do Interceptor:', orcamentoPayload);
 
     this.sendOrcamentoPayloadService.sendPayload(orcamentoPayload)
@@ -324,16 +326,20 @@ export class AddNewBudgetComponent implements OnInit {
         next: (orcamentoRetornadoPeloBackend: DadosOrcamento) => {
           console.log('Orçamento salvo com sucesso!', orcamentoRetornadoPeloBackend);
 
-          this.dadosNovoOrcamentoService.setOrcamento(orcamentoRetornadoPeloBackend); 
-          this.router.navigate(['budget/pdf']);
+          if (this.isEditMode && statusFinal === 'Reprovado') {
+            console.log('Status é Reprovado. Redirecionando para a lista de orçamentos.');
+            this.router.navigate(['/budgets']);
+          } else {
+            console.log('Redirecionando para a página do PDF.');
+            this.dadosNovoOrcamentoService.setOrcamento(orcamentoRetornadoPeloBackend);
+            this.router.navigate(['budget/pdf']);
+          }
         },
         error: (error) => {
           console.error('Erro ao salvar orçamento:', error);
           alert('Erro ao salvar orçamento. Verifique o console para detalhes.');
         }
       });
-    this.dadosNovoOrcamentoService.setOrcamento(orcamentoPayload);
-
   }
 
 }

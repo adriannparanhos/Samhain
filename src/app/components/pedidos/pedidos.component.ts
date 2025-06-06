@@ -70,6 +70,11 @@ export class PedidosComponent implements OnInit {
 
   }
 
+  onEdit(budget: BudgetParaTabela) {
+    console.log('editar', budget);
+    this.router.navigate(['budgets/edit', budget.proposta]);
+  }
+
   onViewPedido(pedido: BudgetParaTabela): void {
     console.log('Visualizar Pedido (resumo):', pedido);
     if (!pedido || !pedido.proposta) {

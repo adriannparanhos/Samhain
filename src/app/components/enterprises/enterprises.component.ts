@@ -4,6 +4,7 @@ import { SearchComponent } from '../search/search.component';
 import { TableColumn, TableInfoComponent } from '../table-info/table-info.component';
 import { Router } from '@angular/router';
 import { FetchEnterpriseService } from '../../services/fetchs/fetch-enterprise.service';
+import { CommonModule } from '@angular/common';
 
 interface Enterprise {
   id: number;
@@ -15,7 +16,7 @@ interface Enterprise {
 @Component({
   selector: 'app-enterprises',
   standalone: true,
-  imports: [ButtonComponent, SearchComponent, TableInfoComponent],
+  imports: [ButtonComponent, SearchComponent, TableInfoComponent, CommonModule],
   templateUrl: './enterprises.component.html',
   styleUrls: ['./enterprises.component.css']
 })

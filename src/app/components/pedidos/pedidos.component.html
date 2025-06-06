@@ -13,8 +13,9 @@
         [columns]="columns"
         [data]="pedidos"
         [showViewAction]="true"   
-        [showEditAction]="false"  
+        [showEditAction]="true"  
         [showDeleteAction]="false" 
-        (view)="onViewPedido($event)" >>
+        (view)="onViewPedido($event)" 
+        (edit)="onEdit($event)">>
     </app-table-info>
 </div>

@@ -5,8 +5,8 @@ import { TableColumn, TableInfoComponent } from '../table-info/table-info.compon
 import { Router } from '@angular/router';
 import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
 import { ListarOrcamentosDTOBackend } from '../../models/interfaces/dados-orcamento';
-import { DadosOrcamento } from '../../models/interfaces/dados-orcamento';
 import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcamento.service';
+import { CommonModule } from '@angular/common';
 
 interface BudgetParaTabela { 
   proposta: string;
@@ -19,7 +19,7 @@ interface BudgetParaTabela {
 @Component({
   selector: 'app-budgets',
   standalone: true,
-  imports: [ButtonComponent, SearchComponent, TableInfoComponent],
+  imports: [ButtonComponent, SearchComponent, TableInfoComponent, CommonModule],
   templateUrl: './budgets.component.html',
   styleUrl: './budgets.component.css'
 })
@@ -30,8 +30,12 @@ export class BudgetsComponent implements OnInit {
     private dadosNovoOrcamentoService: DadosNovoOrcamentoService) {}
 
   budgets: BudgetParaTabela[] = [];
+  pagedBudgets: BudgetParaTabela[] = [];
   isDeleting: boolean = false;
   isLoading: boolean = false;
+  pageSize = 10;
+  currentPage = 1;
+  totalPages = 1;
 
   columns: TableColumn<BudgetParaTabela>[] = [
     { header: 'Número da Proposta', field: 'proposta' },
@@ -55,7 +59,7 @@ export class BudgetsComponent implements OnInit {
 
   private loadFilteredBudgets() {
     this.isLoading = true;
-    this.fetchBudgetsService.getOrcamentosPendentes().subscribe({
+    this.fetchBudgetsService.getOrcamentosPendentesEReprovados().subscribe({
       next: (data: ListarOrcamentosDTOBackend[]) => { 
         this.budgets = data.map(e => ({
           proposta: e.proposta || 'Proposta inválida',
@@ -65,12 +69,30 @@ export class BudgetsComponent implements OnInit {
           totalValue: e.grandTotal || 0,
         }));
         this.isLoading = false;
+        this.setupPagination();
       },
       error: (error) => {
         console.error('Erro ao carregar orçamentos pendentes:', error);
         this.isLoading = false;
       }
     });
+  }
+
+  private setupPagination() {
+    this.totalPages = Math.ceil(this.budgets.length / this.pageSize);
+    this.currentPage = 1;
+    this.updatePaged();
+  }
+
+  private updatePaged() {
+    const start = (this.currentPage - 1) * this.pageSize;
+    this.pagedBudgets = this.budgets.slice(start, start + this.pageSize);
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.updatePaged();
   }
 
   onEdit(budget: BudgetParaTabela) {
