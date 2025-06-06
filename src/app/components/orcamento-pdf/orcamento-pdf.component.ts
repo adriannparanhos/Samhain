@@ -202,12 +202,28 @@ export class OrcamentoPdfComponent implements OnInit {
     return item.quantidade; 
   }
 
-   getDescricaoPrincipalParaItem(item: ItemOrcamentoPayload): string {
+  getDescricaoPrincipalParaItem(item: ItemOrcamentoPayload): string {
     if (item.produto === 'Revestimento' && (item.quantidadeConjuntos ?? 1) > 1) {
       return `Conjunto de ${item.modelo || ''} ${item.quantidade} m²`;
     }
+
+    if (item.produto === 'Peça Usinada' && item.modelo) {
+      const dimensionsString = `x ${item.largura || 0} x ${item.comprimento || 0}`;
+     
+      const anchor = 'DURAMAXX';
+
+      if (item.modelo.includes(anchor)) {
+        return item.modelo.replace(anchor, `${dimensionsString} ${anchor}`);
+
+      } else {
+        return `${item.modelo} - ${item.largura || 0} x ${item.comprimento || 0} mm`;
+        
+      }
+    }
+
     return item.modelo || '';
   }
+
 
   getDescricaoDetalhadaParaPdf(item: ItemOrcamentoPayload): string | undefined {
     return item.descricaoDetalhada || undefined;
