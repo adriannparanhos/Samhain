@@ -45,4 +45,9 @@ export class FetchBudgetsService {
     return this.getFilteredBudgets(['Pendente', 'Reprovado'], 'dataEmissao', 'desc', 'proposta', 'desc');
   }
 
+  deleteBudget(proposta: string): Observable<void> {
+    const url = `${this.apiUrlOrcamentos}/delete`;
+    return this.http.delete<void>(url, { params: { proposta } });
+  }
+
 }

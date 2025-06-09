@@ -21,7 +21,8 @@
             </div>
         </section>
 
-        <app-dynamic-items-table class="w-full max-w-7xl"></app-dynamic-items-table>
+        <app-dynamic-items-table class="w-full max-w-7xl"  [estadoDoCliente]="empresaSelecionada?.address?.estado"
+        ></app-dynamic-items-table>
 
         <div class="w-full max-w-7xl flex justify-end">
           <app-button-form (click)="onSave()"></app-button-form>

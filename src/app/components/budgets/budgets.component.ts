@@ -117,11 +117,16 @@ export class BudgetsComponent implements OnInit {
     if (!confirm(`Excluir ${budget.proposta}?`)) return;
     this.isDeleting = true;
     
-    setTimeout(() => {
-        this.allBudgets = this.allBudgets.filter(b => b.proposta !== budget.proposta);
-        this.updateView(); 
+    this.fetchBudgetsService.deleteBudget(budget.proposta).subscribe({
+      next: () => {
         this.isDeleting = false;
-    }, 500);
+        this.loadFilteredBudgets(); 
+      },
+      error: (error: any) => {
+        console.error('Erro ao excluir orçamento:', error);
+        this.isDeleting = false;
+      } 
+    });
   }
 
   openAddBudget() {

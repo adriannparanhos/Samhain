@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -25,6 +25,7 @@ import { ItemOrcamentoPayload as BackendItemOrcamentoPayload } from '../../model
   templateUrl: './dynamic-items-table.component.html',
 })
 export class DynamicItemsTableComponent implements OnInit, OnDestroy {
+  @Input() estadoDoCliente: string | null | undefined = null; // <<< 1. ADICIONE ESTE INPUT
   private subscription: Subscription = new Subscription();
   taxInformation: string = '1- Impostos incluídos: Selecione um estado para visualizar.';
 
@@ -312,6 +313,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
       tampao: item.adicionarTampao || false,
       projeto: item.adicionarProjeto || false,
       quantidadeConjuntos: item.quantidadeConjuntos || 1,
+      estado: this.estadoDoCliente || 'SP', // Use o estado do cliente se disponível
     };
   }
 

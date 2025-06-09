@@ -217,7 +217,7 @@ export class OrcamentoPdfComponent implements OnInit {
 
       } else {
         return `${item.modelo} - ${item.largura || 0} x ${item.comprimento || 0} mm`;
-        
+
       }
     }
 
@@ -285,7 +285,7 @@ export class OrcamentoPdfComponent implements OnInit {
     RO: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
     RR: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
     SE: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
-    TO: { ICMS: '10%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
+    TO: { ICMS: '7%', PIS: '0,65%', COFINS: '3%', CSLL: '1,10%', IRPJ: '1,20%' },
   };
 
   returnPage() {
