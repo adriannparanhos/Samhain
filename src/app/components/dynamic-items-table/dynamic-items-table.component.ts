@@ -282,7 +282,12 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
 
     this.calculateValueStandartService.postCalculateValueStandart(payload).subscribe({
       next: (response) => {
-        console.log('Frontend: Recebido do cálculo no backend:', response); 
+        console.log('Frontend: Recebido do cálculo no backend:', response);
+
+        // ATUALIZAÇÃO: Salve os valores originais aqui
+        item.valorUnitarioOriginal = response.valorUnitario || 0;
+        item.totalOriginal = response.total || 0;
+        item.totalCIPIOriginal = response.totalCIPI || 0;
 
         item.valorUnitario = response.valorUnitario || 0;
         item.valorUnitarioCIPI = response.valorUnitarioCIPI || 0;
@@ -313,7 +318,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
       tampao: item.adicionarTampao || false,
       projeto: item.adicionarProjeto || false,
       quantidadeConjuntos: item.quantidadeConjuntos || 1,
-      estado: this.estadoDoCliente || 'SP', // Use o estado do cliente se disponível
+      estado: this.estadoDoCliente || 'SP', 
     };
   }
 
@@ -332,14 +337,47 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
   }
 
   public updateTotals(): void {
+    this.distribuirCustosAdicionais();
+
+    let grandTotal = this.subtotalCIPI;
+
+    if (this.descontoGlobal > 0 && this.descontoGlobal <= 100) {
+      grandTotal *= (1 - (this.descontoGlobal / 100));
+    }
+
+    this.grandTotal = grandTotal;
+  }
+
+  private distribuirCustosAdicionais(): void {
+    this.items.forEach(item => {
+      item.valorUnitario = item.valorUnitarioOriginal ?? item.valorUnitario;
+      item.total = item.totalOriginal ?? item.total;
+      item.totalCIPI = item.totalCIPIOriginal ?? item.totalCIPI;
+    });
+    
+    const custoTotalAdicional = (this.valorFrete || 0) + (this.valorDifal || 0);
+    const quantidadeTotal = this.items.reduce((acc, item) => acc + (item.quantidade || 0), 0);
+
+    if (custoTotalAdicional > 0 && quantidadeTotal > 0) {
+      const custoPorUnidade = custoTotalAdicional / quantidadeTotal;
+
+      this.items.forEach(item => {
+        if (item.quantidade > 0) {
+          item.valorUnitario += custoPorUnidade;
+
+          const ipiMultiplier = item.ipi || 1;
+          const discountMultiplier = 1 - ((item.desconto || 0) / 100);
+
+          item.total = item.valorUnitario * item.quantidade * discountMultiplier;
+          
+          item.valorUnitarioCIPI = item.valorUnitario * ipiMultiplier;
+          item.totalCIPI = item.valorUnitarioCIPI * item.quantidade * discountMultiplier;
+        }
+      });
+    }
+
     this.subtotal = this.items.reduce((total, item) => total + (item.total || 0), 0);
     this.subtotalCIPI = this.items.reduce((totalCIPI, item) => totalCIPI + (item.totalCIPI || 0), 0);
-    let grandTotal = this.subtotalCIPI;
-    if (this.descontoGlobal > 0) {
-      grandTotal = grandTotal * (1 - (this.descontoGlobal / 100));
-    }
-    grandTotal += this.valorFrete + this.valorDifal;
-    this.grandTotal = grandTotal;
   }
 
   private updateGlobalValues(): void {

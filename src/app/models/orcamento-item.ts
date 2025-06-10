@@ -50,4 +50,16 @@ export interface OrcamentoItemNaTabela {
 
   quantidadeConjuntos?: number; 
 
+  valorUnitarioOriginal?: number;
+  totalOriginal?: number;
+  totalCIPIOriginal?: number;
+
+}
+
+// Interface para o payload do novo endpoint
+export interface RecalcularOrcamentoPayload {
+  itens: OrcamentoItemNaTabela[]; // A lista de itens atual
+  valorDoFrete?: number;
+  difal?: number;
+  descontoGlobal?: number;
 }
