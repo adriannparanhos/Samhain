@@ -338,6 +338,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
 
   public updateTotals(): void {
     this.distribuirCustosAdicionais();
+    this.aplicarAjustesGlobaisNosItens();
 
     let grandTotal = this.subtotalCIPI;
 
@@ -346,6 +347,48 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     }
 
     this.grandTotal = grandTotal;
+  }
+
+  private aplicarAjustesGlobaisNosItens(): void {
+    this.items.forEach(item => {
+      item.valorUnitario = item.valorUnitarioOriginal ?? item.valorUnitario;
+      item.total = item.totalOriginal ?? item.total;
+      item.totalCIPI = item.totalCIPIOriginal ?? item.totalCIPI;
+    });
+    
+    const custoTotalAdicional = (this.valorFrete || 0) + (this.valorDifal || 0);
+    const quantidadeTotal = this.items.reduce((acc, item) => acc + (item.quantidade || 0), 0);
+    const descontoGlobalMultiplier = (this.descontoGlobal > 0 && this.descontoGlobal <= 100) 
+        ? (1 - (this.descontoGlobal / 100)) 
+        : 1;
+
+    let custoPorUnidade = 0;
+    if (custoTotalAdicional > 0 && quantidadeTotal > 0) {
+      custoPorUnidade = custoTotalAdicional / quantidadeTotal;
+    }
+
+    this.items.forEach(item => {
+      if (item.quantidade > 0 && item.valorUnitarioOriginal != null) {
+        
+        let valorUnitarioAjustado = item.valorUnitarioOriginal;
+
+        valorUnitarioAjustado *= descontoGlobalMultiplier;
+
+        valorUnitarioAjustado += custoPorUnidade;
+
+        item.valorUnitario = valorUnitarioAjustado;
+
+        const ipiMultiplier = item.ipi || 1;
+        const itemDiscountMultiplier = 1 - ((item.desconto || 0) / 100);
+
+        item.total = item.valorUnitario * item.quantidade * itemDiscountMultiplier;
+        item.valorUnitarioCIPI = item.valorUnitario * ipiMultiplier;
+        item.totalCIPI = item.valorUnitarioCIPI * item.quantidade * itemDiscountMultiplier;
+      }
+    });
+
+    this.subtotal = this.items.reduce((total, item) => total + (item.total || 0), 0);
+    this.subtotalCIPI = this.items.reduce((totalCIPI, item) => totalCIPI + (item.totalCIPI || 0), 0);
   }
 
   private distribuirCustosAdicionais(): void {
