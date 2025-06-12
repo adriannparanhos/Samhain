@@ -27,6 +27,7 @@ import { ItemOrcamentoPayload as BackendItemOrcamentoPayload } from '../../model
 export class DynamicItemsTableComponent implements OnInit, OnDestroy {
   @Input() estadoDoCliente: string | null | undefined = null; // <<< 1. ADICIONE ESTE INPUT
   private subscription: Subscription = new Subscription();
+  private productsSubscription: Subscription | undefined;
   taxInformation: string = '1- Impostos incluídos: Selecione um estado para visualizar.';
 
   produtos: string[] = [];
@@ -59,13 +60,23 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
       difal: [0, [Validators.min(0)]],
     });
 
-    this.form.valueChanges.subscribe(() => this.updateGlobalValues());
-    this.addItem();
-    this.getAllProducts();
+    this.productsSubscription = this.fetchProductsService.groupedProducts$.subscribe(groupedData => {
+      console.log('Componente recebeu dados agrupados e ordenados!', groupedData);
+      
+      this.groupedItems = groupedData;
+      this.produtos = Object.keys(groupedData);
+      
+      // Cria o mapa de modelos a partir dos dados já agrupados
+      this.modelosMap = this.produtos.reduce((acc, family) => {
+        acc[family] = this.groupedItems[family].map(item => item.modelo);
+        return acc;
+      }, {} as Record<string, string[]>);
+    });
 
+    // O polling agora chama o método de atualização do serviço
     this.pollingInterval = setInterval(() => {
-      console.log('Verificando por novos produtos...');
-      this.getAllProducts();
+      console.log('Solicitando atualização de produtos...');
+      this.fetchProductsService.refreshProducts();
     }, 30000);
   }
 
@@ -142,75 +153,6 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
       }
     }
     this.onFieldChange(item);
-  }
-
-  private processAndGroupProducts(data: OrcamentoItemNaTabela[]): void {
-    const normalizedData = data.map(item => {
-      if (item.produto?.toLowerCase() === 'peça usinada') {
-        item.produto = 'Peça Usinada';
-      }
-      return item;
-    });
-
-    const filteredItems = normalizedData.map(item => {
-        let produto = item.produto || 'Outros';
-        if (item.modelo.includes('HASTE')) {
-          produto = 'Extratores';
-        } else if (item.modelo.includes('PATOLÃO')) {
-          produto = 'Patolão';
-        }
-        return {
-          produto: produto,
-          modelo: item.modelo,
-          quantidade: 1,
-          valorUnitario: item.valorUnitario || 0,
-          valorUnitarioCIPI: item.valorUnitarioCIPI || 0,
-          desconto: 0,
-          categoria: item.categoria || '',
-          espessura: item.espessura || 0,
-          peso: item.peso || 0,
-          ipi: item.ipi || 1,
-          ncm: item.ncm || '',
-          clienteForneceuDesenho: item.clienteForneceuDesenho || false,
-          adicionarProjeto: item.adicionarProjeto || false,
-          adicionarArruela: item.adicionarArruela || false,
-          adicionarTampao: item.adicionarTampao || false,
-          isPanelVisible: item.isPanelVisible || false
-        };
-      });
-
-    this.groupedItems = filteredItems.reduce((acc, item) => {
-      const family = item.produto || 'Outros';
-      if (!acc[family]) {
-        acc[family] = [];
-      }
-      acc[family].push(item);
-      return acc;
-    }, {} as Record<string, OrcamentoItemNaTabela[]>);
-
-    const chapas = this.groupedItems['Chapas semiacabadas'] || [];
-    if (chapas.length > 0) {
-        const chapas1220 = chapas.filter(i => i.modelo.includes('1220 x 3050'));
-        const chapas1000 = chapas.filter(i => i.modelo.includes('1000 x 3000'));
-        this.groupedItems['Chapas semiacabadas'] = [...chapas1220, ...chapas1000];
-    }
-
-    this.produtos = Object.keys(this.groupedItems);
-    this.modelosMap = this.produtos.reduce((acc, family) => {
-      acc[family] = this.groupedItems[family].map(item => item.modelo);
-      return acc;
-    }, {} as Record<string, string[]>);
-
-    this.valoresPadrao = filteredItems.reduce((acc, item) => {
-      acc[item.modelo] = item.valorUnitario || 0;
-      return acc;
-    }, {} as Record<string, number>);
-  }
-
-  getAllProducts() {
-    this.fetchProductsService.getProducts().subscribe((data: OrcamentoItemNaTabela[]) => {
-      this.processAndGroupProducts(data);
-    });
   }
 
   addItem(): void {
