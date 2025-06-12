@@ -45,7 +45,7 @@ export class EnterprisesComponent implements OnInit {
   }
 
   private loadEnterprises() {
-    this.fetchEnterpriseService.getEnterprises().subscribe(
+    this.fetchEnterpriseService.enterprises$.subscribe(
       data => {
         this.enterprises = data.map(e => ({
           id: +e.cnpj.replace(/\D/g,''),  

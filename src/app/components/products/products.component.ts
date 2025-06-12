@@ -3,15 +3,7 @@ import { ButtonComponent } from "../button/button.component";
 import { SearchComponent } from "../search/search.component";
 import { TableColumn, TableInfoComponent } from '../table-info/table-info.component';
 import { Router } from '@angular/router';
-
-interface Product {
-  id: number;
-  name: string;
-  type: string;
-  unitValue: number;
-  ncm: string;
-  ipi: number;
-}
+import { Product } from '../../models/interfaces/produtos';
 
 @Component({
   selector: 'app-products',

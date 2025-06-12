@@ -56,9 +56,8 @@ export interface OrcamentoItemNaTabela {
 
 }
 
-// Interface para o payload do novo endpoint
 export interface RecalcularOrcamentoPayload {
-  itens: OrcamentoItemNaTabela[]; // A lista de itens atual
+  itens: OrcamentoItemNaTabela[]; 
   valorDoFrete?: number;
   difal?: number;
   descontoGlobal?: number;
