@@ -43,6 +43,8 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
   formValidated: boolean = false;
   formErrors: string[] = [];
   groupedItems: Record<string, OrcamentoItemNaTabela[]> = {};
+  private pollingInterval: any;
+
 
   constructor(
     private fb: FormBuilder,
@@ -60,10 +62,18 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     this.form.valueChanges.subscribe(() => this.updateGlobalValues());
     this.addItem();
     this.getAllProducts();
+
+    this.pollingInterval = setInterval(() => {
+      console.log('Verificando por novos produtos...');
+      this.getAllProducts();
+    }, 30000);
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+    }
   }
 
   public setLoadedData(data: { items: BackendItemOrcamentoPayload[], descontoGlobal?: number, valorFrete?: number, valorDifal?: number }): void {
@@ -134,9 +144,15 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     this.onFieldChange(item);
   }
 
-  getAllProducts() {
-    this.fetchProductsService.getProducts().subscribe((data: OrcamentoItemNaTabela[]) => {
-      const filteredItems = data.map(item => {
+  private processAndGroupProducts(data: OrcamentoItemNaTabela[]): void {
+    const normalizedData = data.map(item => {
+      if (item.produto?.toLowerCase() === 'peça usinada') {
+        item.produto = 'Peça Usinada';
+      }
+      return item;
+    });
+
+    const filteredItems = normalizedData.map(item => {
         let produto = item.produto || 'Outros';
         if (item.modelo.includes('HASTE')) {
           produto = 'Extratores';
@@ -163,30 +179,37 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
         };
       });
 
-      this.groupedItems = filteredItems.reduce((acc, item) => {
-        const family = item.produto || 'Outros';
-        if (!acc[family]) {
-          acc[family] = [];
-        }
-        acc[family].push(item);
-        return acc;
-      }, {} as Record<string, OrcamentoItemNaTabela[]>);
+    this.groupedItems = filteredItems.reduce((acc, item) => {
+      const family = item.produto || 'Outros';
+      if (!acc[family]) {
+        acc[family] = [];
+      }
+      acc[family].push(item);
+      return acc;
+    }, {} as Record<string, OrcamentoItemNaTabela[]>);
 
-      const chapas = this.groupedItems['Chapas semiacabadas'] || [];
-      const chapas1220 = chapas.filter(i => i.modelo.includes('1220 x 3050'));
-      const chapas1000 = chapas.filter(i => i.modelo.includes('1000 x 3000'));
-      this.groupedItems['Chapas semiacabadas'] = [...chapas1220, ...chapas1000];
+    const chapas = this.groupedItems['Chapas semiacabadas'] || [];
+    if (chapas.length > 0) {
+        const chapas1220 = chapas.filter(i => i.modelo.includes('1220 x 3050'));
+        const chapas1000 = chapas.filter(i => i.modelo.includes('1000 x 3000'));
+        this.groupedItems['Chapas semiacabadas'] = [...chapas1220, ...chapas1000];
+    }
 
-      this.produtos = Object.keys(this.groupedItems);
-      this.modelosMap = this.produtos.reduce((acc, family) => {
-        acc[family] = this.groupedItems[family].map(item => item.modelo);
-        return acc;
-      }, {} as Record<string, string[]>);
+    this.produtos = Object.keys(this.groupedItems);
+    this.modelosMap = this.produtos.reduce((acc, family) => {
+      acc[family] = this.groupedItems[family].map(item => item.modelo);
+      return acc;
+    }, {} as Record<string, string[]>);
 
-      this.valoresPadrao = filteredItems.reduce((acc, item) => {
-        acc[item.modelo] = item.valorUnitario || 0;
-        return acc;
-      }, {} as Record<string, number>);
+    this.valoresPadrao = filteredItems.reduce((acc, item) => {
+      acc[item.modelo] = item.valorUnitario || 0;
+      return acc;
+    }, {} as Record<string, number>);
+  }
+
+  getAllProducts() {
+    this.fetchProductsService.getProducts().subscribe((data: OrcamentoItemNaTabela[]) => {
+      this.processAndGroupProducts(data);
     });
   }
 
@@ -226,11 +249,11 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     item.totalCIPI = 0;
     item.pesoTotal = 0;
 
-    if (item.produto === 'Peça usinada') {
-      item.produto = 'Chapas semiacabadas';
-    }
+    // if (item.produto === 'Peça usinada') {
+    //   item.produto = 'Chapas semiacabadas';
+    // }
 
-    if (item.produto !== 'Peça usinada') {
+    if (item.produto !== 'Peça Usinada') {
       item.largura = undefined;
       item.comprimento = undefined;
     }
@@ -323,9 +346,9 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
   }
 
   getModelosForProduto(produto: string): string[] {
-    if (produto === 'Peça usinada') {
-      return this.modelosMap['Chapas semiacabadas'] || [];
-    }
+    // if (produto === 'Peça usinada') {
+    //   return this.modelosMap['Chapas semiacabadas'] || [];
+    // }
     return this.modelosMap[produto] || [];
   }
 
