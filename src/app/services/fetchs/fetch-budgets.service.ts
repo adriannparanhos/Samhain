@@ -22,27 +22,43 @@ export class FetchBudgetsService {
   }
 
   // ---------------------------------------------------------------------------------------------------------
-  getFilteredBudgets(status: string[], sortField: string = 'dataEmissao', sortDirection: string = 'desc', secondarySortField: string = 'proposta', secondarySortDirection: string = 'desc'): Observable<ListarOrcamentosDTOBackend[]> {
+  // MUDANÇA 1: Ajustamos o método para aceitar um array de critérios de ordenação
+  getFilteredBudgets(
+    status: string[],
+    sortCriteria: { field: string, direction: string }[] = [] // Aceita um array de objetos de sort
+  ): Observable<ListarOrcamentosDTOBackend[]> {
+
     let params = new HttpParams();
     status.forEach(s => {
       params = params.append('status', s);
     });
-    params = params.append('sort', `${sortField},${sortDirection}`);
-    params = params.append('sort', `${secondarySortField},${secondarySortDirection}`); 
+
+    // Adiciona cada critério de ordenação como um parâmetro 'sort' separado
+    sortCriteria.forEach(criteria => {
+      params = params.append('sort', `${criteria.field},${criteria.direction}`);
+    });
 
     return this.http.get<ListarOrcamentosDTOBackend[]>(`${this.apiUrlOrcamentos}/listar`, { params });
   }
 
+  private getDefaultSortCriteria() {
+    return [
+      { field: 'anoProposta', direction: 'desc' },
+      { field: 'mesProposta', direction: 'desc' },
+      { field: 'incrementalProposta', direction: 'desc' }
+    ];
+  }
+
   getPedidosAprovados(): Observable<ListarOrcamentosDTOBackend[]> {
-    return this.getFilteredBudgets(['Aprovado'], 'dataEmissao', 'desc', 'proposta', 'desc');
+    return this.getFilteredBudgets(['Aprovado'], this.getDefaultSortCriteria());
   }
 
   getOrcamentosPendentes(): Observable<ListarOrcamentosDTOBackend[]> {
-    return this.getFilteredBudgets(['Pendente'], 'dataEmissao', 'desc', 'proposta', 'desc');
+    return this.getFilteredBudgets(['Pendente'], this.getDefaultSortCriteria());
   }
 
   getOrcamentosPendentesEReprovados(): Observable<ListarOrcamentosDTOBackend[]> {
-    return this.getFilteredBudgets(['Pendente', 'Reprovado'], 'dataEmissao', 'desc', 'proposta', 'desc');
+    return this.getFilteredBudgets(['Pendente', 'Reprovado'], this.getDefaultSortCriteria());
   }
 
   deleteBudget(proposta: string): Observable<void> {
