@@ -4,7 +4,7 @@ import { ButtonComponent } from '../button/button.component';
 import { SearchComponent } from '../search/search.component';
 import { TableColumn, TableInfoComponent } from '../table-info/table-info.component';
 import { Router } from '@angular/router';
-import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
+import { FetchBudgetsService, Page } from '../../services/fetchs/fetch-budgets.service'; // Importa Page
 import { ListarOrcamentosDTOBackend, BudgetParaTabela, DadosOrcamento } from '../../models/interfaces/dados-orcamento';
 import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcamento.service';
 
@@ -17,16 +17,16 @@ import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcam
 })
 export class BudgetsComponent implements OnInit {
 
-  allBudgets: BudgetParaTabela[] = [];   
-  pagedBudgets: BudgetParaTabela[] = [];  
+  pagedBudgets: BudgetParaTabela[] = [];
   isLoading: boolean = false;
 
   searchTerm: string = '';
-  currentPage = 1;
+  currentPage = 0; 
   pageSize = 10;
-  totalFilteredItems = 0;
+  totalElements = 0;
+  totalPages = 0;
 
-  isDeleting: boolean = false; 
+  isDeleting: boolean = false;
 
   columns: TableColumn<BudgetParaTabela>[] = [
     { header: 'Número da Proposta', field: 'proposta' },
@@ -48,84 +48,65 @@ export class BudgetsComponent implements OnInit {
     private router: Router,
     private fetchBudgetsService: FetchBudgetsService,
     private dadosNovoOrcamentoService: DadosNovoOrcamentoService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadFilteredBudgets();
   }
 
-  get totalPages(): number {
-    if (this.totalFilteredItems === 0) return 1;
-    return Math.ceil(this.totalFilteredItems / this.pageSize);
-  }
-
-  private loadFilteredBudgets() {
+  loadFilteredBudgets(): void {
     this.isLoading = true;
-    this.fetchBudgetsService.getOrcamentosPendentesEReprovados().subscribe({
-      next: (data: ListarOrcamentosDTOBackend[]) => {
-        this.allBudgets = data.map(e => ({
-          proposta: e.proposta || 'Proposta inválida',
-          razaoSocial: e.razaoSocial || 'Razão Social não informada',
-          date: e.data ? new Date(e.data) : null,
-          status: e.status || 'Status não informado',
-          totalValue: e.grandTotal || 0,
-        }));
-        this.updateView(); 
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Erro ao carregar orçamentos:', error);
-        this.isLoading = false;
-      }
-    });
+    this.fetchBudgetsService.getOrcamentosPendentesEReprovadoss(this.currentPage, this.pageSize, this.searchTerm)
+      .subscribe({
+        next: (page: Page<ListarOrcamentosDTOBackend>) => {
+          this.pagedBudgets = page.content.map(e => ({
+            proposta: e.proposta || 'Proposta inválida',
+            razaoSocial: e.razaoSocial || 'Razão Social não informada',
+            date: e.data ? new Date(e.data) : null,
+            status: e.status || 'Status não informado',
+            totalValue: e.grandTotal || 0,
+          }));
+
+          this.totalElements = page.totalElements;
+          this.totalPages = page.totalPages;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Erro ao carregar orçamentos:', error);
+          this.isLoading = false;
+        }
+      });
   }
 
   onSearchChange(term: string): void {
     this.searchTerm = term;
-    this.currentPage = 1; 
-    this.updateView();
+    this.currentPage = 0;
+    this.loadFilteredBudgets();
   }
 
-  goToPage(page: number) {
-    if (page < 1 || page > this.totalPages) return;
+  goToPage(page: number): void {
+    if (page < 0 || page >= this.totalPages) return;
     this.currentPage = page;
-    this.updateView();
-  }
-
-  private updateView() {
-    let filtered = this.allBudgets;
-    if (this.searchTerm && this.searchTerm.trim() !== '') {
-      const lowerCaseSearchTerm = this.searchTerm.toLowerCase();
-      filtered = this.allBudgets.filter(budget =>
-        budget.proposta.toLowerCase().includes(lowerCaseSearchTerm) ||
-        budget.razaoSocial.toLowerCase().includes(lowerCaseSearchTerm)
-      );
-    }
-
-    this.totalFilteredItems = filtered.length;
-
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    this.pagedBudgets = filtered.slice(startIndex, startIndex + this.pageSize);
+    this.loadFilteredBudgets();
   }
 
   onEdit(budget: BudgetParaTabela) {
-    console.log('editar', budget);
     this.router.navigate(['budgets/edit', budget.proposta]);
   }
 
   onDelete(budget: BudgetParaTabela) {
     if (!confirm(`Excluir ${budget.proposta}?`)) return;
     this.isDeleting = true;
-    
+
     this.fetchBudgetsService.deleteBudget(budget.proposta).subscribe({
       next: () => {
         this.isDeleting = false;
-        this.loadFilteredBudgets(); 
+        this.loadFilteredBudgets();
       },
       error: (error: any) => {
         console.error('Erro ao excluir orçamento:', error);
         this.isDeleting = false;
-      } 
+      }
     });
   }
 

@@ -4,6 +4,14 @@ import { Observable } from 'rxjs';
 import { DadosOrcamento } from '../../models/interfaces/dados-orcamento';
 import { ListarOrcamentosDTOBackend } from '../../models/interfaces/dados-orcamento';
 
+export interface Page<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number; // número da página atual
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -64,6 +72,46 @@ export class FetchBudgetsService {
   deleteBudget(proposta: string): Observable<void> {
     const url = `${this.apiUrlOrcamentos}/delete`;
     return this.http.delete<void>(url, { params: { proposta } });
+  }
+
+  getPedidosAproved(
+    page: number, 
+    size: number, 
+    searchTerm: string
+  ): Observable<Page<ListarOrcamentosDTOBackend>> {
+    let params = new HttpParams()
+      .set('status', 'Aprovado')
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sort', 'anoProposta,desc')
+      .append('sort', 'mesProposta,desc')
+      .append('sort', 'incrementalProposta,desc');
+
+    if (searchTerm && searchTerm.trim() !== '') {
+      params = params.set('searchTerm', searchTerm);
+    }
+    
+    return this.http.get<Page<ListarOrcamentosDTOBackend>>(`${this.apiUrlOrcamentos}/listar`, { params });
+  }
+
+  getOrcamentosPendentesEReprovadoss(
+    page: number,
+    size: number,
+    searchTerm: string
+  ): Observable<Page<ListarOrcamentosDTOBackend>> {
+    let params = new HttpParams()
+      .set('status', 'Pendente')
+      .append('status', 'Reprovado')
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sort', 'anoProposta,desc')
+      .append('sort', 'mesProposta,desc')
+      .append('sort', 'incrementalProposta,desc');
+
+    if (searchTerm && searchTerm.trim() !== '') {
+      params = params.set('searchTerm', searchTerm);
+    }
+    return this.http.get<Page<ListarOrcamentosDTOBackend>>(`${this.apiUrlOrcamentos}/listar`, { params });
   }
 
 }
