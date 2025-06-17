@@ -68,6 +68,14 @@ export interface ListarOrcamentosDTOBackend {
   grandTotal: number;
 }
 
+export interface ListarProdutosDTOBackend {
+  nome: string;
+  tipo: string;
+  valorUnitario: number;
+  ncm: string;
+  ipi: number;
+}
+
 export interface BudgetParaTabela { 
   proposta: string;
   razaoSocial: string;

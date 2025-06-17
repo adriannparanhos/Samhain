@@ -66,14 +66,12 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
       this.groupedItems = groupedData;
       this.produtos = Object.keys(groupedData);
       
-      // Cria o mapa de modelos a partir dos dados já agrupados
       this.modelosMap = this.produtos.reduce((acc, family) => {
         acc[family] = this.groupedItems[family].map(item => item.modelo);
         return acc;
       }, {} as Record<string, string[]>);
     });
 
-    // O polling agora chama o método de atualização do serviço
     this.pollingInterval = setInterval(() => {
       console.log('Solicitando atualização de produtos...');
       this.fetchProductsService.refreshProducts();

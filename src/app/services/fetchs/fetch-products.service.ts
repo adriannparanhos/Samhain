@@ -4,13 +4,14 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 import { OrcamentoItemNaTabela } from '../../models/orcamento-item';
 import { Product } from '../../models/interfaces/produtos';
+import { ListarProdutosDTOBackend } from '../../models/interfaces/dados-orcamento';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FetchProductsService {
   private apiUrl = 'http://localhost:8080/api/produtos/lista'; 
-  private apiUrlEspeciais = 'http://localhost:8080/api/produtos/lista/especiais'; 
+  private apiUrlEspeciais = 'http://localhost:8080/api/produtosEspeciais/listar'; 
 
 
   private productsState = new BehaviorSubject<Record<string, OrcamentoItemNaTabela[]>>({});
@@ -34,8 +35,16 @@ export class FetchProductsService {
     });
   }
 
-  getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(this.apiUrlEspeciais);
+  getProducts(): Observable<ListarProdutosDTOBackend[]> {
+    return this.http.get<ListarProdutosDTOBackend[]>(this.apiUrlEspeciais);
+  }
+
+  payloadProducts(data: Product[]): Observable<Product[]> {
+    const url = 'http://localhost:8080/api/produtosEspeciais/cadastro';
+    return this.http.post<Product[]>(url, data, {
+      responseType: 'json'
+    });
+
   }
 
   private processAndGroupData(data: OrcamentoItemNaTabela[]): Record<string, OrcamentoItemNaTabela[]> {

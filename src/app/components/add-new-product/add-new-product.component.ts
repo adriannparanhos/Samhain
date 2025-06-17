@@ -8,6 +8,7 @@ import { FieldConfig } from '../add-new-form/add-new-form.component';
 import { SendOrcamentoPayloadService } from '../../services/database/send-orcamento-payload.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Product } from '../../models/interfaces/produtos';
+import { FetchProductsService } from '../../services/fetchs/fetch-products.service';
 
 @Component({
   selector: 'app-add-new-product',
@@ -20,7 +21,8 @@ export class AddNewProductComponent implements OnInit {
   constructor(
     private router: Router,
     private sendOrcamentoPayloadService: SendOrcamentoPayloadService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private fetchProductsService: FetchProductsService
   ) {}
 
   form!: FormGroup;
@@ -65,10 +67,18 @@ export class AddNewProductComponent implements OnInit {
       return;
     }
 
+    const produtoPayload: any = {
+      nome: this.form.value['nome do produto'],
+      tipo: this.form.value['Tipo de produto'],
+      valorUnitario: parseFloat(this.form.value['Valor unitario'].replace('R$ ', '').replace(',', '.')),
+      ncm: this.form.value['NCM'],
+      ipi: parseFloat(this.form.value['IPI'])
+    }
+
     const productData = this.form.value;
     console.log('Produto salvo com sucesso!', productData);
 
-    this.sendOrcamentoPayloadService.payloadProducts(productData).subscribe({
+    this.fetchProductsService.payloadProducts(produtoPayload).subscribe({
       next: (response) => {
         console.log('Produto salvo com sucesso!', response);
         alert('Produto salvo com sucesso!');

@@ -5,6 +5,7 @@ import { TableColumn, TableInfoComponent } from '../table-info/table-info.compon
 import { Router } from '@angular/router';
 import { Product } from '../../models/interfaces/produtos';
 import { FetchProductsService } from '../../services/fetchs/fetch-products.service';
+import { ListarProdutosDTOBackend } from '../../models/interfaces/dados-orcamento';
 
 @Component({
   selector: 'app-products',
@@ -42,10 +43,18 @@ export class ProductsComponent implements OnInit {
   loadProducts() {
     this.isLoading = true;
     this.fetchProductsService.getProducts().subscribe({
-      next: (data) => {
-        this.products = data;
+      next: (data: ListarProdutosDTOBackend[]) => {
+        this.products = data.map(listarProdutosDTOBackend => {
+          return {
+            name: listarProdutosDTOBackend.nome,         
+            type: listarProdutosDTOBackend.tipo,         
+            unitValue: listarProdutosDTOBackend.valorUnitario, 
+            ncm: listarProdutosDTOBackend.ncm,
+            ipi: listarProdutosDTOBackend.ipi
+          };
+        });
         this.isLoading = false;
-        console.log('Produtos carregados:', this.products);
+        console.log('Produtos carregados e mapeados:', this.products);
       },
       error: (err) => {
         console.error('Erro ao carregar produtos:', err);

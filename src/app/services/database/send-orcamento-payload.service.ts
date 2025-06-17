@@ -17,13 +17,5 @@ export class SendOrcamentoPayloadService {
       responseType: 'json'
     });
   }
-
-  payloadProducts(data: Product[]): Observable<Product[]> {
-    const url = 'http://localhost:8080/api/orcamentos/salvarProdutos';
-    return this.http.post<Product[]>(url, data, {
-      responseType: 'json'
-    });
-
-  }
   
 }
