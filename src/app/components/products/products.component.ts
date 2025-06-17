@@ -4,6 +4,7 @@ import { SearchComponent } from "../search/search.component";
 import { TableColumn, TableInfoComponent } from '../table-info/table-info.component';
 import { Router } from '@angular/router';
 import { Product } from '../../models/interfaces/produtos';
+import { FetchProductsService } from '../../services/fetchs/fetch-products.service';
 
 @Component({
   selector: 'app-products',
@@ -13,25 +14,45 @@ import { Product } from '../../models/interfaces/produtos';
   styleUrl: './products.component.css'
 })
 export class ProductsComponent implements OnInit {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private fetchProductsService: FetchProductsService
+  ) {}
 
   products: Product[] = [];
+  isLoading: boolean = false;
   isDeleting: boolean = false;
 
   columns: TableColumn<Product>[] = [
     { header: 'Nome', field: 'name' },
     { header: 'Tipo', field: 'type' },
-    { header: 'Valor Unitário', field: 'unitValue', type: 'currency' },
+    { header: 'Valor Unitário', field: 'unitValue', type: 'currency',
+      currencyCode: 'BRL',
+      currencyDisplay: 'symbol',
+      currencyDigitsInfo: '1.2-2',
+      currencyLocale: 'pt-BR' },
     { header: 'NCM', field: 'ncm' },
     { header: 'IPI', field: 'ipi' }
   ];
 
   ngOnInit() {
-    this.products = [
-      { id: 1, name: 'Parafuso', type: 'A', unitValue: 2.50, ncm: '1234.56.78', ipi: 5 },
-      { id: 2, name: 'Porca', type: 'B', unitValue: 1.25, ncm: '4321.65.87', ipi: 3 },
-      { id: 3, name: 'Arruela', type: 'A', unitValue: 0.75, ncm: '9876.54.32', ipi: 2 }
-    ];
+    this.loadProducts();
+  }
+
+  loadProducts() {
+    this.isLoading = true;
+    this.fetchProductsService.getProducts().subscribe({
+      next: (data) => {
+        this.products = data;
+        this.isLoading = false;
+        console.log('Produtos carregados:', this.products);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar produtos:', err);
+        this.isLoading = false;
+        alert('Erro ao carregar produtos. Por favor, tente novamente mais tarde.');
+      }
+    })
   }
 
   onEdit(product: Product) {

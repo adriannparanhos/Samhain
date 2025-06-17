@@ -9,7 +9,7 @@ export interface Page<T> {
   totalPages: number;
   totalElements: number;
   size: number;
-  number: number; // número da página atual
+  number: number; 
 }
 
 @Injectable({
@@ -29,11 +29,10 @@ export class FetchBudgetsService {
     return this.http.get<DadosOrcamento>(`${this.apiUrlOrcamentos}/listarOrcamento`, { params: { proposta } });
   }
 
-  // ---------------------------------------------------------------------------------------------------------
-  // MUDANÇA 1: Ajustamos o método para aceitar um array de critérios de ordenação
+  
   getFilteredBudgets(
     status: string[],
-    sortCriteria: { field: string, direction: string }[] = [] // Aceita um array de objetos de sort
+    sortCriteria: { field: string, direction: string }[] = [] 
   ): Observable<ListarOrcamentosDTOBackend[]> {
 
     let params = new HttpParams();
@@ -41,7 +40,6 @@ export class FetchBudgetsService {
       params = params.append('status', s);
     });
 
-    // Adiciona cada critério de ordenação como um parâmetro 'sort' separado
     sortCriteria.forEach(criteria => {
       params = params.append('sort', `${criteria.field},${criteria.direction}`);
     });

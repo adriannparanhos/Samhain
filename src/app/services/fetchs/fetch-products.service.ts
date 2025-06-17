@@ -3,12 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 import { OrcamentoItemNaTabela } from '../../models/orcamento-item';
+import { Product } from '../../models/interfaces/produtos';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FetchProductsService {
   private apiUrl = 'http://localhost:8080/api/produtos/lista'; 
+  private apiUrlEspeciais = 'http://localhost:8080/api/produtos/lista/especiais'; 
+
 
   private productsState = new BehaviorSubject<Record<string, OrcamentoItemNaTabela[]>>({});
   
@@ -29,6 +32,10 @@ export class FetchProductsService {
     ).subscribe(processedData => {
       this.productsState.next(processedData); 
     });
+  }
+
+  getProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(this.apiUrlEspeciais);
   }
 
   private processAndGroupData(data: OrcamentoItemNaTabela[]): Record<string, OrcamentoItemNaTabela[]> {
