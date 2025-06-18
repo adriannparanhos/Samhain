@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 import { OrcamentoItemNaTabela } from '../../models/orcamento-item';
 import { Product } from '../../models/interfaces/produtos';
@@ -15,8 +15,16 @@ export class FetchProductsService {
 
 
   private productsState = new BehaviorSubject<Record<string, OrcamentoItemNaTabela[]>>({});
-  
+  private _productSaved$ = new Subject<void>();
   public groupedProducts$ = this.productsState.asObservable();
+
+  get productSaved$(): Observable<void> {
+    return this._productSaved$.asObservable();
+  }
+
+  notifyProductSaved(): void {
+    this._productSaved$.next();
+  }
 
   constructor(private http: HttpClient) {
     this.loadAndProcessProducts(); 

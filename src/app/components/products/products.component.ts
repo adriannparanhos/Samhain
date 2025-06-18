@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ButtonComponent } from "../button/button.component";
 import { SearchComponent } from "../search/search.component";
 import { TableColumn, TableInfoComponent } from '../table-info/table-info.component';
@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { Product } from '../../models/interfaces/produtos';
 import { FetchProductsService } from '../../services/fetchs/fetch-products.service';
 import { ListarProdutosDTOBackend } from '../../models/interfaces/dados-orcamento';
+import { Subscription } from 'rxjs'; // Importe Subscription
 
 @Component({
   selector: 'app-products',
@@ -14,7 +15,7 @@ import { ListarProdutosDTOBackend } from '../../models/interfaces/dados-orcament
   templateUrl: './products.component.html',
   styleUrl: './products.component.css'
 })
-export class ProductsComponent implements OnInit {
+export class ProductsComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private fetchProductsService: FetchProductsService
@@ -23,6 +24,8 @@ export class ProductsComponent implements OnInit {
   products: Product[] = [];
   isLoading: boolean = false;
   isDeleting: boolean = false;
+  private productSavedSubscription!: Subscription;
+
 
   columns: TableColumn<Product>[] = [
     { header: 'Nome', field: 'name' },
@@ -38,6 +41,16 @@ export class ProductsComponent implements OnInit {
 
   ngOnInit() {
     this.loadProducts();
+    this.productSavedSubscription = this.fetchProductsService.productSaved$.subscribe(() => {
+      console.log('Notificação recebida! Recarregando lista de produtos...');
+      this.loadProducts();
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.productSavedSubscription) {
+      this.productSavedSubscription.unsubscribe();
+    }
   }
 
   loadProducts() {

@@ -9,6 +9,7 @@ import { SendOrcamentoPayloadService } from '../../services/database/send-orcame
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Product } from '../../models/interfaces/produtos';
 import { FetchProductsService } from '../../services/fetchs/fetch-products.service';
+import { ListarProdutosDTOBackend } from '../../models/interfaces/dados-orcamento';
 
 @Component({
   selector: 'app-add-new-product',
@@ -45,6 +46,35 @@ export class AddNewProductComponent implements OnInit {
   onFormReady(formGroup: FormGroup) {
     console.log("Formulario recebido do component filho")
     this.form = formGroup;
+
+    if (this.isEditMode && this.editingProductId) {
+      this.loadProductForEditing(this.editingProductId)
+    }
+  }
+
+  loadProductForEditing(productId: number) {
+    this.isLoading = true;
+    this.fetchProductsService.getProducts().subscribe({
+      next: (products: ListarProdutosDTOBackend[]) => {
+        const productToEdit = products.find(product => product.id === productId);
+        if (productToEdit) {
+          this.form.patchValue({
+            'nome do produto': productToEdit.nome,
+            'Tipo de produto': productToEdit.tipo,
+            'codigo': productToEdit.id,
+            'Valor unitario': `R$ ${productToEdit.valorUnitario.toFixed(2).replace('.', ',')}`,
+            'NCM': productToEdit.ncm,
+            'IPI': productToEdit.ipi.toString(),
+            'descricao': '' // Assuming description is not part of the Product interface
+          });
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar produto para edição:', error);
+        this.isLoading = false;
+      }
+    });
   }
 
   ngOnInit() {
@@ -86,6 +116,7 @@ export class AddNewProductComponent implements OnInit {
     }
 
     const produtoPayload: any = {
+      id: this.isEditMode ? this.editingProductId : undefined,
       nome: this.form.value['nome do produto'],
       tipo: this.form.value['Tipo de produto'],
       valorUnitario: parseFloat(this.form.value['Valor unitario'].replace('R$ ', '').replace(',', '.')),
@@ -100,6 +131,7 @@ export class AddNewProductComponent implements OnInit {
       next: (response) => {
         console.log('Produto salvo com sucesso!', response);
         alert('Produto salvo com sucesso!');
+        this.fetchProductsService.notifyProductSaved(); // Notifica que o produto foi salvo
         this.router.navigate(['/products']);
       },
       error: (error) => {
