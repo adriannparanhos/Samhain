@@ -39,6 +39,11 @@ export class FetchProductsService {
     return this.http.get<ListarProdutosDTOBackend[]>(this.apiUrlEspeciais);
   }
 
+  deleteProduct(id: number | undefined): Observable<void> {
+    const url = `http://localhost:8080/api/produtosEspeciais/deletar?id=${id}`;
+    return this.http.delete<void>(url);
+  }
+
   payloadProducts(data: Product[]): Observable<Product[]> {
     const url = 'http://localhost:8080/api/produtosEspeciais/cadastro';
     return this.http.post<Product[]>(url, data, {

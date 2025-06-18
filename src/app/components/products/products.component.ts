@@ -46,6 +46,7 @@ export class ProductsComponent implements OnInit {
       next: (data: ListarProdutosDTOBackend[]) => {
         this.products = data.map(listarProdutosDTOBackend => {
           return {
+            id: listarProdutosDTOBackend.id,
             name: listarProdutosDTOBackend.nome,         
             type: listarProdutosDTOBackend.tipo,         
             unitValue: listarProdutosDTOBackend.valorUnitario, 
@@ -66,15 +67,25 @@ export class ProductsComponent implements OnInit {
 
   onEdit(product: Product) {
     console.log('editar', product);
+    this.router.navigate(['products/edit', product.id]);
   }
 
   onDelete(product: Product) {
     if (!confirm(`Excluir ${product.name}?`)) return;
     this.isDeleting = true;
-    setTimeout(() => {
-      this.products = this.products.filter(p => p.id !== product.id);
-      this.isDeleting = false;
-    }, 500);
+    
+    this.fetchProductsService.deleteProduct(product.id).subscribe({
+      next: () => {
+        this.isDeleting = false;
+        this.loadProducts(); 
+        alert(`Produto ${product.name} excluído com sucesso.`);
+      },
+      error: (err) => {
+        console.error('Erro ao excluir produto:', err);
+        this.isDeleting = false;
+        alert('Erro ao excluir produto. Por favor, tente novamente mais tarde.');
+      }
+    })
   }
 
   openAddProduct() {

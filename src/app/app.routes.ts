@@ -16,6 +16,7 @@ export const routes: Routes = [
     {path: 'budgets', component: BudgetsComponent},
     {path: 'enterprises/add', component: AddNewEnterpriseComponent},
     {path: 'products/add', component: AddNewProductComponent},
+    {path: 'products/edit/:id', component: AddNewProductComponent},
     {path: 'budgets/add', component: AddNewBudgetComponent},
     {path: 'budgets/edit/:proposta', component: AddNewBudgetComponent},
     {path: 'budget/pdf', component: OrcamentoPdfComponent},

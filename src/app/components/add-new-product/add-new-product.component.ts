@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ReturnArrowComponent } from "../return-arrow/return-arrow.component";
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AddNewFormComponent } from '../add-new-form/add-new-form.component';
 import { ButtonFormComponent } from '../button-form/button-form.component';
 import { LucideAngularModule } from 'lucide-angular';
@@ -20,12 +20,17 @@ import { FetchProductsService } from '../../services/fetchs/fetch-products.servi
 export class AddNewProductComponent implements OnInit {
   constructor(
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private sendOrcamentoPayloadService: SendOrcamentoPayloadService,
     private fb: FormBuilder,
     private fetchProductsService: FetchProductsService
   ) {}
 
   form!: FormGroup;
+  isEditMode: boolean = false;
+  editingProductId: number | null = null;
+  pageTitle: string = 'Adicionar Novo Produto';
+  isLoading: boolean = false;
 
   formFields: FieldConfig[] =[
     { name: 'nome do produto', label: 'Nome do Produto', type: 'text', placeholder: 'Produto Exemplo' },
@@ -43,11 +48,24 @@ export class AddNewProductComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.activatedRoute.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.isEditMode = true;
+        this.editingProductId = +id;
+        this.pageTitle = 'Editar Produto';
+      } else {
+        this.isEditMode = false;
+        this.editingProductId = null;
+        this.pageTitle = 'Adicionar Novo Produto';
+      }
+    })
     this.form = this.fb.group({})
   }
 
   onFormSubmit(formData: any) {
-    console.log('Form Data:', formData); 
+    this.form = formData;
+    
   }
 
   returnPage() {

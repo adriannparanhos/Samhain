@@ -69,6 +69,7 @@ export interface ListarOrcamentosDTOBackend {
 }
 
 export interface ListarProdutosDTOBackend {
+  id?: number
   nome: string;
   tipo: string;
   valorUnitario: number;
