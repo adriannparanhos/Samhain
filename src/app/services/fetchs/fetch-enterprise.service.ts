@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';   // Importe o 'tap'
 
@@ -19,11 +19,19 @@ interface IEnterprise {
   } 
 }
 
+export interface Page<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number; 
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class FetchEnterpriseService {
-  private apiUrl = 'http://localhost:8080/api/v1/enterprises'; 
+  private apiUrl = 'http://localhost:8080/api/v1/enterprises/listar'; 
 
   private enterprisesState = new BehaviorSubject<IEnterprise[]>([]);
 
@@ -42,5 +50,21 @@ export class FetchEnterpriseService {
   getEnterpriseByCnpj(cnpj: string): Observable<IEnterprise> {
     const url = `http://localhost:8080/api/v1/enterprises/byCnpj?cnpj=${cnpj}`;
     return this.http.get<IEnterprise>(url);
+  }
+
+  getEnterprises(
+    page: number,
+    size: number,
+    searchTerm: string
+  ): Observable<Page<IEnterprise>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+    
+    if (searchTerm && searchTerm.trim() !== '') {
+      params = params.set('searchTerm', searchTerm)
+    }
+
+    return this.http.get<Page<IEnterprise>>(this.apiUrl, {params})
   }
 }

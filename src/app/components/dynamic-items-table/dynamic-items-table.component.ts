@@ -25,7 +25,7 @@ import { ItemOrcamentoPayload as BackendItemOrcamentoPayload } from '../../model
   templateUrl: './dynamic-items-table.component.html',
 })
 export class DynamicItemsTableComponent implements OnInit, OnDestroy {
-  @Input() estadoDoCliente: string | null | undefined = null; // <<< 1. ADICIONE ESTE INPUT
+  @Input() estadoDoCliente: string | null | undefined = null;
   private subscription: Subscription = new Subscription();
   private productsSubscription: Subscription | undefined;
   taxInformation: string = '1- Impostos incluídos: Selecione um estado para visualizar.';

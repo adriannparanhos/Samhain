@@ -5,6 +5,7 @@ import { TableColumn, TableInfoComponent } from '../table-info/table-info.compon
 import { Router } from '@angular/router';
 import { FetchEnterpriseService } from '../../services/fetchs/fetch-enterprise.service';
 import { CommonModule } from '@angular/common';
+import { CpfCnpjMaskDirective } from '../../directive/cpf-cnpj-mask.directive';
 
 interface Enterprise {
   id: number;
@@ -16,7 +17,7 @@ interface Enterprise {
 @Component({
   selector: 'app-enterprises',
   standalone: true,
-  imports: [ButtonComponent, SearchComponent, TableInfoComponent, CommonModule],
+  imports: [ButtonComponent, SearchComponent, TableInfoComponent, CommonModule, CpfCnpjMaskDirective],
   templateUrl: './enterprises.component.html',
   styleUrls: ['./enterprises.component.css']
 })
@@ -31,9 +32,12 @@ export class EnterprisesComponent implements OnInit {
     { header: 'Cidade/UF',    field: 'CidadeUF' }
   ];
 
+  searchTerm: string = '';
+  currentPage = 0; 
   pageSize = 10;
-  currentPage = 1;
-  totalPages = 1;
+  totalElements = 0;
+  totalPages = 0;
+  isLoading: boolean = false;
 
   constructor(
     private router: Router,
@@ -44,36 +48,52 @@ export class EnterprisesComponent implements OnInit {
     this.loadEnterprises();
   }
 
-  private loadEnterprises() {
-    this.fetchEnterpriseService.enterprises$.subscribe(
-      data => {
-        this.enterprises = data.map(e => ({
-          id: +e.cnpj.replace(/\D/g,''),  
-          razaoSocial: e.corporateName,
-          CNPJ: e.cnpj,
-          CidadeUF: `${e.address.cidade}/${e.address.estado}`
-        }));
-        this.setupPagination();
+   private loadEnterprises() {
+    this.isLoading = true; 
+    
+    this.fetchEnterpriseService.getEnterprises(
+      this.currentPage,
+      this.pageSize,
+      this.searchTerm
+    ).subscribe({
+      next: (page) => {
+        
+        this.pagedEnterprises = page.content.map(e => {
+          
+          const razaoSocial = e?.corporateName || 'Razão social inválida';
+          const cnpj = e?.cnpj || 'CNPJ inválido';
+          const cidadeUF = e?.address ? `${e.address.cidade}/${e.address.estado}` : 'Localidade inválida';
+
+          return {
+            id: e?.cnpj ? +e.cnpj.replace(/\D/g, '') : 0,
+            
+            razaoSocial: razaoSocial,
+            CNPJ: cnpj,
+            CidadeUF: cidadeUF
+          };
+        });
+
+        this.totalElements = page.totalElements;
+        this.totalPages = page.totalPages;
+        this.isLoading = false;
       },
-      err => console.error(err)
-    );
+      error: (error) => {
+        console.error('Erro ao carregar empresas:', error);
+        this.isLoading = false;
+      }
+    });
   }
 
-  private setupPagination() {
-    this.totalPages = Math.ceil(this.enterprises.length / this.pageSize);
-    this.currentPage = 1;
-    this.updatePaged();
+  onSearchChange(term: string): void {
+    this.searchTerm = term;
+    this.currentPage = 0;
+    this.loadEnterprises();
   }
 
-  private updatePaged() {
-    const start = (this.currentPage) * this.pageSize;
-    this.pagedEnterprises = this.enterprises.slice(start, start + this.pageSize);
-  }
-
-  goToPage(page: number) {
-    if (page < 1 || page > this.totalPages) return;
+  goToPage(page: number): void {
+    if (page < 0 || page >= this.totalPages) return;
     this.currentPage = page;
-    this.updatePaged();
+    this.loadEnterprises();
   }
 
   onEdit(ent: Enterprise) { this.router.navigate(['enterprises', ent.id, 'edit']); }

@@ -129,9 +129,8 @@ export class AddNewProductComponent implements OnInit {
 
     this.fetchProductsService.payloadProducts(produtoPayload).subscribe({
       next: (response) => {
-        console.log('Produto salvo com sucesso!', response);
-        alert('Produto salvo com sucesso!');
-        this.fetchProductsService.notifyProductSaved(); // Notifica que o produto foi salvo
+        alert(`Produto ${this.isEditMode ? 'atualizado' : 'salvo'} com sucesso!`);
+        this.fetchProductsService.notifyProductSaved(); 
         this.router.navigate(['/products']);
       },
       error: (error) => {
