@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { Product } from '../../models/interfaces/produtos';
 import { FetchProductsService } from '../../services/fetchs/fetch-products.service';
 import { ListarProdutosDTOBackend } from '../../models/interfaces/dados-orcamento';
-import { Subscription } from 'rxjs'; // Importe Subscription
+import { Subscription } from 'rxjs'; 
 
 @Component({
   selector: 'app-products',

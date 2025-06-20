@@ -247,7 +247,6 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
       next: (response) => {
         console.log('Frontend: Recebido do cálculo no backend:', response);
 
-        // ATUALIZAÇÃO: Salve os valores originais aqui
         item.valorUnitarioOriginal = response.valorUnitario || 0;
         item.totalOriginal = response.total || 0;
         item.totalCIPIOriginal = response.totalCIPI || 0;

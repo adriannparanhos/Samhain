@@ -35,7 +35,7 @@ export class AddNewProductComponent implements OnInit {
 
   formFields: FieldConfig[] =[
     { name: 'nome do produto', label: 'Nome do Produto', type: 'text', placeholder: 'Produto Exemplo' },
-    { name: 'Tipo de produto', label: 'Tipo de Produto', type: 'select', options: [{ label: 'Produto', value: 'produto' }]},
+    { name: 'Tipo de produto', label: 'Tipo de Produto', type: 'select', options: [{ label: 'Chapas personalizadas', value: 'chapasPersonalizadas' }, { label: 'Peças personalizadas', value: 'pecasPersonalizadas' }]},
     { name: 'codigo', label: 'Código do Produto', type: 'text', placeholder: '123456' },
     { name: 'Valor unitario', label: 'Valor unitario', type: 'currency', placeholder: 'R$ 0,00' },
     { name: 'NCM', label: 'NCM', type: 'text', placeholder: '1234.56.78' },
@@ -65,7 +65,7 @@ export class AddNewProductComponent implements OnInit {
             'Valor unitario': `R$ ${productToEdit.valorUnitario.toFixed(2).replace('.', ',')}`,
             'NCM': productToEdit.ncm,
             'IPI': productToEdit.ipi.toString(),
-            'descricao': '' // Assuming description is not part of the Product interface
+            'descricao': ''
           });
         }
         this.isLoading = false;
