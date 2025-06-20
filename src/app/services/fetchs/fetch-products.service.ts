@@ -6,6 +6,15 @@ import { OrcamentoItemNaTabela } from '../../models/orcamento-item';
 import { Product } from '../../models/interfaces/produtos';
 import { ListarProdutosDTOBackend } from '../../models/interfaces/dados-orcamento';
 
+export interface SpecialProduct {
+  id: number;
+  nome: string; 
+  tipo: string;
+  valorUnitario: number;
+  ncm: string;
+  ipi: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -14,9 +23,15 @@ export class FetchProductsService {
   private apiUrlEspeciais = 'http://localhost:8080/api/produtosEspeciais/listar'; 
 
 
-  private productsState = new BehaviorSubject<Record<string, OrcamentoItemNaTabela[]>>({});
+  private standardProductsState = new BehaviorSubject<Record<string, OrcamentoItemNaTabela[]>>({});
+  public standardProductsGrouped$ = this.standardProductsState.asObservable();
+
+  private specialProductsState = new BehaviorSubject<SpecialProduct[]>([]);
+  public specialProducts$ = this.specialProductsState.asObservable();
+
+
   private _productSaved$ = new Subject<void>();
-  public groupedProducts$ = this.productsState.asObservable();
+
 
   get productSaved$(): Observable<void> {
     return this._productSaved$.asObservable();
@@ -27,11 +42,14 @@ export class FetchProductsService {
   }
 
   constructor(private http: HttpClient) {
-    this.loadAndProcessProducts(); 
+    this.loadStandardProducts(); 
+    this.loadSpecialProducts();
+
   }
 
   public refreshProducts(): void {
-    this.loadAndProcessProducts();
+    this.loadStandardProducts();
+    this.loadSpecialProducts();
   }
 
   private loadAndProcessProducts(): void {
@@ -39,8 +57,50 @@ export class FetchProductsService {
       map(data => this.processAndGroupData(data)), 
       tap(() => console.log("Dados de produtos carregados, processados e disponíveis."))
     ).subscribe(processedData => {
-      this.productsState.next(processedData); 
+      this.standardProductsState.next(processedData); 
     });
+  }
+
+  private loadStandardProducts(): void {
+    this.http.get<OrcamentoItemNaTabela[]>(this.apiUrl).pipe(
+      tap(rawData => {
+        console.log('[DEBUG-SERVICE] Dados BRUTOS recebidos da API de Catálogo:', rawData);
+        if (rawData && rawData.length > 0) {
+          console.log('[DEBUG-SERVICE] Exemplo do primeiro item bruto:', rawData[0]);
+        }
+      }),
+      map(data => this.groupStandardProducts(data)), 
+      tap(groupedData => {
+        console.log('[DEBUG-SERVICE] Dados APÓS o agrupamento:', groupedData);
+      })
+    ).subscribe(processedData => {
+      console.log('[DEBUG-SERVICE] Emitindo para standardProductsState.next():', processedData);
+      this.standardProductsState.next(processedData); 
+    });
+  }
+
+  private loadSpecialProducts(): void {
+    this.http.get<SpecialProduct[]>(this.apiUrlEspeciais).pipe(
+      tap(() => console.log("Produtos ESPECIAIS/CADASTRADOS carregados."))
+    ).subscribe(data => {
+      this.specialProductsState.next(data);
+    });
+  }
+
+   private groupStandardProducts(data: OrcamentoItemNaTabela[]): Record<string, OrcamentoItemNaTabela[]> {
+    if (!data || data.length === 0) {
+      console.warn('[DEBUG-SERVICE] groupStandardProducts recebeu dados vazios ou nulos. Retornando {}.');
+      return {}; 
+    }
+    
+    return data.reduce((acc, item) => {
+      const family = item.produto || 'Sem Categoria';
+      if (!acc[family]) {
+        acc[family] = [];
+      }
+      acc[family].push(item);
+      return acc;
+    }, {} as Record<string, OrcamentoItemNaTabela[]>);
   }
 
   getProducts(): Observable<ListarProdutosDTOBackend[]> {

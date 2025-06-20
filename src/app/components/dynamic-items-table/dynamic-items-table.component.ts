@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -10,6 +10,7 @@ import { CalculateValueStandartService } from '../../services/calculations/calcu
 import { Subscription } from 'rxjs';
 import { OrcamentoItemNaTabela } from '../../models/orcamento-item';
 import { ItemOrcamentoPayload as BackendItemOrcamentoPayload } from '../../models/interfaces/dados-orcamento';
+import { SpecialProduct } from '../../services/fetchs/fetch-products.service';
 
 @Component({
   selector: 'app-dynamic-items-table',
@@ -43,39 +44,58 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
   grandTotal: number = 0;
   formValidated: boolean = false;
   formErrors: string[] = [];
-  groupedItems: Record<string, OrcamentoItemNaTabela[]> = {};
+  standardProductsGrouped: Record<string, OrcamentoItemNaTabela[]> = {};
+  standardProductFamilies: string[] = [];
+  specialProducts: SpecialProduct[] = [];
   private pollingInterval: any;
+  private subscriptions = new Subscription();
+
 
 
   constructor(
     private fb: FormBuilder,
     private fetchProductsService: FetchProductsService,
-    private calculateValueStandartService: CalculateValueStandartService
+    private calculateValueStandartService: CalculateValueStandartService,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.form = this.fb.group({
-      globalDiscount: [0, [Validators.min(0), Validators.max(100)]],
-      shipping: [0, [Validators.min(0)]],
-      difal: [0, [Validators.min(0)]],
+    this.form = this.fb.group({ /* ... */ });
+
+    const sub1 = this.fetchProductsService.standardProductsGrouped$.subscribe(groupedData => {
+      this.standardProductsGrouped = groupedData;
+      this.standardProductFamilies = Object.keys(groupedData);
+      console.log('[DEBUG-COMPONENT] Dados recebidos em "groupedProducts$":', groupedData);
+
+      if (groupedData && Object.keys(groupedData).length > 0) {
+        this.standardProductsGrouped = groupedData;
+        this.standardProductFamilies = Object.keys(groupedData);
+
+        this.modelosMap = {}; 
+
+        for (const family of this.standardProductFamilies) {
+          this.modelosMap[family] = this.standardProductsGrouped[family].map(item => item.modelo);
+        }
+      } else {
+        this.standardProductFamilies = [];
+        this.modelosMap = {}; 
+
+      }      
+
+      this.cdRef.detectChanges();
+
     });
 
-    this.productsSubscription = this.fetchProductsService.groupedProducts$.subscribe(groupedData => {
-      console.log('Componente recebeu dados agrupados e ordenados!', groupedData);
-      
-      this.groupedItems = groupedData;
-      this.produtos = Object.keys(groupedData);
-      
-      this.modelosMap = this.produtos.reduce((acc, family) => {
-        acc[family] = this.groupedItems[family].map(item => item.modelo);
-        return acc;
-      }, {} as Record<string, string[]>);
+    const sub2 = this.fetchProductsService.specialProducts$.subscribe(data => {
+      if (data && data.length > 0) {
+        this.specialProducts = data;
+        console.log('Produtos especiais carregados:', this.specialProducts.length);
+      }
+      this.cdRef.detectChanges();
     });
 
-    this.pollingInterval = setInterval(() => {
-      console.log('Solicitando atualização de produtos...');
-      this.fetchProductsService.refreshProducts();
-    }, 30000);
+    this.subscriptions.add(sub1);
+    this.subscriptions.add(sub2);
   }
 
   ngOnDestroy() {
@@ -83,6 +103,39 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     if (this.pollingInterval) {
       clearInterval(this.pollingInterval);
     }
+  }
+
+  addStandardItem(item: OrcamentoItemNaTabela): void {
+    this.items.push(item);
+    this.calculateItemValue(item); 
+  }
+
+  addSpecialItem(product: SpecialProduct): void {
+    const newItem: OrcamentoItemNaTabela = {
+      produto: product.tipo,
+      modelo: product.nome,
+      valorUnitario: product.valorUnitario,
+      ncm: product.ncm,
+      ipi: product.ipi,
+      quantidade: 1, 
+      desconto: 0,
+      total: product.valorUnitario,
+      totalCIPI: product.valorUnitario * (1 + (product.ipi / 100)),
+      isPanelVisible: false,
+
+      clienteForneceuDesenho: false,
+      adicionarProjeto: false,
+      adicionarArruela: false,
+      adicionarTampao: false,
+      valorUnitarioCIPI: product.valorUnitario * (1 + (product.ipi / 100)), 
+      peso: 0, 
+      categoria: product.tipo, 
+      espessura: 0,
+      pesoTotal: 0,
+      quantidadeConjuntos: 1,
+    };
+    this.items.push(newItem);
+    this.updateTotals();
   }
 
   public setLoadedData(data: { items: BackendItemOrcamentoPayload[], descontoGlobal?: number, valorFrete?: number, valorDifal?: number }): void {
@@ -104,7 +157,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
         adicionarTampao: backendItem.tampao || false,
         quantidadeConjuntos: backendItem.quantidadeConjuntos || 1,
 
-        valorUnitarioCIPI: backendItem.valorTotalItemCIPI && backendItem.quantidade ? backendItem.valorTotalItemCIPI / backendItem.quantidade : 0, // Estimativa
+        valorUnitarioCIPI: backendItem.valorTotalItemCIPI && backendItem.quantidade ? backendItem.valorTotalItemCIPI / backendItem.quantidade : 0,
         total: backendItem.valorTotalItem || 0,
         totalCIPI: backendItem.valorTotalItemCIPI, 
         largura: backendItem.largura || undefined,
@@ -189,46 +242,57 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     item.totalCIPI = 0;
     item.pesoTotal = 0;
 
-    // if (item.produto === 'Peça usinada') {
-    //   item.produto = 'Chapas semiacabadas';
-    // }
-
     if (item.produto !== 'Peça Usinada') {
       item.largura = undefined;
       item.comprimento = undefined;
     }
   }
 
-  onModeloChange(item: OrcamentoItemNaTabela): void {
-    if (!item.modelo) {
-      item.valorUnitario = 0;
-      item.total = 0;
-      item.totalCIPI = 0;
-      item.pesoTotal = 0;
-      return;
-    }
+onModeloChange(item: OrcamentoItemNaTabela): void {
+  if (!item.modelo) {
+    item.valorUnitario = 0;
+    item.total = 0;
+    item.totalCIPI = 0;
+    return;
+  }
 
-    const produto = item.produto === 'Peça usinada' ? 'Chapas semiacabadas' : item.produto;
-    const itemSelecionado = this.groupedItems[produto]?.find(apiItem => apiItem.modelo === item.modelo);
+  const standardItemData = this.standardProductsGrouped[item.produto]?.find(
+    apiItem => apiItem.modelo === item.modelo
+  );
 
-    if (itemSelecionado) {
-      item.ipi = itemSelecionado.ipi || 0;
-      item.ncm = itemSelecionado.ncm || '';
-      item.peso = itemSelecionado.peso || 0;
-      item.categoria = itemSelecionado.categoria || '';
-      item.espessura = itemSelecionado.espessura || 0;
-    } else {
-      item.ipi = 0;
-      item.ncm = '';
-      item.peso = 0;
-      item.categoria = '';
-      item.espessura = 0;
-    }
-
+  if (standardItemData) {
+    item.ipi = standardItemData.ipi || 0;
+    item.ncm = standardItemData.ncm || '';
+    item.peso = standardItemData.peso || 0;
+    item.categoria = standardItemData.categoria || '';
+    item.espessura = standardItemData.espessura || 0;
+    
     if (this.shouldCalculateBackend(item)) {
       this.calculateItemValue(item);
     }
+  } else {
+    const specialItemData = this.specialProducts.find(
+      sp => sp.nome === item.modelo
+    );
+
+    if (specialItemData) {
+      item.ipi = specialItemData.ipi || 0;
+      item.ncm = specialItemData.ncm || '';
+      item.valorUnitario = specialItemData.valorUnitario || 0; 
+      
+      item.quantidade = item.quantidade > 0 ? item.quantidade : 1;
+      const ipiMultiplier = 1 + (item.ipi / 100);
+      item.total = item.valorUnitario * item.quantidade;
+      item.totalCIPI = item.total * ipiMultiplier;
+
+      item.peso = 0;
+      item.categoria = specialItemData.tipo;
+      item.espessura = 0;
+      
+      this.updateTotals(); 
+    }
   }
+}
 
   onFieldChange(item: OrcamentoItemNaTabela): void {
     if (this.shouldCalculateBackend(item)) {
@@ -285,10 +349,17 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
   }
 
   getModelosForProduto(produto: string): string[] {
-    // if (produto === 'Peça usinada') {
-    //   return this.modelosMap['Chapas semiacabadas'] || [];
-    // }
-    return this.modelosMap[produto] || [];
+    const standardModels = this.modelosMap[produto];
+    if (standardModels) {
+      return standardModels;
+    }
+
+    const isSpecialProduct = this.specialProducts.some(sp => sp.nome === produto);
+    if (isSpecialProduct) {
+      return [produto];
+    }
+
+    return [];
   }
 
   removeItem(index: number): void {

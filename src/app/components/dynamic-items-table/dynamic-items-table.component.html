@@ -45,8 +45,21 @@
               (ngModelChange)="onProdutoChange(item)"
               class="w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               [class.border-red-500]="isItemInvalid(item) && !item.produto">
+
               <option value="" disabled selected>Selecione um produto</option>
-              <option *ngFor="let p of produtos" [value]="p">{{ p }}</option>
+              
+              <optgroup label="Produtos de Catálogo">
+                <option *ngFor="let family of standardProductFamilies" [value]="family">
+                  {{ family }}
+                </option>
+              </optgroup>
+              
+              <optgroup label="Produtos Cadastrados">
+                <option *ngFor="let special of specialProducts" [value]="special.nome">
+                  {{ special.nome }}
+                </option>
+              </optgroup>
+              
             </select>
             <p *ngIf="isItemInvalid(item) && !item.produto" class="mt-1 text-xs text-red-500">
               Produto é necessário
