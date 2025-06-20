@@ -7,7 +7,7 @@ import { FetchProductsService } from '../../services/fetchs/fetch-products.servi
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CalculateValueStandartService } from '../../services/calculations/calculate-value-standart.service';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 import { OrcamentoItemNaTabela } from '../../models/orcamento-item';
 import { ItemOrcamentoPayload as BackendItemOrcamentoPayload } from '../../models/interfaces/dados-orcamento';
 import { SpecialProduct } from '../../services/fetchs/fetch-products.service';
@@ -45,10 +45,16 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
   formValidated: boolean = false;
   formErrors: string[] = [];
   standardProductsGrouped: Record<string, OrcamentoItemNaTabela[]> = {};
+  specialProductsGrouped: Record<string, SpecialProduct[]> = {};
   standardProductFamilies: string[] = [];
+  specialProductFamilies: string[] = [];
   specialProducts: SpecialProduct[] = [];
   private pollingInterval: any;
   private subscriptions = new Subscription();
+
+
+  allProductsGrouped: Record<string, (OrcamentoItemNaTabela | SpecialProduct)[]> = {};
+  productFamilies: string[] = []; 
 
 
 
@@ -59,43 +65,24 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     private cdRef: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
-    this.form = this.fb.group({ /* ... */ });
+   ngOnInit() {
+    this.form = this.fb.group({ });
 
     const sub1 = this.fetchProductsService.standardProductsGrouped$.subscribe(groupedData => {
       this.standardProductsGrouped = groupedData;
       this.standardProductFamilies = Object.keys(groupedData);
-      console.log('[DEBUG-COMPONENT] Dados recebidos em "groupedProducts$":', groupedData);
-
-      if (groupedData && Object.keys(groupedData).length > 0) {
-        this.standardProductsGrouped = groupedData;
-        this.standardProductFamilies = Object.keys(groupedData);
-
-        this.modelosMap = {}; 
-
-        for (const family of this.standardProductFamilies) {
-          this.modelosMap[family] = this.standardProductsGrouped[family].map(item => item.modelo);
-        }
-      } else {
-        this.standardProductFamilies = [];
-        this.modelosMap = {}; 
-
-      }      
-
       this.cdRef.detectChanges();
-
     });
 
-    const sub2 = this.fetchProductsService.specialProducts$.subscribe(data => {
-      if (data && data.length > 0) {
-        this.specialProducts = data;
-        console.log('Produtos especiais carregados:', this.specialProducts.length);
-      }
+    const sub2 = this.fetchProductsService.specialProductsGrouped$.subscribe(groupedData => {
+      this.specialProductsGrouped = groupedData;
+      this.specialProductFamilies = Object.keys(groupedData);
       this.cdRef.detectChanges();
     });
 
     this.subscriptions.add(sub1);
     this.subscriptions.add(sub2);
+  
   }
 
   ngOnDestroy() {
@@ -248,51 +235,43 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     }
   }
 
-onModeloChange(item: OrcamentoItemNaTabela): void {
-  if (!item.modelo) {
-    item.valorUnitario = 0;
-    item.total = 0;
-    item.totalCIPI = 0;
-    return;
-  }
+  onModeloChange(item: OrcamentoItemNaTabela): void {
+    if (!item.modelo || !item.produto) return;
 
-  const standardItemData = this.standardProductsGrouped[item.produto]?.find(
-    apiItem => apiItem.modelo === item.modelo
-  );
+    let selectedItemData = this.standardProductsGrouped[item.produto]?.find(p => p.modelo === item.modelo);
 
-  if (standardItemData) {
-    item.ipi = standardItemData.ipi || 0;
-    item.ncm = standardItemData.ncm || '';
-    item.peso = standardItemData.peso || 0;
-    item.categoria = standardItemData.categoria || '';
-    item.espessura = standardItemData.espessura || 0;
+    if (selectedItemData) {
+      item.ipi = selectedItemData.ipi ?? 0;
+      item.ncm = selectedItemData.ncm || '';
+      item.peso = selectedItemData.peso || 0;
+      item.categoria = selectedItemData.categoria || '';
+      item.espessura = selectedItemData.espessura || 0;
+      if (this.shouldCalculateBackend(item)) {
+        this.calculateItemValue(item);
+      }
+      return; 
+    }
+
+    const specialItemData = this.specialProductsGrouped[item.produto]?.find(p => p.nome === item.modelo);
     
-    if (this.shouldCalculateBackend(item)) {
-      this.calculateItemValue(item);
-    }
-  } else {
-    const specialItemData = this.specialProducts.find(
-      sp => sp.nome === item.modelo
-    );
-
     if (specialItemData) {
-      item.ipi = specialItemData.ipi || 0;
+      item.ipi = specialItemData.ipi ?? 0;
       item.ncm = specialItemData.ncm || '';
-      item.valorUnitario = specialItemData.valorUnitario || 0; 
-      
+      item.valorUnitario = specialItemData.valorUnitario || 0;
       item.quantidade = item.quantidade > 0 ? item.quantidade : 1;
-      const ipiMultiplier = 1 + (item.ipi / 100);
-      item.total = item.valorUnitario * item.quantidade;
-      item.totalCIPI = item.total * ipiMultiplier;
-
-      item.peso = 0;
-      item.categoria = specialItemData.tipo;
-      item.espessura = 0;
-      
-      this.updateTotals(); 
+      this.updateTotalsForItem(item); 
     }
   }
-}
+
+  updateTotalsForItem(item: OrcamentoItemNaTabela): void {
+    const ipiValue = item.ipi ?? 0;
+
+    const ipiMultiplier = 1 + (ipiValue / 100);
+    const discountMultiplier = 1 - ((item.desconto || 0) / 100);
+    item.total = item.valorUnitario * item.quantidade * discountMultiplier;
+    item.totalCIPI = item.total * ipiMultiplier;
+    this.updateTotals(); 
+  }
 
   onFieldChange(item: OrcamentoItemNaTabela): void {
     if (this.shouldCalculateBackend(item)) {
@@ -348,18 +327,16 @@ onModeloChange(item: OrcamentoItemNaTabela): void {
     };
   }
 
-  getModelosForProduto(produto: string): string[] {
-    const standardModels = this.modelosMap[produto];
-    if (standardModels) {
-      return standardModels;
+  getModelosForProduto(family: string): string[] {
+    if (this.standardProductsGrouped[family]) {
+      return this.standardProductsGrouped[family].map(item => item.modelo);
+    }
+    
+    if (this.specialProductsGrouped[family]) {
+      return this.specialProductsGrouped[family].map(item => item.nome);
     }
 
-    const isSpecialProduct = this.specialProducts.some(sp => sp.nome === produto);
-    if (isSpecialProduct) {
-      return [produto];
-    }
-
-    return [];
+    return []; 
   }
 
   removeItem(index: number): void {

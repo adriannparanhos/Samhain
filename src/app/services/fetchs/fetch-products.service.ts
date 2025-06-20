@@ -26,8 +26,8 @@ export class FetchProductsService {
   private standardProductsState = new BehaviorSubject<Record<string, OrcamentoItemNaTabela[]>>({});
   public standardProductsGrouped$ = this.standardProductsState.asObservable();
 
-  private specialProductsState = new BehaviorSubject<SpecialProduct[]>([]);
-  public specialProducts$ = this.specialProductsState.asObservable();
+  private specialProductsState = new BehaviorSubject<Record<string, SpecialProduct[]>>({});
+  public specialProductsGrouped$ = this.specialProductsState.asObservable();
 
 
   private _productSaved$ = new Subject<void>();
@@ -79,11 +79,12 @@ export class FetchProductsService {
     });
   }
 
-  private loadSpecialProducts(): void {
+   private loadSpecialProducts(): void {
     this.http.get<SpecialProduct[]>(this.apiUrlEspeciais).pipe(
-      tap(() => console.log("Produtos ESPECIAIS/CADASTRADOS carregados."))
-    ).subscribe(data => {
-      this.specialProductsState.next(data);
+      map(data => this.groupSpecialProducts(data)),
+      tap(() => console.log("Produtos ESPECIAIS/CADASTRADOS carregados e AGRUPADOS."))
+    ).subscribe(groupedData => {
+      this.specialProductsState.next(groupedData);
     });
   }
 
@@ -101,6 +102,19 @@ export class FetchProductsService {
       acc[family].push(item);
       return acc;
     }, {} as Record<string, OrcamentoItemNaTabela[]>);
+  }
+
+  private groupSpecialProducts(data: SpecialProduct[]): Record<string, SpecialProduct[]> {
+    if (!data) return {};
+    
+    return data.reduce((acc, item) => {
+      const family = item.tipo || 'Produtos Especiais';
+      if (!acc[family]) {
+        acc[family] = [];
+      }
+      acc[family].push(item);
+      return acc;
+    }, {} as Record<string, SpecialProduct[]>);
   }
 
   getProducts(): Observable<ListarProdutosDTOBackend[]> {
