@@ -347,16 +347,26 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
   }
 
   public updateTotals(): void {
-    this.distribuirCustosAdicionais();
-    this.aplicarAjustesGlobaisNosItens();
+    // Passo 1: Calcular os subtotais simplesmente SOMANDO os totais de cada item.
+    // Esses valores (item.total e item.totalCIPI) são os que vieram diretamente do backend e são a nossa fonte da verdade.
+    this.subtotal = this.items.reduce((acc, item) => acc + (item.total || 0), 0);
+    this.subtotalCIPI = this.items.reduce((acc, item) => acc + (item.totalCIPI || 0), 0);
 
-    let grandTotal = this.subtotalCIPI;
+    // Passo 2: Calcular o total geral (Grand Total) a partir dos subtotais, aplicando os ajustes globais.
+    let totalFinal = this.subtotalCIPI;
 
+    // Aplica o desconto global sobre o subtotal com IPI
     if (this.descontoGlobal > 0 && this.descontoGlobal <= 100) {
-      grandTotal *= (1 - (this.descontoGlobal / 100));
+      const fatorDesconto = 1 - (this.descontoGlobal / 100);
+      totalFinal = totalFinal * fatorDesconto;
     }
 
-    this.grandTotal = grandTotal;
+    // Adiciona os custos fixos de frete e DIFAL AO FINAL
+    totalFinal += (this.valorFrete || 0);
+    totalFinal += (this.valorDifal || 0);
+
+    // Define o valor final para exibição na tela
+    this.grandTotal = totalFinal;
   }
 
   private aplicarAjustesGlobaisNosItens(): void {

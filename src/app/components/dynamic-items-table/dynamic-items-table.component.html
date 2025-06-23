@@ -85,8 +85,8 @@
                 <input type="number" [(ngModel)]="item.valorUnitario" readonly class="w-full rounded-md border-slate-300 shadow-sm pl-10 pr-3 py-2 bg-slate-100 text-sm text-slate-600 cursor-not-allowed" step="0.01" min="0" />
               </div>
             </td>
-            <td class="px-6 py-4 font-medium text-slate-700">
-              {{ (item.ipi! - 1) | percent:'1.2-2' }}
+            <td class.px-6.py-4.font-medium.text-slate-700>
+                {{ (item.produto === 'chapasPersonalizadas' || item.produto === 'pecasPersonalizadas' ? (item.ipi! / 100) : (item.ipi! - 1)) | percent:'1.2-2' }}
             </td>
             <td class="px-6 py-4">
               <div class="relative">
