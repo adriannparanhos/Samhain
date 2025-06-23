@@ -8,8 +8,8 @@ import { ListarProdutosDTOBackend } from '../../models/interfaces/dados-orcament
 
 export interface SpecialProduct {
   id: number;
-  nome: string; 
-  tipo: string;
+  modelo: string; 
+  produto: string;
   valorUnitario: number;
   ncm: string;
   ipi: number;
@@ -108,7 +108,7 @@ export class FetchProductsService {
     if (!data) return {};
     
     return data.reduce((acc, item) => {
-      const family = item.tipo || 'Produtos Especiais';
+      const family = item.produto || 'Produtos Especiais';
       if (!acc[family]) {
         acc[family] = [];
       }

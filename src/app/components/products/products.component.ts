@@ -60,8 +60,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
         this.products = data.map(listarProdutosDTOBackend => {
           return {
             id: listarProdutosDTOBackend.id,
-            name: listarProdutosDTOBackend.nome,         
-            type: listarProdutosDTOBackend.tipo,         
+            name: listarProdutosDTOBackend.modelo,         
+            type: listarProdutosDTOBackend.produto,         
             unitValue: listarProdutosDTOBackend.valorUnitario, 
             ncm: listarProdutosDTOBackend.ncm,
             ipi: listarProdutosDTOBackend.ipi

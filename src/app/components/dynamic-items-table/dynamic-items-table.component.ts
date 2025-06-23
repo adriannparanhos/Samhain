@@ -99,8 +99,8 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
 
   addSpecialItem(product: SpecialProduct): void {
     const newItem: OrcamentoItemNaTabela = {
-      produto: product.tipo,
-      modelo: product.nome,
+      produto: product.produto,
+      modelo: product.modelo,
       valorUnitario: product.valorUnitario,
       ncm: product.ncm,
       ipi: product.ipi,
@@ -116,7 +116,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
       adicionarTampao: false,
       valorUnitarioCIPI: product.valorUnitario * (1 + (product.ipi / 100)), 
       peso: 0, 
-      categoria: product.tipo, 
+      categoria: product.produto, 
       espessura: 0,
       pesoTotal: 0,
       quantidadeConjuntos: 1,
@@ -252,7 +252,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
       return; 
     }
 
-    const specialItemData = this.specialProductsGrouped[item.produto]?.find(p => p.nome === item.modelo);
+    const specialItemData = this.specialProductsGrouped[item.produto]?.find(p => p.modelo === item.modelo);
     
     if (specialItemData) {
       item.ipi = specialItemData.ipi ?? 0;
@@ -333,7 +333,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     }
     
     if (this.specialProductsGrouped[family]) {
-      return this.specialProductsGrouped[family].map(item => item.nome);
+      return this.specialProductsGrouped[family].map(item => item.modelo);
     }
 
     return []; 

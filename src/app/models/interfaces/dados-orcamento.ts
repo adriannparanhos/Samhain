@@ -70,8 +70,8 @@ export interface ListarOrcamentosDTOBackend {
 
 export interface ListarProdutosDTOBackend {
   id?: number
-  nome: string;
-  tipo: string;
+  modelo: string;
+  produto: string;
   valorUnitario: number;
   ncm: string;
   ipi: number;

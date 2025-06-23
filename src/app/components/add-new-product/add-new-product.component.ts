@@ -59,8 +59,8 @@ export class AddNewProductComponent implements OnInit {
         const productToEdit = products.find(product => product.id === productId);
         if (productToEdit) {
           this.form.patchValue({
-            'nome do produto': productToEdit.nome,
-            'Tipo de produto': productToEdit.tipo,
+            'nome do produto': productToEdit.modelo,
+            'Tipo de produto': productToEdit.produto,
             'codigo': productToEdit.id,
             'Valor unitario': `R$ ${productToEdit.valorUnitario.toFixed(2).replace('.', ',')}`,
             'NCM': productToEdit.ncm,
@@ -117,8 +117,8 @@ export class AddNewProductComponent implements OnInit {
 
     const produtoPayload: any = {
       id: this.isEditMode ? this.editingProductId : undefined,
-      nome: this.form.value['nome do produto'],
-      tipo: this.form.value['Tipo de produto'],
+      modelo: this.form.value['nome do produto'],
+      produto: this.form.value['Tipo de produto'],
       valorUnitario: parseFloat(this.form.value['Valor unitario'].replace('R$ ', '').replace(',', '.')),
       ncm: this.form.value['NCM'],
       ipi: parseFloat(this.form.value['IPI'])
@@ -129,6 +129,8 @@ export class AddNewProductComponent implements OnInit {
 
     this.fetchProductsService.payloadProducts(produtoPayload).subscribe({
       next: (response) => {
+        console.log("payload", produtoPayload);
+        console.log("Response", response);
         alert(`Produto ${this.isEditMode ? 'atualizado' : 'salvo'} com sucesso!`);
         this.fetchProductsService.notifyProductSaved(); 
         this.router.navigate(['/products']);
