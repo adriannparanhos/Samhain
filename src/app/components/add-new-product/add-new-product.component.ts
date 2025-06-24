@@ -39,7 +39,7 @@ export class AddNewProductComponent implements OnInit {
     { name: 'codigo', label: 'Código do Produto', type: 'text', placeholder: '123456' },
     { name: 'Valor unitario', label: 'Valor unitario', type: 'currency', placeholder: 'R$ 0,00' },
     { name: 'NCM', label: 'NCM', type: 'text', placeholder: '1234.56.78' },
-    { name: 'IPI', label: 'IPI', type: 'number', placeholder: '6,5' },
+    { name: 'IPI', label: 'IPI', type: 'number', placeholder: '6,5', useIpiMask: true },
     { name: 'descricao', label: 'Descrição', type: 'textarea', placeholder: 'Descrição do produto' }
   ]
 

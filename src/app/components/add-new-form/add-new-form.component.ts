@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn } from '@angul
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { CpfCnpjMaskDirective } from '../../directive/cpf-cnpj-mask.directive';
+import { IpiMultiplierDirective } from '../../directive/ipi-multiplier.directive';
 
 export interface FieldConfig {
   name: string;
@@ -14,6 +15,7 @@ export interface FieldConfig {
   customEvents?: { [key: string]: (event: any) => void }; 
   disabled?: boolean;
   useMask?: 'cpfCnpjMask' | string;
+  useIpiMask?: boolean
 }
 
 @Component({
@@ -22,7 +24,8 @@ export interface FieldConfig {
   imports: [CommonModule, 
     ReactiveFormsModule, 
     LucideAngularModule,
-    CpfCnpjMaskDirective],
+    CpfCnpjMaskDirective,
+    IpiMultiplierDirective],
   templateUrl: './add-new-form.component.html',
   styleUrl: './add-new-form.component.css'
 })

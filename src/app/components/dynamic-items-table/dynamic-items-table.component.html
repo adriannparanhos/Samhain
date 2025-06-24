@@ -85,7 +85,7 @@
                 <input type="number" [(ngModel)]="item.valorUnitario" readonly class="w-full rounded-md border-slate-300 shadow-sm pl-10 pr-3 py-2 bg-slate-100 text-sm text-slate-600 cursor-not-allowed" step="0.01" min="0" />
               </div>
             </td>
-            <td class.px-6.py-4.font-medium.text-slate-700>
+            <td class="px-6.py-4.font-medium.text-slate-700">
                 {{ (item.produto === 'chapasPersonalizadas' || item.produto === 'pecasPersonalizadas' ? (item.ipi! / 100) : (item.ipi! - 1)) | percent:'1.2-2' }}
             </td>
             <td class="px-6 py-4">
@@ -193,11 +193,11 @@
             <div class="space-y-2 text-sm">
               <div class="flex justify-between items-center">
                 <span class="text-slate-600">Peso total: </span>
-                <span class="font-medium text-blue-600">{{ pesoTotal | currency:'BRL':'':'1.2-2' }}</span>
+                <span class="font-medium text-blue-600">{{ pesoTotal | currency:'BRL':'':'1.2-2' }} Kg</span>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-slate-600">Valor do kg: </span>
-                <span class="font-medium text-green-600">{{ (grandTotal - (valorDifal + valorDifal)) / pesoTotal | currency:'BRL':'':'1.2-2' }}</span>
+                <span class="font-medium text-green-600">{{ (grandTotal - (valorDifal + valorDifal)) / pesoTotal | currency:'BRL':'symbol':'1.2-2' }}</span>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-slate-600">Subtotal:</span>
