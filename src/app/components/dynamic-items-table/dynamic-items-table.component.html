@@ -192,6 +192,14 @@
             <h4 class="text-base font-semibold text-slate-800 mb-4">Resumo do Orçamento</h4>
             <div class="space-y-2 text-sm">
               <div class="flex justify-between items-center">
+                <span class="text-slate-600">Peso total: </span>
+                <span class="font-medium text-blue-600">{{ pesoTotal | currency:'BRL':'':'1.2-2' }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-600">Valor do kg: </span>
+                <span class="font-medium text-green-600">{{ (grandTotal - (valorDifal + valorDifal)) / pesoTotal | currency:'BRL':'':'1.2-2' }}</span>
+              </div>
+              <div class="flex justify-between items-center">
                 <span class="text-slate-600">Subtotal:</span>
                 <span class="font-medium text-slate-800">{{ subtotal | currency:'BRL':'symbol':'1.2-2' }}</span>
               </div>
