@@ -5,4 +5,5 @@ export interface Product {
   unitValue: number;
   ncm: string;
   ipi: number;
+  ipiFormatted?: string;
 }

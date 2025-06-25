@@ -36,7 +36,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
       currencyDigitsInfo: '1.2-2',
       currencyLocale: 'pt-BR' },
     { header: 'NCM', field: 'ncm' },
-    { header: 'IPI', field: 'ipi' }
+    { header: 'IPI', field: 'ipiFormatted' }
   ];
 
   ngOnInit() {
@@ -58,13 +58,22 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.fetchProductsService.getProducts().subscribe({
       next: (data: ListarProdutosDTOBackend[]) => {
         this.products = data.map(listarProdutosDTOBackend => {
+
+          const ipiMultiplier = listarProdutosDTOBackend.ipi || 0;
+                let ipiFormatted = '0,00 %'; 
+                if (ipiMultiplier > 0) {
+                    const percentage = (ipiMultiplier - 1) * 100;
+                    ipiFormatted = percentage.toFixed(2).replace('.', ',') + ' %';
+                }
+
           return {
             id: listarProdutosDTOBackend.id,
             name: listarProdutosDTOBackend.modelo,         
             type: listarProdutosDTOBackend.produto,         
             unitValue: listarProdutosDTOBackend.valorUnitario, 
             ncm: listarProdutosDTOBackend.ncm,
-            ipi: listarProdutosDTOBackend.ipi
+            ipi: ipiMultiplier,
+            ipiFormatted: ipiFormatted
           };
         });
         this.isLoading = false;

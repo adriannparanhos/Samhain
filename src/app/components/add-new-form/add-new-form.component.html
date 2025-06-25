@@ -10,7 +10,7 @@
 
       <ng-container [ngSwitch]="true">
         <input
-          *ngSwitchCase="f.type !== 'select' && f.type !== 'textarea' && f.useMask === 'cpfCnpjMask' && f.useIpiMask"
+          *ngSwitchCase="f.type !== 'select' && f.type !== 'textarea' && f.useMask === 'cpfCnpjMask'"
           [id]="f.name"
           [type]="f.type"
           [formControlName]="f.name"
