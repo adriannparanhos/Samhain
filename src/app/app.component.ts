@@ -10,7 +10,8 @@ import { AppLayoutComponent } from './components/app-layout/app-layout.component
     AppLayoutComponent  
   ],
   template: `
-    <app-layout></app-layout>
+    <!-- <app-layout></app-layout> -->
+    <router-outlet></router-outlet>
   `
 })
 export class AppComponent { }

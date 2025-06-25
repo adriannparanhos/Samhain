@@ -1,0 +1,64 @@
+<div class="flex items-center justify-center min-h-screen bg-slate-50">
+
+  <div class="flex flex-col items-center text-center p-4 w-full max-w-lg">
+
+    <header class="mb-8">
+      <div class="inline-block p-4 bg-blue-100 rounded-full mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
+          <path d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1V21c0 .8.7 1.5 1.5 1.5s1.5-.7 1.5-1.5V3h5.5l3.4 3.4c.3.3.4.7.4 1.1V21c0 .8.7 1.5 1.5 1.5s1.5-.7 1.5-1.5V8.4c0-.4-.2-.8-.5-1.1L15.5 2z"></path>
+          <path d="M15 2v5h5"></path>
+        </svg>
+      </div>
+      <h1 class="text-4xl font-bold text-slate-800">Baron Revestimentos</h1>
+      <p class="mt-2 text-slate-500">Sistema de orçamentos para soluções em UHMW</p>
+    </header>
+
+    <div class="w-full bg-white rounded-xl shadow-lg p-8">
+      <h2 class="text-2xl font-bold text-slate-900 mb-6">Entrar</h2>
+      <form class="space-y-5" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div>
+          <label for="email" class="block text-sm font-medium text-left text-gray-700">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            placeholder="seu@email.com"
+            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+        <div>
+          <label for="password" class="block text-sm font-medium text-left text-gray-700">Senha</label>
+          <input 
+            type="password" 
+            id="password" 
+            formControlName="password" 
+            placeholder="********"
+            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+        <div *ngIf="errorMessage" class="text-red-600 text-sm text-center bg-red-50 p-2 rounded-md">
+          {{ errorMessage }}
+        </div>
+        <button type="submit" [disabled]="loginForm.invalid" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+          Entrar
+        </button>
+      </form>
+    </div>
+
+    <footer class="mt-6">
+        <p class="text-sm text-gray-600 mb-1.5">
+        Esqueci minha
+        <a routerLink="" class="font-medium text-red-600 hover:text-red-500">
+          senha
+        </a>
+      </p>
+      <p class="text-sm text-gray-600">
+        Não tem uma conta? 
+        <a routerLink="/auth/register" class="font-medium text-blue-600 hover:text-blue-500">
+          Registre-se
+        </a>
+      </p>
+    </footer>
+
+  </div>
+</div>
