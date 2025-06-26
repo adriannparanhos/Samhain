@@ -17,12 +17,12 @@
       <h2 class="text-2xl font-bold text-slate-900 mb-6">Entrar</h2>
       <form class="space-y-5" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div>
-          <label for="email" class="block text-sm font-medium text-left text-gray-700">Email</label>
+          <label for="login" class="block text-sm font-medium text-left text-gray-700">Usuario</label>
           <input 
-            type="email" 
-            id="email" 
-            formControlName="email" 
-            placeholder="seu@email.com"
+            type="text" 
+            id="login" 
+            formControlName="login" 
+            placeholder="seu login"
             class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
         </div>

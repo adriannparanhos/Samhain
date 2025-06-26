@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { AuthService } from '../../services/auth.service';
+import { AuthLoginService } from '../../services/auth-login.service';
 
 interface NavItem {
   name: string;
@@ -37,7 +38,8 @@ export class AppLayoutComponent {
 
   constructor(
     private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private authService: AuthLoginService
   ) {
     this.user = this.auth.currentUser;
   }
@@ -46,8 +48,8 @@ export class AppLayoutComponent {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
 
-  logout() {
-    this.auth.logout();
+  logout(): void {
+    this.authService.logout();
     this.router.navigate(['/login']);
   }
 }

@@ -10,13 +10,12 @@ import { OrcamentoPdfComponent } from './components/orcamento-pdf/orcamento-pdf.
 import { PedidosComponent } from './components/pedidos/pedidos.component';
 import { LoginComponent } from './pages/login/login.component';
 import { AppLayoutComponent } from './components/app-layout/app-layout.component';
-import { authGuard } from './guards/auth.guard'; // Importe o guardião
-
+import { authGuard } from './guards/auth.guard'; 
+import { SettingsComponent } from './pages/settings/settings.component';
+import { loginGuard } from './guards/login.guard'; 
 
 export const routes: Routes = [
-    // Rotas de "Tela Cheia" (sem layout principal)
-    { path: 'login', component: LoginComponent },    
-    // Rota padrão redireciona para o login
+    { path: 'login', component: LoginComponent, canActivate: [loginGuard] },    
     { path: '', redirectTo: '/login', pathMatch: 'full' },
 
     // Rota "Pai" que carrega o AppLayoutComponent
@@ -25,9 +24,8 @@ export const routes: Routes = [
         path: '',
         component: AppLayoutComponent,
         canActivate: [authGuard],
-        // canActivate: [AuthGuard], // No futuro, adicione um guardião de rota aqui
         children: [
-            { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // Redireciona para o dashboard se estiver logado
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, 
             { path: 'dashboard', component: DashboardComponent },
             { path: 'products', component: ProductsComponent },
             { path: 'products/add', component: AddNewProductComponent },
@@ -37,12 +35,12 @@ export const routes: Routes = [
             { path: 'budgets', component: BudgetsComponent },
             { path: 'budgets/add', component: AddNewBudgetComponent },
             { path: 'budgets/edit/:proposta', component: AddNewBudgetComponent },
-            { path: 'budget/pdf', component: OrcamentoPdfComponent }, // PDF também é tela cheia
+            { path: 'budget/pdf', component: OrcamentoPdfComponent }, 
             { path: 'orders', component: PedidosComponent },
+            { path: 'settings', component: SettingsComponent }
         ]
     },
 
-    // Rota "catch-all" para redirecionar rotas inválidas (opcional, mas recomendado)
     { path: '**', redirectTo: '/login' }
 ];
 

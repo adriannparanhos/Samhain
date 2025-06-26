@@ -21,8 +21,8 @@ export class LoginComponent {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      email: ['usuario@exemplo.com', [Validators.required, Validators.email]], 
-      password: ['123', [Validators.required]],
+      login: ['adriannpostigo', [Validators.required]], 
+      password: ['123456', [Validators.required]],
     });
   }
 
@@ -32,12 +32,21 @@ export class LoginComponent {
     }
 
     this.errorMessage = null;
-    const { email, password } = this.loginForm.value;
+    const credentials = this.loginForm.value;
 
-    if (this.authService.login(email, password)) {
-      this.router.navigate(['/dashboard']);
-    } else {
-      this.errorMessage = 'Email ou senha inválidos.';
-    }
+    this.authService.login(credentials).subscribe({
+      next: (response) => {
+        console.log('Comunicação com o backend bem-sucedida!');
+        console.log('Token recebido:', response.token); 
+
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        console.error('Erro na comunicação com o backend:', err);
+        this.errorMessage = 'Login ou senha inválidos, ou erro no servidor.';
+      }
+    })
+
+   
   }
 }
