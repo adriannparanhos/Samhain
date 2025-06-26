@@ -51,6 +51,21 @@ export class AuthLoginService {
     return localStorage.getItem('authToken');
   }
 
+  public isAdmin(): boolean {
+    const token = this.getToken();
+    if (!token) {
+      return false;
+    }
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.roles && Array.isArray(payload.roles) && payload.roles.includes('ROLE_ADMIN');
+      
+    } catch (e) {
+      console.error('Erro ao verificar permissão de admin no token:', e);
+      return false;
+    }
+  }
+
   private getUserFromToken(): any {
     const token = this.getToken();
     if (!token) {
@@ -58,7 +73,7 @@ export class AuthLoginService {
     }
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      return { name: payload.sub, email: payload.sub }; 
+      return { name: payload.name || payload.sub, email: payload.sub }; 
     } catch (e) {
       console.error('Erro ao decodificar o token', e);
       return null;
