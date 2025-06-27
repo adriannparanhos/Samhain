@@ -73,7 +73,15 @@ export class AuthLoginService {
     }
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      return { name: payload.name || payload.sub, email: payload.sub }; 
+      let photoUrl = 'assets/images/profiles/bianca.png'
+
+      if (payload.sub === 'adriannpostigo') {
+        photoUrl = 'assets/images/profiles/adriann.jpeg'
+      } else if (payload.sub === 'bianca') {
+        photoUrl = 'assets/images/profiles/bianca.png'
+      } 
+
+      return { name: payload.name || payload.sub, email: payload.sub, photoUrl: photoUrl }; 
     } catch (e) {
       console.error('Erro ao decodificar o token', e);
       return null;

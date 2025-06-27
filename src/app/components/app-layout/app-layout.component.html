@@ -48,8 +48,8 @@
             routerLinkActive="bg-gray-100" 
             class="flex items-center p-2 rounded-md cursor-pointer hover:bg-gray-100 transition-colors"
           >
-            <div class="h-9 w-9 rounded-full bg-blue-100 flex items-center justify-center">
-              <i-lucide name="user" class="w-5 h-5 text-blue-600"></i-lucide>
+            <div *ngIf="user && user.photoUrl" class="h-9 w-9 rounded-full overflow-hidden">
+                <img [src]="user.photoUrl" alt="Foto do Perfil" class="w-full h-full object-cover">
             </div>
             <div class="ml-3 flex-1">
               <p class="text-sm font-medium text-gray-700">{{ user.name }}</p>

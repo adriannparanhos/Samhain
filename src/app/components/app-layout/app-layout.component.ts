@@ -41,7 +41,7 @@ export class AppLayoutComponent {
     private router: Router,
     private authService: AuthLoginService
   ) {
-    this.user = this.auth.currentUser;
+    this.user = this.authService.currentUserValue  
   }
 
   toggleSidebar() {
