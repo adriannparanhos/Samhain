@@ -76,7 +76,7 @@
                 <button (click)="editUser(user.id)" class="text-blue-600 hover:text-blue-900" title="Editar">
                   <i-lucide name="file-pen-line"></i-lucide>
                 </button>
-                <button (click)="deleteUser(user.id)" class="text-red-600 hover:text-red-900" title="Excluir">
+                <button (click)="deleteUser(user.name)" class="text-red-600 hover:text-red-900" title="Excluir">
                   <i-lucide name="trash-2"></i-lucide>
                 </button>
               </td>
@@ -92,92 +92,129 @@
 <div class="bg-white rounded-lg shadow">
     </div>
 
-<div *ngIf="isAdmin && lastVariable" class="bg-white rounded-lg shadow">
-  
-  <div class="p-4 border-b flex items-center justify-between">
-    <div class="flex items-center space-x-3">
-      <i-lucide name="sliders-horizontal" class="w-6 h-6 text-gray-500"></i-lucide>
-      <h2 class="text-lg font-semibold text-gray-800">Variáveis do Sistema</h2>
+<div *ngIf="isAdmin" class="bg-white rounded-lg shadow mt-8">
+
+  <ng-container *ngIf="!isEditingVariables; else editFormTemplate">
+
+    <div class="p-4 border-b flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <i-lucide name="sliders-horizontal" class="w-6 h-6 text-gray-500"></i-lucide>
+        <h2 class="text-lg font-semibold text-gray-800">Variáveis do Sistema</h2>
+      </div>
+      <button (click)="editVariables()" [disabled]="!lastVariable" class="px-4 py-2 text-sm bg-gray-100 text-gray-800 font-semibold rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
+        Editar
+      </button>
     </div>
-    <button (click)="editVariables()" class="px-4 py-2 text-sm bg-gray-100 text-gray-800 font-semibold rounded-md hover:bg-gray-200">
-      Editar
-    </button>
-  </div>
 
-  <div class="p-6">
-    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-sm">
-      
-      <div class="col-span-1 md:col-span-2">
-        <dt class="text-gray-500">Última atualização:</dt>
-        <dd class="font-medium text-gray-800">{{ lastUpdate | date:'dd/MM/yyyy HH:mm' }}</dd>
-      </div>
-      
-      <div class="col-span-1 md:col-span-2 mb-2 border-t pt-4">
-        <dt class="text-gray-500">Alterações realizadas:</dt>
-        <dd class="font-medium text-gray-800">{{ lastVariable.id }}</dd>
-      </div>
+    <div class="p-6">
+      <ng-container *ngIf="lastVariable; else loadingVariables">
+        <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-sm">
+            <div class="col-span-1 md:col-span-2">
+                <dt class="text-gray-500">Última atualização:</dt>
+                <dd class="font-medium text-red-800">{{ lastUpdate | date:'dd/MM/yyyy HH:mm' }}</dd>
+            </div>
+            <div class="col-span-1 md:col-span-2 mt-4 border-t border-gray-200 pt-4">
+              <h4 class="font-semibold text-gray-600 mb-2">Variaveis de orçamento</h4>
+            </div>
+            <div>
+                <dt class="text-gray-500">Valor hora usinagem:</dt>
+                <dd class="font-medium text-green-500">{{ lastVariable.valorHoraUsinagem }}</dd>
+            </div>
+            <div>
+              <dt class="text-gray-500">Rebarbação:</dt>
+              <dd class="font-medium text-green-500">{{ lastVariable.rebarbacao }}</dd>
+            </div>
+            <div>
+              <dt class="text-gray-500">Valor unitário do desenho:</dt>
+              <dd class="font-medium text-green-500">{{ lastVariable.valorUnitarioDesenho }}</dd>
+            </div>
+            <div>
+              <dt class="text-gray-500">Mark up (revestimento):</dt>
+              <dd class="font-medium text-green-500">{{ lastVariable.markUpRevestimento }}</dd>
+            </div>
+            <div>
+              <dt class="text-gray-500">Variavel de frete:</dt>
+              <dd class="font-medium text-green-500">{{ lastVariable.mark_up_frete }}</dd>
+            </div>
+            <div>
+              <dt class="text-gray-500">Valor da resina:</dt>
+              <dd class="font-medium text-green-500">{{ lastVariable.resinValue }}</dd>
+            </div>
+            
+            <div class="col-span-1 md:col-span-2 mt-4 border-t border-gray-200 pt-4">
+              <h4 class="font-semibold text-gray-600 mb-2">Descontos (%)</h4>
+            </div>
+            <div>
+              <dt class="text-gray-500">Desconto um:</dt>
+              <dd class="font-medium text-green-500">{{ lastVariable.descontoUm }} %</dd>
+            </div>
+            <div>
+              <dt class="text-gray-500">Desconto dois:</dt>
+              <dd class="font-medium text-green-500">{{ lastVariable.descontoDois }} %</dd>
+            </div>
+            <div>
+              <dt class="text-gray-500">Desconto três:</dt>
+              <dd class="font-medium text-green-500">{{ lastVariable.descontoTres }} %</dd>
+            </div>
+            <div>
+              <dt class="text-gray-500">Desconto quatro:</dt>
+              <dd class="font-medium text-green-500">{{ lastVariable.descontoQuatro }} %</dd>
+            </div>
 
-      <div>
-        <dt class="text-gray-500">Valor hora usinagem:</dt>
-        <dd class="font-medium text-gray-800">{{ lastVariable.valorHoraUsinagem }}</dd>
-      </div>
-      <div>
-        <dt class="text-gray-500">Rebarbação:</dt>
-        <dd class="font-medium text-gray-800">{{ lastVariable.rebarbacao }}</dd>
-      </div>
-      <div>
-        <dt class="text-gray-500">Valor unitário do desenho:</dt>
-        <dd class="font-medium text-gray-800">{{ lastVariable.valorUnitarioDesenho }}</dd>
-      </div>
-      <div>
-        <dt class="text-gray-500">Mark up (revestimento):</dt>
-        <dd class="font-medium text-gray-800">{{ lastVariable.markUpRevestimento }}</dd>
-      </div>
-      <div>
-        <dt class="text-gray-500">Variavel de frete:</dt>
-        <dd class="font-medium text-gray-800">{{ lastVariable.mark_up_frete }}</dd>
-      </div>
-      <div>
-        <dt class="text-gray-500">Valor da resina:</dt>
-        <dd class="font-medium text-gray-800">{{ lastVariable.resinValue }}</dd>
-      </div>
-      
-      <div class="col-span-1 md:col-span-2 mt-4 border-t pt-4">
-        <h4 class="font-semibold text-gray-600 mb-2">Descontos (%)</h4>
-      </div>
-      <div>
-        <dt class="text-gray-500">Desconto um:</dt>
-        <dd class="font-medium text-gray-800">{{ lastVariable.descontoUm }} %</dd>
-      </div>
-      <div>
-        <dt class="text-gray-500">Desconto dois:</dt>
-        <dd class="font-medium text-gray-800">{{ lastVariable.descontoDois }} %</dd>
-      </div>
-      <div>
-        <dt class="text-gray-500">Desconto três:</dt>
-        <dd class="font-medium text-gray-800">{{ lastVariable.descontoTres }} %</dd>
-      </div>
-      <div>
-        <dt class="text-gray-500">Desconto quatro:</dt>
-        <dd class="font-medium text-gray-800">{{ lastVariable.descontoQuatro }} %</dd>
-      </div>
+            <div class="col-span-1 md:col-span-2 mt-4 border-t border-gray-200 pt-4">
+              <h4 class="font-semibold text-gray-600 mb-2">Mark ups de Categoria</h4>
+            </div>
+            <div>
+              <dt class="text-gray-500">Mark up black:</dt>
+              <dd class="font-medium text-green-500">{{ lastVariable.mark_up_black }}</dd>
+            </div>
+            <div>
+              <dt class="text-gray-500">Mark up natural:</dt>
+              <dd class="font-medium text-green-500">{{ lastVariable.mark_up_natural }}</dd>
+            </div>
+            <div>
+              <dt class="text-gray-500">Mark up ultra:</dt>
+              <dd class="font-medium text-green-500">{{ lastVariable.mark_up_ultra }}</dd>
+            </div>
+        </dl>
+      </ng-container>
 
-      <div class="col-span-1 md:col-span-2 mt-4 border-t pt-4">
-        <h4 class="font-semibold text-gray-600 mb-2">Mark ups de Categoria</h4>
-      </div>
-      <div>
-        <dt class="text-gray-500">Mark up black:</dt>
-        <dd class="font-medium text-gray-800">{{ lastVariable.mark_up_black }}</dd>
-      </div>
-      <div>
-        <dt class="text-gray-500">Mark up natural:</dt>
-        <dd class="font-medium text-gray-800">{{ lastVariable.mark_up_natural }}</dd>
-      </div>
-      <div>
-        <dt class="text-gray-500">Mark up ultra:</dt>
-        <dd class="font-medium text-gray-800">{{ lastVariable.mark_up_ultra }}</dd>
-      </div>
+      <ng-template #loadingVariables>
+        <div class="text-center text-gray-500">
+          <p>Carregando variáveis do sistema...</p>
+        </div>
+      </ng-template>
+    </div>
+    
+  </ng-container>
 
-    </dl>
-  </div>
+
+  <ng-template #editFormTemplate>
+    <div class="p-4 border-b flex items-center">
+      <i-lucide name="sliders-horizontal" class="w-6 h-6 text-gray-500"></i-lucide>
+      <h2 class="text-lg font-semibold text-gray-800 ml-3">Editando Variáveis do Sistema</h2>
+    </div>
+    <form [formGroup]="variablesForm" (ngSubmit)="onSaveVariables()" class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let key of variableKeys">
+          <label [for]="key" class="block text-sm font-medium text-gray-700 capitalize">{{ key | formatKey }}</label>
+          <input 
+            type="number" 
+            [id]="key" 
+            [formControlName]="key"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+      </div>
+      <div class="mt-8 pt-5 border-t text-right space-x-3">
+        <button type="button" (click)="cancelEditVariables()" class="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-md hover:bg-gray-300">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="variablesForm.invalid" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md shadow-sm hover:bg-blue-700 disabled:opacity-50">
+          Salvar Variáveis
+        </button>
+      </div>
+    </form>
+  </ng-template>
+
 </div>
