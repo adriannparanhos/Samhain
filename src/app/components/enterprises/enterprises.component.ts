@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ButtonComponent } from '../button/button.component';
 import { SearchComponent } from '../search/search.component';
 import { TableColumn, TableInfoComponent } from '../table-info/table-info.component';
@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import { FetchEnterpriseService } from '../../services/fetchs/fetch-enterprise.service';
 import { CommonModule } from '@angular/common';
 import { CpfCnpjMaskDirective } from '../../directive/cpf-cnpj-mask.directive';
+import { Subject, Subscription } from 'rxjs'; 
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators'; 
 
 interface Enterprise {
   id: number;
@@ -21,10 +23,14 @@ interface Enterprise {
   templateUrl: './enterprises.component.html',
   styleUrls: ['./enterprises.component.css']
 })
-export class EnterprisesComponent implements OnInit {
+export class EnterprisesComponent implements OnInit, OnDestroy {
   isDeleting: boolean = false;
   enterprises: Enterprise[] = [];
   pagedEnterprises: Enterprise[] = [];
+
+  private searchSubject = new Subject<string>();
+  private searchSubscription!: Subscription;
+
 
   columns: TableColumn<Enterprise>[] = [
     { header: 'Razão Social', field: 'razaoSocial' },
@@ -46,9 +52,29 @@ export class EnterprisesComponent implements OnInit {
 
   ngOnInit() {
     this.loadEnterprises();
+
+    // 6. Configure o "ouvinte" da busca com Debounce
+    this.searchSubscription = this.searchSubject.pipe(
+      // Espera 400ms após o usuário parar de digitar
+      debounceTime(400),
+      // Só emite se o texto for diferente do anterior (evita buscas repetidas)
+      distinctUntilChanged()
+    ).subscribe(searchTerm => {
+      // Quando o tempo de espera passar, esta lógica é executada
+      this.searchTerm = searchTerm;
+      this.currentPage = 0;
+      this.loadEnterprises();
+    });
   }
 
-   private loadEnterprises() {
+  ngOnDestroy() {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
+  }
+
+  private loadEnterprises() {
+    console.log(`[DEBUG] O método loadEnterprises() foi chamado! Termo de busca atual: '${this.searchTerm}'`);
     this.isLoading = true; 
     
     this.fetchEnterpriseService.getEnterprises(
@@ -85,9 +111,7 @@ export class EnterprisesComponent implements OnInit {
   }
 
   onSearchChange(term: string): void {
-    this.searchTerm = term;
-    this.currentPage = 0;
-    this.loadEnterprises();
+    this.searchSubject.next(term);
   }
 
   goToPage(page: number): void {

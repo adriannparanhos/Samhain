@@ -6,11 +6,15 @@ import { LucideAngularModule } from 'lucide-angular';
 import { of } from 'rxjs'; 
 import { EnvironmentVariablesService } from '../../services/fetchs/environment-variables.service';
 import { FormatKeyPipe } from '../../pipes/format-key.pipe';
+import { FieldConfig } from '../../components/add-new-form/add-new-form.component';
+import { AddNewFormComponent } from '../../components/add-new-form/add-new-form.component';
+import { ReturnArrowComponent } from '../../components/return-arrow/return-arrow.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, FormatKeyPipe],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, FormatKeyPipe, AddNewFormComponent, ReturnArrowComponent],
   templateUrl: './settings.component.html',
 })
 export class SettingsComponent implements OnInit {
@@ -26,10 +30,27 @@ export class SettingsComponent implements OnInit {
   isEditingVariables: boolean = false;
   isVisualize: boolean = true;
 
+  isAddingUser = false; // Controla a visibilidade do formulário
+  newUserForm!: FormGroup
+
+  newUserFormFields: FieldConfig[] = [
+    { name: 'login', label: 'Login (Nome de Usuário)', type: 'text', placeholder: 'ex: adriann', validators: [Validators.required] },
+    { name: 'email', label: 'Email', type: 'email', placeholder: 'usuario@exemplo.com', validators: [Validators.required, Validators.email] },
+    { name: 'senha', label: 'Senha Provisória', type: 'password', placeholder: '********', validators: [Validators.required, Validators.minLength(6)] },
+    { name: 'role', label: 'Permissão', type: 'select', 
+      options: [
+        { label: 'Usuário Padrão', value: 'ROLE_USER' },
+        { label: 'Administrador', value: 'ROLE_ADMIN' }
+      ], 
+      validators: [Validators.required] 
+    }
+  ];
+
   constructor(
     private fb: FormBuilder, 
     private authService: AuthLoginService,
-    private environmentVariablesService: EnvironmentVariablesService
+    private environmentVariablesService: EnvironmentVariablesService,
+    private router: Router
   ) {
     this.profileForm = this.fb.group({
       name: ['', Validators.required],
@@ -71,6 +92,39 @@ export class SettingsComponent implements OnInit {
     } else {
       console.log('Não é admin. A tabela de gerenciamento não será exibida.');
     }
+  }
+
+  openAddUserForm(): void {
+    this.isAddingUser = true;
+  }
+  
+  cancelAddUser(): void {
+    this.isAddingUser = false;
+    this.newUserForm.reset(); // Limpa o formulário ao cancelar
+  }
+
+  // Recebe o FormGroup do componente filho <app-add-new-form>
+  onNewUserFormReady(formGroup: FormGroup): void {
+    this.newUserForm = formGroup;
+  }
+
+  onSaveNewUser(): void {
+    if (this.newUserForm.invalid) {
+      alert('Por favor, preencha todos os campos para criar o novo usuário.');
+      return;
+    }
+
+    const newUserData = this.newUserForm.value;
+    console.log("Enviando novo usuário para o backend:", newUserData);
+
+    // SIMULAÇÃO: No futuro, você chamaria seu serviço aqui
+    // this.userService.createUser(newUserData).subscribe({ ... });
+
+    alert(`Usuário '${newUserData.login}' criado com sucesso! (simulação)`);
+    
+    // Após o sucesso, esconde o formulário e recarrega a lista de usuários
+    this.isAddingUser = false;
+    this.loadAllUsers(); // Recarrega a tabela de usuários
   }
 
   loadAllUsers(): void {
@@ -167,4 +221,9 @@ export class SettingsComponent implements OnInit {
   get variableKeys(): string[] {
     return Object.keys(this.variablesForm.controls);
   }
+
+  returnPage() {
+    this.router.navigate(['budgets']);
+  }
+
 }

@@ -8,7 +8,7 @@ import { IpiMultiplierDirective } from '../../directive/ipi-multiplier.directive
 export interface FieldConfig {
   name: string;
   label: string;
-  type: 'text' | 'number' | 'select' | 'checkbox' | 'textarea' | 'date' | 'email' | 'number' | 'currency';
+  type: 'text' | 'number' | 'select' | 'checkbox' | 'textarea' | 'date' | 'email' | 'number' | 'currency' | 'password';
   options?: { label: string; value: string }[];
   validators?: ValidatorFn[];
   placeholder?: string;
