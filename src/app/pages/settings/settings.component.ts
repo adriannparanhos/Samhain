@@ -30,13 +30,13 @@ export class SettingsComponent implements OnInit {
   isEditingVariables: boolean = false;
   isVisualize: boolean = true;
 
-  isAddingUser = false; // Controla a visibilidade do formulário
+  isAddingUser = false; 
   newUserForm!: FormGroup
 
   newUserFormFields: FieldConfig[] = [
     { name: 'login', label: 'Login (Nome de Usuário)', type: 'text', placeholder: 'ex: adriann', validators: [Validators.required] },
     { name: 'email', label: 'Email', type: 'email', placeholder: 'usuario@exemplo.com', validators: [Validators.required, Validators.email] },
-    { name: 'senha', label: 'Senha Provisória', type: 'password', placeholder: '********', validators: [Validators.required, Validators.minLength(6)] },
+    { name: 'password', label: 'Senha Provisória', type: 'password', placeholder: '********', validators: [Validators.required, Validators.minLength(6)] },
     { name: 'role', label: 'Permissão', type: 'select', 
       options: [
         { label: 'Usuário Padrão', value: 'ROLE_USER' },
@@ -113,18 +113,20 @@ export class SettingsComponent implements OnInit {
       alert('Por favor, preencha todos os campos para criar o novo usuário.');
       return;
     }
-
     const newUserData = this.newUserForm.value;
     console.log("Enviando novo usuário para o backend:", newUserData);
 
-    // SIMULAÇÃO: No futuro, você chamaria seu serviço aqui
-    // this.userService.createUser(newUserData).subscribe({ ... });
-
-    alert(`Usuário '${newUserData.login}' criado com sucesso! (simulação)`);
-    
-    // Após o sucesso, esconde o formulário e recarrega a lista de usuários
-    this.isAddingUser = false;
-    this.loadAllUsers(); // Recarrega a tabela de usuários
+    this.authService.createUser(newUserData).subscribe({
+      next: (response) => {
+        alert(`Usuário '${response.login}' criado com sucesso!`);
+        this.isAddingUser = false;
+        this.loadAllUsers(); 
+      },
+      error: (err) => {
+        console.error("Erro ao criar usuário", err);
+        alert(`Erro: ${err.error.message || 'Não foi possível criar o usuário.'}`);
+      }
+    });
   }
 
   loadAllUsers(): void {

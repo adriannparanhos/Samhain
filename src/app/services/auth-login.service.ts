@@ -8,6 +8,7 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 })
 export class AuthLoginService {
   private apiUrl = 'http://localhost:8080/login';
+  private url = 'http://localhost:8080/user';
   
   private currentUserSubject: BehaviorSubject<any>;
 
@@ -86,5 +87,9 @@ export class AuthLoginService {
       console.error('Erro ao decodificar o token', e);
       return null;
     }
+  }
+
+  createUser(userData: any): Observable<any> {
+    return this.http.post(`${this.url}/register`, userData);
   }
 }
