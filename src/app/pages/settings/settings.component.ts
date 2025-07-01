@@ -10,11 +10,12 @@ import { FieldConfig } from '../../components/add-new-form/add-new-form.componen
 import { AddNewFormComponent } from '../../components/add-new-form/add-new-form.component';
 import { ReturnArrowComponent } from '../../components/return-arrow/return-arrow.component';
 import { Router } from '@angular/router';
+import { RoleNamePipe } from '../../pipes/role-name.pipe';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, FormatKeyPipe, AddNewFormComponent, ReturnArrowComponent],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, FormatKeyPipe, AddNewFormComponent, ReturnArrowComponent, RoleNamePipe],
   templateUrl: './settings.component.html',
 })
 export class SettingsComponent implements OnInit {
@@ -34,7 +35,8 @@ export class SettingsComponent implements OnInit {
   newUserForm!: FormGroup
 
   newUserFormFields: FieldConfig[] = [
-    { name: 'login', label: 'Login (Nome de Usuário)', type: 'text', placeholder: 'ex: adriann', validators: [Validators.required] },
+    { name: 'nome', label: 'Nome', type: 'text', placeholder: 'ex: Joao Mendes', validators: [Validators.required] },
+    { name: 'login', label: 'Login (Nome de Usuário)', type: 'text', placeholder: 'ex: novousuario', validators: [Validators.required] },
     { name: 'email', label: 'Email', type: 'email', placeholder: 'usuario@exemplo.com', validators: [Validators.required, Validators.email] },
     { name: 'password', label: 'Senha Provisória', type: 'password', placeholder: '********', validators: [Validators.required, Validators.minLength(6)] },
     { name: 'role', label: 'Permissão', type: 'select', 
@@ -100,10 +102,9 @@ export class SettingsComponent implements OnInit {
   
   cancelAddUser(): void {
     this.isAddingUser = false;
-    this.newUserForm.reset(); // Limpa o formulário ao cancelar
+    this.newUserForm.reset(); 
   }
 
-  // Recebe o FormGroup do componente filho <app-add-new-form>
   onNewUserFormReady(formGroup: FormGroup): void {
     this.newUserForm = formGroup;
   }
@@ -130,13 +131,30 @@ export class SettingsComponent implements OnInit {
   }
 
   loadAllUsers(): void {
-    const mockUsers = [
-      { id: 1, name: 'Admin Principal', email: 'admin@exemplo.com', role: 'ADMIN' },
-      { id: 2, name: 'Usuário Comum 1', email: 'user1@exemplo.com', role: 'USER' },
-      { id: 3, name: 'Usuário Comum 2', email: 'user2@exemplo.com', role: 'USER' },
-    ];
-    of(mockUsers).subscribe(users => {
-      this.allUsers = users;
+    // const mockUsers = [
+    //   { id: 1, name: 'Admin Principal', email: 'admin@exemplo.com', role: 'ADMIN' },
+    //   { id: 2, name: 'Usuário Comum 1', email: 'user1@exemplo.com', role: 'USER' },
+    //   { id: 3, name: 'Usuário Comum 2', email: 'user2@exemplo.com', role: 'USER' },
+    // ];
+    // of(mockUsers).subscribe(users => {
+    //   this.allUsers = users;
+    // });
+
+    this.authService.getAllUsers().subscribe({
+      next: (users) => {
+        if (Array.isArray(users) && users.length > 0) {
+          this.allUsers = users;
+          console.log("Lista de usuários carregada com sucesso:", this.allUsers);
+        } else {
+          console.warn("Nenhum usuário encontrado ou o formato está incorreto.");
+          this.allUsers = [];
+        }
+      },
+      error: (err) => {
+        console.error("Erro ao carregar a lista de usuários", err);
+        alert("Não foi possível carregar a lista de usuários.");
+        this.allUsers = [];
+      }
     });
   }
 
@@ -156,10 +174,18 @@ export class SettingsComponent implements OnInit {
   }
 
   deleteUser(userId: number): void {
-    if (confirm(`Tem certeza que deseja excluir o usuário ${userId}?`)) {
-      console.log(`Admin quer DELETAR o usuário com ID: ${userId}`);
-      alert(`Simulação de exclusão do usuário ${userId}`);
-      this.allUsers = this.allUsers.filter(u => u.id !== userId);
+    console.log(`Admin quer deletar o usuário com ID: ${userId}`);
+    if (confirm(`Tem certeza que deseja deletar o usuário com ID ${userId}?`)) {
+      this.authService.deleteUser(userId).subscribe({
+        next: () => {
+          alert('Usuário deletado com sucesso!');
+          this.loadAllUsers(); 
+        },
+        error: (err) => {
+          console.error("Erro ao deletar usuário", err);
+          alert("Não foi possível deletar o usuário.");
+        }
+      });
     }
   }
 

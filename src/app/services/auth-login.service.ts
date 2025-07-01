@@ -82,7 +82,11 @@ export class AuthLoginService {
         photoUrl = 'assets/images/profiles/bianca.png'
       } 
 
-      return { name: payload.name || payload.sub, email: payload.sub, photoUrl: photoUrl }; 
+      return { 
+        name: payload.name,  
+        email: payload.email, 
+        photoUrl: photoUrl 
+      }; 
     } catch (e) {
       console.error('Erro ao decodificar o token', e);
       return null;
@@ -91,5 +95,13 @@ export class AuthLoginService {
 
   createUser(userData: any): Observable<any> {
     return this.http.post(`${this.url}/register`, userData);
+  }
+
+  getAllUsers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.url}`);
+  }
+
+  deleteUser(userId: number): Observable<any> {
+    return this.http.delete(`${this.url}?id=${userId}`);
   }
 }
