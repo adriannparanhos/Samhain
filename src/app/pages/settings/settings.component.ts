@@ -30,15 +30,28 @@ export class SettingsComponent implements OnInit {
   allUsers: any[] = []; 
   isEditingVariables: boolean = false;
   isVisualize: boolean = true;
-
-  isAddingUser = false; 
+  isAddingUser = false;
+  isEditingUser = false;
   newUserForm!: FormGroup
-
+  
   newUserFormFields: FieldConfig[] = [
     { name: 'nome', label: 'Nome', type: 'text', placeholder: 'ex: Joao Mendes', validators: [Validators.required] },
     { name: 'login', label: 'Login (Nome de Usuário)', type: 'text', placeholder: 'ex: novousuario', validators: [Validators.required] },
     { name: 'email', label: 'Email', type: 'email', placeholder: 'usuario@exemplo.com', validators: [Validators.required, Validators.email] },
     { name: 'password', label: 'Senha Provisória', type: 'password', placeholder: '********', validators: [Validators.required, Validators.minLength(6)] },
+    { name: 'role', label: 'Permissão', type: 'select', 
+      options: [
+        { label: 'Usuário Padrão', value: 'ROLE_USER' },
+        { label: 'Administrador', value: 'ROLE_ADMIN' }
+      ], 
+      validators: [Validators.required] 
+    }
+  ];
+
+  editingUser: any = null;       
+  editUserForm!: FormGroup;
+  editUserFormFields: FieldConfig[] = [
+    { name: 'email', label: 'Email', type: 'email', validators: [Validators.required, Validators.email] },
     { name: 'role', label: 'Permissão', type: 'select', 
       options: [
         { label: 'Usuário Padrão', value: 'ROLE_USER' },
@@ -79,6 +92,11 @@ export class SettingsComponent implements OnInit {
       mark_up_ultra: [null, Validators.required],
       resinValue: [null, Validators.required]
     });
+
+    this.editUserForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      role: ['', Validators.required]
+    });
   }
 
   ngOnInit(): void {
@@ -98,6 +116,10 @@ export class SettingsComponent implements OnInit {
 
   openAddUserForm(): void {
     this.isAddingUser = true;
+  }
+
+  openEditUserForm(userId: number): void {
+    this.isEditingUser = true;
   }
   
   cancelAddUser(): void {
@@ -130,16 +152,62 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  loadAllUsers(): void {
-    // const mockUsers = [
-    //   { id: 1, name: 'Admin Principal', email: 'admin@exemplo.com', role: 'ADMIN' },
-    //   { id: 2, name: 'Usuário Comum 1', email: 'user1@exemplo.com', role: 'USER' },
-    //   { id: 3, name: 'Usuário Comum 2', email: 'user2@exemplo.com', role: 'USER' },
-    // ];
-    // of(mockUsers).subscribe(users => {
-    //   this.allUsers = users;
-    // });
+  onEditUserFormReady(formGroup: FormGroup): void {
+    this.editUserForm = formGroup; 
 
+    if (this.editingUser) {
+      this.editUserForm.patchValue({
+        email: this.editingUser.email,
+        role: this.editingUser.role
+      });
+    }
+  }
+
+  editUser(user: any): void {
+    this.isAddingUser = false;
+    this.isEditingUser = true;
+    this.editingUser = user;
+
+  }
+
+  cancelEditUser(): void {
+    this.isEditingUser = false; 
+    this.editingUser = null;   
+    this.editUserForm.reset();  
+  }
+
+
+onUpdateUser(): void {
+  if (!this.editingUser || this.editUserForm.invalid) {
+    alert('Por favor, preencha os campos corretamente.');
+    return;
+  }
+
+  const userId = this.editingUser.id;
+
+  const payload = {
+    email: this.editUserForm.value.email,
+    role: this.editUserForm.value.role
+  };
+
+  console.log(`Enviando dados atualizados para o usuário ID ${userId}:`, payload);
+
+  this.authService.updateUser(userId, payload).subscribe({
+    next: (response) => {
+      console.log('Usuário atualizado com sucesso:', response);
+      alert(`Usuário atualizado com sucesso!`);
+      
+      this.cancelEditUser(); 
+      this.loadAllUsers();   
+    },
+    error: (err) => {
+      console.error("Erro ao atualizar usuário", err);
+      alert(`Erro: ${err.error?.message || 'Não foi possível atualizar o usuário.'}`);
+    }
+  });
+}
+
+  loadAllUsers(): void {
     this.authService.getAllUsers().subscribe({
       next: (users) => {
         if (Array.isArray(users) && users.length > 0) {
@@ -168,11 +236,6 @@ export class SettingsComponent implements OnInit {
   onPasswordSubmit(): void {
   }
   
-  editUser(userId: number): void {
-    console.log(`Admin quer editar o usuário com ID: ${userId}`);
-    alert(`Simulação de edição do usuário ${userId}`);
-  }
-
   deleteUser(userId: number): void {
     console.log(`Admin quer deletar o usuário com ID: ${userId}`);
     if (confirm(`Tem certeza que deseja deletar o usuário com ID ${userId}?`)) {

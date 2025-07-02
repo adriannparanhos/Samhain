@@ -1,9 +1,6 @@
 <div class="space-y-8">
-  <div class="w-full max-w-7xl overflow-hidden mr-12">
-    <header class="flex items-center py-4">
-      <app-return-arrow (click)="returnPage()"></app-return-arrow>
-      <h1 class="text-4xl font-medium ml-4 text-slate-800">Configurações</h1>
-    </header>
+  <div>
+    <h1 class="text-3xl font-bold text-slate-800">Configurações</h1>
     <p class="text-slate-500 mt-1">Gerencie suas informações de perfil e segurança.</p>
   </div>
 
@@ -18,7 +15,7 @@
         <input type="text" id="name" formControlName="name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>
       <div class="pt-2 text-right">
-        <button type="submit" [disabled]="profileForm.invalid" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" title="Digite seu nome">
+        <button type="submit" [disabled]="profileForm.invalid" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed">
           Salvar Nome
         </button>
       </div>
@@ -27,63 +24,47 @@
 
   <div class="bg-white rounded-lg shadow">
     <div class="p-4 border-b flex items-center space-x-3">
-        <i-lucide name="key-round" class="w-6 h-6 text-blue-600"></i-lucide>
-        <h2 class="text-lg font-semibold text-gray-800">Alterar Senha</h2>
+      <i-lucide name="key-round" class="w-6 h-6 text-blue-600"></i-lucide>
+      <h2 class="text-lg font-semibold text-gray-800">Alterar Senha</h2>
     </div>
     <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()" class="p-6 space-y-4">
-        <div>
-            <label for="currentPassword" class="block text-sm font-medium text-gray-700">Senha Atual</label>
-            <input type="password" id="currentPassword" formControlName="currentPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <div>
-            <label for="newPassword" class="block text-sm font-medium text-gray-700">Nova Senha</label>
-            <input type="password" id="newPassword" formControlName="newPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <div>
-            <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirmar Nova Senha</label>
-            <input type="password" id="confirmPassword" formControlName="confirmPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <div class="pt-2 text-right">
-            <button type="submit" [disabled]="passwordForm.invalid" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed">
-                Alterar Senha
-            </button>
-        </div>
+      <div>
+        <label for="currentPassword" class="block text-sm font-medium text-gray-700">Senha Atual</label>
+        <input type="password" id="currentPassword" formControlName="currentPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <div>
+        <label for="newPassword" class="block text-sm font-medium text-gray-700">Nova Senha</label>
+        <input type="password" id="newPassword" formControlName="newPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <div>
+        <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirmar Nova Senha</label>
+        <input type="password" id="confirmPassword" formControlName="confirmPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <div class="pt-2 text-right">
+        <button type="submit" [disabled]="passwordForm.invalid" class="px-4 py-2 bg-gray-700 text-white font-semibold rounded-md shadow-sm hover:bg-gray-800 disabled:opacity-50">
+          Alterar Senha
+        </button>
+      </div>
     </form>
   </div>
 
-  <div class="bg-white rounded-lg shadow">
-    </div>
-
   <div *ngIf="isAdmin" class="bg-white rounded-lg shadow">
-    <div class="p-4 border-b flex items-center space-x-3 justify-between">
+    <div class="p-4 border-b flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <i-lucide name="users" class="w-6 h-6 text-blue-600"></i-lucide>
-        <h2 class="text-lg font-semibold text-gray-800">Gerenciamento de Usuários</h2>
+        <h2 class="text-lg font-semibold text-gray-800">
+          <ng-container *ngIf="isAddingUser">Cadastrar Novo Usuário</ng-container>
+          <ng-container *ngIf="isEditingUser">Editando Usuário: {{ editingUser.nome }}</ng-container>
+          <ng-container *ngIf="!isAddingUser && !isEditingUser">Gerenciamento de Usuários</ng-container>
+        </h2>
       </div>
-      <button *ngIf="!isAddingUser" (click)="openAddUserForm()" class="px-4 py-2 text-sm bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 text-right">
+      <button *ngIf="!isAddingUser && !isEditingUser" (click)="openAddUserForm()" class="px-4 py-2 text-sm bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600">
         Novo Usuário
       </button>
     </div>
+
     <div class="p-6">
-      <div *ngIf="isAddingUser">
-        <h3 class="text-md font-semibold text-gray-700 mb-4 border-b pb-2">Cadastrar Novo Usuário</h3>
-        <app-add-new-form
-          [fields]="newUserFormFields"
-          (formReady)="onNewUserFormReady($event)"
-        ></app-add-new-form>
-        <div class="mt-6 text-right space-x-3">
-          <button (click)="cancelAddUser()" class="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-md hover:bg-gray-300">
-            Cancelar
-          </button>
-          <button (click)="onSaveNewUser()" [disabled]="!newUserForm || newUserForm.invalid" class="px-4 py-2 bg-green-600 text-white font-semibold rounded-md shadow-sm hover:bg-green-700 disabled:opacity-50">
-            Salvar Novo Usuário
-          </button>
-        </div>
-        <div *ngIf="!isAddingUser" class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200"></table>
-        </div>
-      </div>
-      <div class="overflow-x-auto mt-6">
+      <div *ngIf="!isAddingUser && !isEditingUser" class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
@@ -100,18 +81,12 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ user.nome }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ user.email }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm">
-                <span 
-                  class="px-2 py-1 rounded-full text-xs font-semibold"
-                  [ngClass]="{
-                    'bg-blue-100 text-blue-800': user.role === 'ROLE_ADMIN',
-                    'bg-green-100 text-green-800': user.role === 'ROLE_USER'
-                  }"
-                >
+                <span class="px-2 py-1 rounded-full text-xs font-semibold" [ngClass]="{ 'bg-blue-100 text-blue-800': user.role === 'ROLE_ADMIN', 'bg-green-100 text-green-800': user.role === 'ROLE_USER' }">
                   {{ user.role | roleName }}
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-4">
-                <button (click)="editUser(user.id)" class="text-blue-600 hover:text-blue-900" title="Editar">
+                <button (click)="editUser(user)" class="text-blue-600 hover:text-blue-900" title="Editar">
                   <i-lucide name="file-pen-line"></i-lucide>
                 </button>
                 <button (click)="deleteUser(user.id)" class="text-red-600 hover:text-red-900" title="Excluir">
@@ -122,13 +97,29 @@
           </tbody>
         </table>
       </div>
+
+      <div *ngIf="isAddingUser">
+        <app-add-new-form [fields]="newUserFormFields" (formReady)="onNewUserFormReady($event)"></app-add-new-form>
+        <div class="mt-6 text-right space-x-3">
+          <button (click)="cancelAddUser()" class="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-md hover:bg-gray-300">Cancelar</button>
+          <button (click)="onSaveNewUser()" [disabled]="!newUserForm || newUserForm.invalid" class="px-4 py-2 bg-green-600 text-white font-semibold rounded-md shadow-sm hover:bg-green-700 disabled:opacity-50">Salvar Novo Usuário</button>
+        </div>
+      </div>
+
+      <div *ngIf="isEditingUser">
+        <app-add-new-form [fields]="editUserFormFields" [initialData]="editUserForm.value" (formReady)="onEditUserFormReady($event)"></app-add-new-form>
+        <div class="mt-6 text-right space-x-3">
+          <button (click)="cancelEditUser()" class="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-md hover:bg-gray-300">Cancelar</button>
+          <button (click)="onUpdateUser()" [disabled]="editUserForm.invalid" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-sm hover:bg-blue-600 disabled:opacity-50">Salvar Alterações</button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-
-<div class="bg-white rounded-lg shadow">
+  <div *ngIf="isAdmin" class="bg-white rounded-lg shadow">
     </div>
+
+</div>
 
 <div *ngIf="isAdmin" class="bg-white rounded-lg shadow mt-8">
 

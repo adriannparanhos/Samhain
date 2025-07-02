@@ -31,6 +31,7 @@ export interface FieldConfig {
 })
 export class AddNewFormComponent implements OnInit {
   @Input() fields: FieldConfig[] = [];
+  @Input() initialData: any = null;
   @Output() submitForm = new EventEmitter<any>();
   @Output() formReady = new EventEmitter<FormGroup>();
 
@@ -44,6 +45,10 @@ export class AddNewFormComponent implements OnInit {
         group[f.name] = ['', f.validators || []];
       }
     this.form = this.fb.group(group);
+    if (this.initialData) {
+      // ... use o método patchValue para preencher os campos correspondentes.
+      this.form.patchValue(this.initialData);
+    }
     this.formReady.emit(this.form);
   }
 

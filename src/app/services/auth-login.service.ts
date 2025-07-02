@@ -101,6 +101,11 @@ export class AuthLoginService {
     return this.http.get<any[]>(`${this.url}`);
   }
 
+  updateUser(userId: number, userData: any): Observable<any> {
+    // Constrói a URL no padrão REST: /usuarios/{id}
+    return this.http.put(`${this.url}/${userId}`, userData);
+  }
+
   deleteUser(userId: number): Observable<any> {
     return this.http.delete(`${this.url}?id=${userId}`);
   }
