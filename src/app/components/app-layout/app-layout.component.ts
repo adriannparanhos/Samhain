@@ -34,6 +34,7 @@ export class AppLayoutComponent {
     { name: 'Produtos',  path: '/products',  icon: 'package'   },
     { name: 'Orçamentos',path: '/budgets',   icon: 'file-text' },
     { name: 'Pedidos', path: '/orders',    icon: 'file-check' },
+    { name: 'Serviços', path: '/services', icon: 'Hammer'       },
   ];
 
   constructor(

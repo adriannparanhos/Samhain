@@ -13,6 +13,7 @@ import { AppLayoutComponent } from './components/app-layout/app-layout.component
 import { authGuard } from './guards/auth.guard'; 
 import { SettingsComponent } from './pages/settings/settings.component';
 import { loginGuard } from './guards/login.guard'; 
+import { ServicesFormComponent } from './components/services-form/services-form.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent, canActivate: [loginGuard] },    
@@ -37,7 +38,8 @@ export const routes: Routes = [
             { path: 'budgets/edit/:proposta', component: AddNewBudgetComponent },
             { path: 'budget/pdf', component: OrcamentoPdfComponent }, 
             { path: 'orders', component: PedidosComponent },
-            { path: 'settings', component: SettingsComponent }
+            { path: 'settings', component: SettingsComponent },
+            { path: 'services', component: ServicesFormComponent }
         ]
     },
 
