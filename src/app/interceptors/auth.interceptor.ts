@@ -22,6 +22,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (error instanceof HttpErrorResponse) {
         if (error.status === 401 || error.status === 403) {
           console.warn('Sessão expirada ou inválida. Fazendo logout automático.');
+          alert('Sessão expirada ou inválida. Fazendo logout automático.');
           authService.logout();
         }
       }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
@@ -12,7 +12,11 @@ export class AuthLoginService {
   
   private currentUserSubject: BehaviorSubject<any>;
 
-  constructor(private router: Router, private http: HttpClient) {
+  constructor(
+    private router: Router, 
+    private http: HttpClient,
+    private zone: NgZone
+  ) {
     this.currentUserSubject = new BehaviorSubject<any>(this.getUserFromToken());
   }
 
@@ -41,7 +45,9 @@ export class AuthLoginService {
     
     this.currentUserSubject.next(null);
     
-    this.router.navigate(['/login']);
+    this.zone.run(() => {
+      this.router.navigate(['/login']);
+    });
   }
 
   public isAuthenticated(): boolean {
@@ -74,13 +80,17 @@ export class AuthLoginService {
     }
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      let photoUrl = 'assets/images/profiles/bianca.png'
+      let photoUrl = ''
 
       if (payload.sub === 'adriannpostigo') {
         photoUrl = 'assets/images/profiles/adriann.jpeg'
       } else if (payload.sub === 'bianca') {
         photoUrl = 'assets/images/profiles/bianca.png'
-      } 
+      } else if (payload.sub === 'celia') {
+        photoUrl = 'assets/images/profiles/celia.jpeg'
+      } else if (payload.sub === 'alan') {
+        photoUrl = 'assets/images/profiles/alan.jpeg'
+      }
 
       return { 
         name: payload.name,  
@@ -102,7 +112,6 @@ export class AuthLoginService {
   }
 
   updateUser(userId: number, userData: any): Observable<any> {
-    // Constrói a URL no padrão REST: /usuarios/{id}
     return this.http.put(`${this.url}/${userId}`, userData);
   }
 
