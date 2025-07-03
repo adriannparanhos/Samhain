@@ -90,7 +90,22 @@ export class SettingsComponent implements OnInit {
       mark_up_black: [null, Validators.required],
       mark_up_natural: [null, Validators.required],
       mark_up_ultra: [null, Validators.required],
-      resinValue: [null, Validators.required]
+      resinValue: [null, Validators.required],
+      rapido: [null, Validators.required],
+      medio: [null, Validators.required],
+      lento: [null, Validators.required],
+      custo_km_caminhao: [null, Validators.required],
+      custo_km_carro_proprio: [null, Validators.required],
+      custo_diaria_carro_alugado: [null, Validators.required],
+      mark_up_transporte: [null, Validators.required],
+      mark_up_remocao_revestimento: [null, Validators.required],
+      ar_comprimido: [null, Validators.required],
+      energia_eletrica: [null, Validators.required],
+      arame_de_solda: [null, Validators.required],
+      gas_de_solda: [null, Validators.required],
+      mark_up_ferramental: [null, Validators.required],
+      mark_up_chapa_semiacabadas: [null, Validators.required],
+      mark_up_with_tampoes: [null, Validators.required],
     });
 
     this.editUserForm = this.fb.group({
