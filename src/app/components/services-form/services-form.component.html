@@ -6,16 +6,26 @@
             <h3 class="text-lg font-medium text-gray-900 mb-4">Dados do cliente</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label for="installationLocation" class="block text-sm font-medium text-gray-700">Número da proposta: </label>
-                    <input type="number" id="installationLocation" formControlName="proposalNumber" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" placeholder="Digite o numero da proposta">
+                    <label for="proposalNumber" class="block text-sm font-medium text-gray-700">Número da proposta: </label>
+                    <input 
+                        type="text" 
+                        id="proposalNumber" 
+                        formControlName="proposalNumber" 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-300" 
+                        placeholder="Digite o numero da proposta"
+                        >
                 </div>
                 <div>
-                    <label for="coatedArea" class="block text-sm font-medium text-gray-700">CNPJ: </label>
-                    <input type="number" id="coatedArea" formControlName="cnpj" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" placeholder="00.000.000/0000-00">
+                    <label for="cnpj" class="block text-sm font-medium text-gray-700">CNPJ: </label>
+                    <input type="text" id="cnpj" formControlName="cnpj" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-300" placeholder="00.000.000/0000-00">
                 </div>
                 <div>
-                    <label for="coatedArea" class="block text-sm font-medium text-gray-700">Razao Social: </label>
-                    <input type="number" id="coatedArea" formControlName="razaoSocial" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" placeholder="Empresa XYZ LTDA">
+                    <label for="razaoSocial" class="block text-sm font-medium text-gray-700">Razao Social: </label>
+                    <input type="text" id="razaoSocial" formControlName="razaoSocial" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-300" placeholder="Empresa XYZ LTDA">
+                </div>
+                <div>
+                    <label for="metragem" class="block text-sm font-medium text-gray-700">Metro quadrado: </label>
+                    <input type="text" id="metragem" formControlName="metragem" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-300" placeholder="50 m²">
                 </div>
             </div>
         </section>
@@ -145,20 +155,20 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label for="installationLocation" class="block text-sm font-medium text-gray-700">Local de instalação (Km de São Carlos)</label>
-                <input type="number" id="installationLocation" formControlName="installationLocation" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" placeholder="Digite o km">
+                <input type="number" id="installationLocation" formControlName="installationLocation" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-300" placeholder="Digite o km">
             </div>
             <div>
                 <label for="coatedArea" class="block text-sm font-medium text-gray-700">Área total a ser revestida (m²)</label>
-                <input type="number" id="coatedArea" formControlName="coatedArea" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" placeholder="Área em m²">
+                <input type="number" id="coatedArea" formControlName="coatedArea" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-300" placeholder="Área em m²">
             </div>
             <div>
                 <label for="integrationDays" class="block text-sm font-medium text-gray-700">Dias de integração</label>
-                <input type="number" id="integrationDays" formControlName="integrationDays" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" placeholder="Dias de integração">
+                <input type="number" id="integrationDays" formControlName="integrationDays" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-300" placeholder="Dias de integração">
             </div>
         </div>
         <div class="mt-6">
             <label for="equipmentDescription" class="block text-sm font-medium text-gray-700">Descrição dos equipamentos</label>
-            <textarea id="equipmentDescription" formControlName="equipmentDescription" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" placeholder="Descreva os equipamentos"></textarea>
+            <textarea id="equipmentDescription" formControlName="equipmentDescription" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-300" placeholder="Descreva os equipamentos"></textarea>
         </div>
       </section>
     </div>
