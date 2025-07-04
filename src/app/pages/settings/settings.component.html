@@ -140,7 +140,7 @@
         <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-sm">
             <div class="col-span-1 md:col-span-2">
                 <dt class="text-gray-500">Última atualização:</dt>
-                <dd class="font-medium text-red-800">{{ lastUpdate | date:'dd/MM/yyyy HH:mm' }}</dd>
+                <dd class="font-medium text-red-800">{{ lastVariable.ultima_atualizacao | date:'dd/MM/yyyy HH:mm' }}</dd>
             </div>
             <div class="col-span-1 md:col-span-2 mt-4 border-t border-gray-200 pt-4">
               <h4 class="font-semibold text-gray-600 mb-2">Variaveis de orçamento</h4>
@@ -223,51 +223,51 @@
             </div>
             <div>
               <dt class="text-gray-500">Custo por km (caminhão):</dt>
-              <dd class="font-medium text-green-500">{{ lastVariable.custoKmCaminhao }}</dd>
+              <dd class="font-medium text-green-500">{{ lastVariable.custo_km_caminhao }}</dd>
             </div>
             <div>
               <dt class="text-gray-500">Custo por km (carro proprio):</dt>
-              <dd class="font-medium text-green-500">{{ lastVariable.custoKmCarroProprio }}</dd>
+              <dd class="font-medium text-green-500">{{ lastVariable.custo_km_carro_proprio }}</dd>
             </div>
             <div>
               <dt class="text-gray-500">Custo diario do carro alugado:</dt>
-              <dd class="font-medium text-green-500">{{ lastVariable.custoDiariaCarroAlugado }}</dd>
+              <dd class="font-medium text-green-500">{{ lastVariable.custo_diaria_carro_alugado }}</dd>
             </div>
             <div>
               <dt class="text-gray-500">Mark up transporte:</dt>
-              <dd class="font-medium text-green-500">{{ lastVariable.markUpTransporte }}</dd>
+              <dd class="font-medium text-green-500">{{ lastVariable.mark_up_transporte }}</dd>
             </div>
             <div>
               <dt class="text-gray-500">Mark up remoção do revestimento antigo:</dt>
-              <dd class="font-medium text-green-500">{{ lastVariable.marUpRemocaoRevestimento }}</dd>
+              <dd class="font-medium text-green-500">{{ lastVariable.mark_up_remocao_revestimento }}</dd>
             </div>
             <div>
               <dt class="text-gray-500">Ar comprimido:</dt>
-              <dd class="font-medium text-green-500">{{ lastVariable.arComprimido }}</dd>
+              <dd class="font-medium text-green-500">{{ lastVariable.ar_comprimido }}</dd>
             </div>
             <div>
               <dt class="text-gray-500">Energia eletrica:</dt>
-              <dd class="font-medium text-green-500">{{ lastVariable.energiaEletrica }}</dd>
+              <dd class="font-medium text-green-500">{{ lastVariable.energia_eletrica }}</dd>
             </div>
             <div>
               <dt class="text-gray-500">Arame de solda:</dt>
-              <dd class="font-medium text-green-500">{{ lastVariable.arameDeSolda }}</dd>
+              <dd class="font-medium text-green-500">{{ lastVariable.arame_de_solda }}</dd>
             </div>
             <div>
               <dt class="text-gray-500">Gas de solda:</dt>
-              <dd class="font-medium text-green-500">{{ lastVariable.gasDeSolda }}</dd>
+              <dd class="font-medium text-green-500">{{ lastVariable.gas_de_solda }}</dd>
             </div>
             <div>
               <dt class="text-gray-500">Mark up feerramental:</dt>
-              <dd class="font-medium text-green-500">{{ lastVariable.markUpFerramental }}</dd>
+              <dd class="font-medium text-green-500">{{ lastVariable.mark_up_ferramental }}</dd>
             </div>
             <div>
               <dt class="text-gray-500">Mark up chapa semiacabadas:</dt>
-              <dd class="font-medium text-green-500">{{ lastVariable.markUpChapaSemiacabadas }}</dd>
+              <dd class="font-medium text-green-500">{{ lastVariable.mark_up_chapa_semiacabadas }}</dd>
             </div>
             <div>
               <dt class="text-gray-500">Mark up tampoes:</dt>
-              <dd class="font-medium text-green-500">{{ lastVariable.markUpWithTampoes }}</dd>
+              <dd class="font-medium text-green-500">{{ lastVariable.mark_up_with_tampoes }}</dd>
             </div>
         </dl>
       </ng-container>

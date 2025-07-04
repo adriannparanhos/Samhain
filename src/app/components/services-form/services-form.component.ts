@@ -1,4 +1,3 @@
-// Imports necessários do Angular e RxJS
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -7,6 +6,7 @@ import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged, switchMap, filter, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-services-form',
@@ -18,7 +18,7 @@ export class ServicesFormComponent implements OnInit, OnDestroy {
   servicesForm: FormGroup;
   private destroy$ = new Subject<void>(); 
 
-  constructor(private fb: FormBuilder, private fetchBudgetsService: FetchBudgetsService) {
+  constructor(private fb: FormBuilder, private fetchBudgetsService: FetchBudgetsService, private router: Router) {
     this.servicesForm = this.fb.group({
       proposalNumber: ['', Validators.required],
       cnpj: ['', [Validators.required]],
@@ -99,8 +99,19 @@ export class ServicesFormComponent implements OnInit, OnDestroy {
     if (this.servicesForm.valid) {
       console.log('Formulário de Serviços Enviado:', this.servicesForm.value);
       alert('Dados do serviço enviados com sucesso! (simulação)');
+      this.routeToBudgetData();
     } else {
       console.error('Formulário de Serviços Inválido');
     }
+  }
+
+  routeToBudgetData(): void {
+    if (this.servicesForm.valid) {
+      const formData = this.servicesForm.value;
+      this.router.navigate(['/service-budget-data'], { state: { formData } });
+    } else {
+      alert('Por favor, preencha todos os campos obrigatórios antes de prosseguir.');
+    }
+    
   }
 }

@@ -14,6 +14,7 @@ import { authGuard } from './guards/auth.guard';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { loginGuard } from './guards/login.guard'; 
 import { ServicesFormComponent } from './components/services-form/services-form.component';
+import { ServiceBudgetComponent } from './components/service-budget-data/service-budget-data.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent, canActivate: [loginGuard] },    
@@ -39,7 +40,8 @@ export const routes: Routes = [
             { path: 'budget/pdf', component: OrcamentoPdfComponent }, 
             { path: 'orders', component: PedidosComponent },
             { path: 'settings', component: SettingsComponent },
-            { path: 'services', component: ServicesFormComponent }
+            { path: 'services', component: ServicesFormComponent },
+            { path: 'service-budget-data', component: ServiceBudgetComponent}
         ]
     },
 
