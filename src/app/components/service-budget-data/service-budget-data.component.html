@@ -1,113 +1,111 @@
 <form [formGroup]="pdfForm" class="bg-gray-100 p-4 print:bg-white print:p-0">
-  <div id="pdfElements" class="max-w-4xl mx-auto bg-white p-8 shadow-lg print:shadow-none">
-    <section class="flex justify-between items-start pb-4 border-b">
-      <div>
-        <img src="../../../assets/images/baron-header-img-removebg-preview.png" alt="Baron Logo" class="w-48">
+  <div id="pdfElements" class="max-w-4xl mx-auto bg-white p-6 font-sans text-xs">
+
+    <header class="flex justify-between items-start mb-4">
+      <div class="w-1/4">
+        <img src="../../../assets/images/baron-header-img-removebg-preview.png" alt="Baron Logo" class="w-full">
       </div>
-      <div>
-        <img src="../../../assets/images/ISO-removebg-preview.png" alt="ISO" class="w-20">
+      <div class="w-1/2 text-center">
+        <h2 class="text-xl font-bold">Proposta Comercial nº: {{ formData.proposalNumber || 'XX-XX-XXX-A' }}</h2>
+        <p class="text-sm">Responsável: Vendas Internas</p>
       </div>
-      <div class="text-right text-xs text-gray-600">
-        <p>CNPJ 10.633.565/0001-60</p>
-        <p>Insc. Est. 637161884113</p>
+      <div class="w-1/4 text-right text-[10px] leading-tight">
+        <p class="font-bold">Baron S.A.</p>
+        <p>CNPJ 10.633.565/0001-60 - Insc. Est. 637161884113</p>
         <p>Telefone: (16) 3378-0335</p>
         <p>Rua Bela Cintra, 999 - CEP.: 13.578-000</p>
         <p>Centro - Água Vermelha, São Carlos - SP</p>
+        <a href="http://www.baron.com.br" class="text-blue-600">www.baron.com.br</a>
+      </div>
+    </header>
+
+    <section class="grid grid-cols-3 gap-x-6 border-t border-b border-gray-300 py-2">
+      <div class="col-span-2">
+        <p class="font-bold">Informações do Cliente</p>
+        <div class="grid grid-cols-[max-content,1fr] gap-x-2">
+          <span class="font-semibold">Nome:</span>   <span>{{ formData.corporateName || 'N/A' }}</span>
+          <span class="font-semibold">CNPJ:</span>   <span>{{ formData.cnpj || 'N/A' }}</span>
+          <span class="font-semibold">Endereço:</span> <span>{{ formData.address.street || 'N/A' }} - {{ formData.address.number }} - {{ formData.address.neighborhood }} - CEP: {{ formData.address.cep }}</span>
+          <span class="font-semibold">Cidade:</span> <span>{{ formData.address.city || 'N/A' }} - {{ formData.address.state || 'N/A' }}</span>
+        </div>
+      </div>
+      <div class="col-span-1">
+        <div class="grid grid-cols-[max-content,1fr] gap-x-2 mt-4">
+          <span class="font-semibold">A/C:</span>    <span>{{ formData.contato || 'N/A' }}</span>
+          <span class="font-semibold">Fone:</span>   <span>{{ formData.phone || 'N/A' }}</span>
+          <span class="font-semibold">E-mail:</span> <span>{{ formData.email || 'N/A' }}</span>
+        </div>
       </div>
     </section>
 
-    <div class="text-center my-6">
-      <h3 class="text-2xl font-bold text-slate-800 flex justify-center items-center">
-        <!-- <i-lucide name="file-text" class="w-7 h-7 mr-3 text-blue-600"></i-lucide> -->
-        Orçamento de Serviço nº: {{ formData.proposalNumber || 'N/A'}}
-      </h3>
-      <!-- <p class="text-sm text-gray-500 mt-1">Vendedor: Adriann Postigo</p> --> 
-    </div>
-
-    <section class="flex justify-between border border-gray-300 rounded-lg p-4 text-sm">
-      <div class="w-1/2 space-y-2">
-        <h5 class="font-bold text-base text-slate-700 mb-2">Dados do Cliente:</h5>
-        <p><span class="font-semibold text-gray-500">Razão Social:</span> {{ formData.corporateName || 'N/A' }}</p>
-        <p><span class="font-semibold text-gray-500">CNPJ:</span> {{ formData.cnpj || 'N/A' }}</p>
-        <p><span class="font-semibold text-gray-500">Endereço:</span>
-          {{ formData.address.street || 'N/A' }}, {{ formData.address.number }} - {{ formData.address.neighborhood }}
-        </p>
-        <p><span class="font-semibold text-gray-500">Cidade/UF:</span> {{ formData.address.city }} - {{ formData.address.state || 'N/A' }}</p>
+    <section class="mt-2">
+      <div class="text-center font-bold bg-gray-200 p-1 border-x border-t border-gray-400">Serviços de Instalação</div>
+      
+      <div class="grid grid-cols-[55%,25%,20%] font-bold border-x border-t border-b border-gray-400">
+        <div class="p-1 border-r border-gray-400">Descrição</div>
+        <div class="p-1 border-r border-gray-400 text-center">Área Total (m²)</div>
+        <div class="p-1 text-center">Total</div>
       </div>
-      <div class="w-1/2 pl-8 space-y-2">
-        <h5 class="font-bold text-base text-slate-700 mb-2">Contato:</h5>
-        <p><span class="font-semibold text-gray-500">A/C:</span> {{ formData.contato || 'N/A' }}</p>
-        <p><span class="font-semibold text-gray-500">Fone:</span> {{ formData.phone || 'N/A' }}</p>
-        <p><span class="font-semibold text-gray-500">E-mail:</span> {{ formData.email || 'N/A' }}</p>
+      
+      <div *ngFor="let service of formData.services" class="grid grid-cols-[55%,25%,20%] border-x border-b border-gray-400">
+        <div class="p-1 border-r border-gray-400">{{ service.description }}</div>
+        <div class="p-1 border-r border-gray-400 text-center">{{ service.quantity }}</div>
+        <div class="p-1 text-right font-semibold">{{ service.totalPrice | currency:'BRL':'R$':'1.2-2':'pt-BR' }}</div>
+      </div>
+
+      <div class="grid grid-cols-1 border-x border-b border-gray-400">
+        <div class="p-1 h-20">
+          <span class="font-semibold">Descrição: </span>
+          <p class="whitespace-pre-wrap">{{ formData.observations }}</p>
+          <!-- <p class="whitespace-pre-wrap">{{ formData.detailedDescription || 'N/A' }}</p> -->
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-[80%,20%] font-bold border-x border-b border-gray-400">
+        <div class="p-1 border-r border-gray-400 text-right">TOTAL A PAGAR</div>
+        <div class="p-1 text-right bg-gray-200">{{ formData.total | currency:'BRL':'R$':'1.2-2':'pt-BR' }}</div>
       </div>
     </section>
 
-    <div class="flex justify-center items-center bg-slate-800 text-white p-2 font-bold my-4 rounded-md text-lg">
-      <i-lucide name="wrench" class="w-5 h-5 mr-3"></i-lucide>
-      Descrição dos Serviços
-    </div>
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-100">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descrição do Serviço</th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Qtde.</th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Preço Unit.</th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Subtotal</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200 text-sm">
-          <tr *ngFor="let service of formData.services">
-            <td class="px-6 py-4 whitespace-normal font-medium text-gray-800">{{ service.description }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-gray-600">{{ service.quantity }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-gray-600">{{ service.unitPrice | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-right font-semibold text-gray-800">{{ service.totalPrice | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <section class="mt-2">
+      <div class="text-center font-bold bg-gray-200 p-1 border-x border-t border-gray-400">Condições Gerais de Fornecimento</div>
+      <div class="grid grid-cols-4 border-x border-t border-b border-gray-400">
+        <div class="p-1 border-r border-gray-400"><span class="font-semibold">Data de envio da proposta:</span></div>
+        <div class="p-1 border-r border-gray-400">{{ getCurrentDate() }}</div>
+        <div class="p-1 border-r border-gray-400"><span class="font-semibold">Validade da prop:</span></div>
+        <div class="p-1">{{ formData.proposalValidity || 'N/A' }}</div>
+      </div>
+      <div class="grid grid-cols-4 border-x border-b border-gray-400">
+        <div class="p-1 border-r border-gray-400"><span class="font-semibold">Data Prevista para início:</span></div>
+        <div class="p-1 border-r border-gray-400">Data de inicio</div>
+        <!-- <div class="p-1 border-r border-gray-400">{{ formData.startDate || 'A combinar' }}</div> -->
+        <div class="p-1 border-r border-gray-400"><span class="font-semibold">Condição de pag:</span></div>
+        <div class="p-1">{{ formData.paymentConditions || 'N/A' }}</div>
+      </div>
+      <div class="grid grid-cols-4 border-x border-b border-gray-400">
+        <div class="p-1 border-r border-gray-400"><span class="font-semibold">Data Prevista para término:</span></div>
+        <div class="p-1 border-r border-gray-400">Previsão de termino</div>
+        <!-- <div class="p-1 border-r border-gray-400">{{ formData.endDate || 'A combinar' }}</div> -->
+        <div class="p-1 border-r border-gray-400"></div>
+        <div class="p-1"></div>
+      </div>
+    </section>
 
-    <div class="flex justify-end mt-6">
-      <div class="w-full md:w-1/2 lg:w-2/5 text-sm">
-        <div class="flex justify-between p-2">
-          <span class="text-gray-600">Subtotal:</span>
-          <span class="font-medium text-gray-800">{{ formData.subtotal | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
-        </div>
-        <div class="flex justify-between p-2">
-          <span class="text-gray-600">Desconto:</span>
-          <span class="font-medium text-gray-800">{{ formData.discount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
-        </div>
-        <div class="flex justify-between p-2 mt-2 bg-gray-100 rounded-lg">
-          <span class="font-bold text-base text-slate-800">TOTAL GERAL:</span>
-          <span class="font-bold text-base text-blue-600">{{ formData.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
-        </div>
+    <section class="mt-2">
+      <div class="text-center font-bold bg-gray-200 p-1 border-x border-t border-gray-400">Resumo do Fornecimento</div>
+      <div class="grid grid-cols-[50%,8%,42%] text-left border-x border-b border-gray-400">
+        <div class="p-1"><span class="font-semibold">Haverá remoção de revestimento antigo?</span></div>
+        <div class="p-1 border-x border-gray-400 text-center font-bold">remoção de revestimeto antigo ?</div>
+        <!-- <div class="p-1 border-x border-gray-400 text-center font-bold">{{ formData.summary.removeOldCoating ? 'SIM' : 'NÃO' }}</div> -->
+        <div class="p-1"></div>
       </div>
-    </div>
-
-    <div class="flex justify-center items-center bg-slate-800 text-white p-2 font-bold my-4 rounded-md text-lg">
-      <i-lucide name="file-check-2" class="w-5 h-5 mr-3"></i-lucide>
-      Condições Gerais
-    </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 text-sm border rounded-lg">
-      <div class="font-semibold text-gray-500">Data do Orçamento:</div>
-      <div>{{ getCurrentDate() }}</div>
-      <div class="font-semibold text-gray-500">Validade da Proposta:</div>
-      <div>{{ formData.proposalValidity || 'N/A' }}</div>
-      <div class="font-semibold text-gray-500 md:col-span-2">Condições de Pagamento:</div>
-      <div class="md:col-span-2">{{ formData.paymentConditions || 'N/A' }}</div>
-    </div>
-    
-    <div class="mt-4" *ngIf="formData.observations && formData.observations.length > 0">
-      <div class="flex justify-center items-center bg-slate-800 text-white p-2 font-bold my-4 rounded-md text-lg">
-          <i-lucide name="message-square" class="w-5 h-5 mr-3"></i-lucide>
-          Observações
+      <div class="grid grid-cols-[50%,8%,42%] text-left border-x border-b border-gray-400">
+        <div class="p-1"><span class="font-semibold">Com Instalação de tampões?</span></div>
+        <!-- <div class="p-1 border-x border-gray-400 text-center font-bold">{{ formData.summary.withPlugs ? 'SIM' : 'NÃO' }}</div> -->
+        <div class="p-1 border-x border-gray-400 text-center font-bold">Com tampao ?</div>
+        <div class="p-1"></div>
       </div>
-      <div class="p-4 border rounded-lg">
-          <ul class="list-disc list-inside space-y-1 text-sm text-gray-600">
-              <li *ngFor="let obs of formData.observations">{{ obs }}</li>
-          </ul>
-      </div>
-    </div>
+      </section>
 
   </div>
 </form>
