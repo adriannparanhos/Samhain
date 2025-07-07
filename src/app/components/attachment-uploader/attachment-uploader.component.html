@@ -14,9 +14,9 @@
   </label>
 </div>
 
-<div *ngIf="attachments.length > 0" class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+<div *ngIf="attachments.length > 0" class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
   <div *ngFor="let attachment of attachments; let i = index" class="relative group">
-    <img [src]="attachment.previewUrl" alt="Prévia do anexo" class="w-full h-24 object-cover rounded-md">
+    <img [src]="attachment.previewUrl" alt="Prévia do anexo" class="w-full sm:h-40 md:h-48 lg:h-56 object-cover rounded-md">
     
     <button 
       (click)="removeAttachment(i)"

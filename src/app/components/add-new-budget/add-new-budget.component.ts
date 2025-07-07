@@ -320,8 +320,8 @@ export class AddNewBudgetComponent implements OnInit {
       tipoFrete: this.form.get('tipoFrete')?.value,     
       
       anexos: this.anexos.map(anexo => ({
-        nome: anexo.file.name, 
-        url: anexo.previewUrl  
+          nome: anexo.file.name,
+          url: anexo.previewUrl as any 
       }))
 
     };
@@ -334,6 +334,7 @@ export class AddNewBudgetComponent implements OnInit {
       .subscribe({
         next: (orcamentoRetornadoPeloBackend: DadosOrcamento) => {
           console.log('Orçamento salvo com sucesso!', orcamentoRetornadoPeloBackend);
+          orcamentoRetornadoPeloBackend.anexos = orcamentoPayload.anexos;
 
           if (this.isEditMode && statusFinal === 'Reprovado') {
             console.log('Status é Reprovado. Redirecionando para a lista de orçamentos.');

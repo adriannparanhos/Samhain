@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 export interface AttachmentFile {
   file: File;
-  previewUrl: string;
+  previewUrl: SafeUrl; 
 }
 
 @Component({
@@ -17,6 +18,9 @@ export interface AttachmentFile {
 export class AttachmentUploaderComponent {
   
   @Output() filesChanged = new EventEmitter<AttachmentFile[]>();
+
+  constructor(private sanitizer: DomSanitizer) {}
+
   
   attachments: AttachmentFile[] = [];
 
@@ -29,7 +33,9 @@ export class AttachmentUploaderComponent {
       if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = (e: any) => {
-          this.attachments.push({ file: file, previewUrl: e.target.result });
+          const unsafeUrl = e.target.result;
+          const safeUrl = this.sanitizer.bypassSecurityTrustUrl(unsafeUrl);
+          this.attachments.push({ file: file, previewUrl: safeUrl });
           this.emitFiles();
         };
         reader.readAsDataURL(file);

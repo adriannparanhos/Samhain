@@ -144,27 +144,21 @@
     </div>
   </div>
 
-  <!-- <div class="mt-8 flex justify-center print:hidden">
-    <button mat-raised-button color="accent" (click)="generatePDF()">
-        Gerar PDF / Imprimir
-    </button>
-  </div> -->
-
-  <section *ngIf="orcamentoRecebido?.anexos && orcamentoRecebido?.anexos!.length > 0" class="mt-4">
-  
-    <div class="bg-gray-200 text-center py-2 h-[20px] flex items-center justify-center mb-2">
+  <section *ngIf="orcamentoRecebido?.anexos && orcamentoRecebido?.anexos!.length > 0" class="mt-4 break-before-page">
+    <div class="bg-gray-200 text-center py-2 mb-4">
       <p class="font-medium">Anexos</p>
     </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 page-break-before-always">
-      
-      <div *ngFor="let anexo of orcamentoRecebido?.anexos" class="flex flex-col items-center">
-        <div class="w-full border p-2 rounded-lg shadow-sm">
-          <img [src]="anexo.url" [alt]="anexo.nome" class="w-full h-auto object-contain max-h-80">
+    <div class="grid grid-cols-2 gap-8">
+      <div *ngFor="let anexo of orcamentoRecebido?.anexos">
+        <div class="w-full aspect-[4/4] border border-gray-300 p-2 flex">
+          <div class="flex-1 min-h-0">
+            <img 
+              [src]="anexo.url" 
+              [alt]="anexo.nome" 
+              class="w-full h-full object-contain">
+          </div>
         </div>
-        <p class="mt-2 text-sm text-gray-700 font-medium">{{ anexo.nome }}</p>
       </div>
-
     </div>
   </section>
 </div>

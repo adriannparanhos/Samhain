@@ -1,3 +1,5 @@
+import { SafeUrl } from '@angular/platform-browser'; // ✅ Importe
+
 export interface DadosOrcamento {
   proposta: string | null; 
   idOrcamento?: string; 
@@ -35,7 +37,8 @@ export interface DadosOrcamento {
   estado?: string;
   cidade?: string;
 
-  anexos?: { nome: string; url: string; }[]; // Anexos do orçamento, se houver
+  anexos?: { nome: string; url: SafeUrl | string; }[];
+
 }
 
 export interface ItemOrcamentoPayload {
