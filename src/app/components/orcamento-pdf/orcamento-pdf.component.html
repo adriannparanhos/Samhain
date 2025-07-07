@@ -1,6 +1,6 @@
-<app-return-arrow class="cursor-pointer" (click)="returnPage()"></app-return-arrow>
-<body class="font-sans m-0 p-0 box-border">
-    <header class="w-[1300px] h-[180px] mt-4 bg-gray-200 flex justify-end items-center bg-[url('/assets/images/baron-header-img-removebg-preview.png'),url('/assets/images/ISO-removebg-preview.png')] bg-no-repeat bg-[position:left_top,center]">
+<app-return-arrow class="cursor-pointer print:hidden" (click)="returnPage()"></app-return-arrow>
+<div class="font-sans m-0 p-0 box-border">
+    <header class="min-w-full h-[180px] mt-4 bg-gray-200 flex justify-end items-center bg-[url('/assets/images/baron-header-img-removebg-preview.png'),url('/assets/images/ISO-removebg-preview.png')] bg-no-repeat bg-[position:left_top,center]">
         <div class="flex flex-col text-right mr-4">
             <p>CNPJ 10.633.565/0001-60 - Insc. Est. 637161884113</p>
             <p>Telefone: (16) 3378-0335</p>
@@ -143,4 +143,10 @@
       <p>{{CONDICOES_GERAL_VENDA_PART2}}</p>
     </div>
   </div>
-</body>
+
+  <!-- <div class="mt-8 flex justify-center print:hidden">
+    <button mat-raised-button color="accent" (click)="generatePDF()">
+        Gerar PDF / Imprimir
+    </button>
+  </div> -->
+</div>

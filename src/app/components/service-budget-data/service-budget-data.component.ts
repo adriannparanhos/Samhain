@@ -2,9 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { LucideAngularModule } from 'lucide-angular'; // ✅ Importado
+import { LucideAngularModule } from 'lucide-angular'; 
 
-// Definição da interface para um item de serviço, para clareza
 export interface ServiceItem {
   description: string;
   quantity: number;
@@ -12,7 +11,6 @@ export interface ServiceItem {
   totalPrice: number;
 }
 
-// Definição da interface para os dados do orçamento
 export interface ServiceBudgetData {
   proposalNumber: string;
   cnpj: string;
@@ -52,7 +50,6 @@ export interface ServiceBudgetData {
 })
 export class ServiceBudgetComponent implements OnInit {
 
-  // Recebe todos os dados do orçamento de um componente pai
   @Input() formData!: ServiceBudgetData;
 
   pdfForm: FormGroup;
@@ -62,10 +59,8 @@ export class ServiceBudgetComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Exemplo de como você poderia preencher o formulário se necessário,
-    // embora para exibição os inputs não sejam estritamente necessários.
+
     if (this.formData) {
-      // Lógica para popular campos de formulário se houver
     }
   }
 
@@ -78,7 +73,6 @@ export class ServiceBudgetComponent implements OnInit {
   }
 
   generatePDF(): void {
-    // Sua lógica existente para gerar o PDF usando a div #pdfElements
     console.log('Gerando PDF para o Orçamento de Serviço...');
     window.print();
   }

@@ -1,6 +1,6 @@
 <div class="min-h-screen bg-gray-100 flex flex-col">
   <!-- Header - Agora com largura total -->
-  <header class="sticky top-0 z-40 bg-white border-b h-16 w-full flex items-center px-6">
+  <header class="sticky top-0 z-40 bg-white border-b h-16 w-full flex items-center px-6 print:hidden">
     <button class="lg:hidden text-gray-500 hover:text-black mr-4" (click)="toggleSidebar()">
       <i-lucide name="menu" class="w-6 h-6"></i-lucide>
     </button>
@@ -25,7 +25,7 @@
     <div *ngIf="isSidebarOpen" class="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden" (click)="toggleSidebar()"></div>
 
     <!-- Sidebar -->
-    <aside class="fixed top-16 bottom-0 left-0 z-30 w-1xl transform bg-white shadow-lg transition-transform lg:static lg:translate-x-0 lg:h-auto"
+    <aside class="fixed top-16 bottom-0 left-0 z-30 w-1xl transform bg-white shadow-lg transition-transform lg:static lg:translate-x-0 lg:h-auto print:hidden"
            [class.translate-x-0]="isSidebarOpen" [class.-translate-x-full]="!isSidebarOpen">
       <div class="flex flex-col h-full">
         <!-- Navigation -->
@@ -64,9 +64,9 @@
     </aside>
     
     <!-- Main Content -->
-    <div class="flex-1 overflow-hidden">
+    <div class="flex-1 overflow-hidden content-area">
       <!-- Router Outlet -->
-      <main class="relative overflow-y-auto p-6 focus:outline-none">
+      <main class="relative overflow-y-auto p-6 focus:outline-none print:w-full print:h-screen print:m-0 print:p-0 printable-content">
         <router-outlet></router-outlet>
       </main>
     </div>
