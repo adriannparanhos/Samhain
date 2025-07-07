@@ -24,8 +24,21 @@
         <app-dynamic-items-table class="w-full max-w-7xl"  [estadoDoCliente]="empresaSelecionada?.address?.estado"
         ></app-dynamic-items-table>
 
+        <section class="w-full max-w-7xl bg-white rounded-lg shadow overflow-hidden mt-8">
+            <div class="flex px-6 py-3 bg-gray-100 border-b">
+                <lucide-icon name="paperclip" class="h-6 w-6 text-blue-500 mr-2" />
+                <h2 class="text-lg font-medium">Anexos</h2>
+            </div>
+            <div class="p-6">
+                <app-attachment-uploader 
+                    (filesChanged)="onAttachmentsChanged($event)">
+                </app-attachment-uploader>
+            </div>
+        </section>
+        
         <div class="w-full max-w-7xl flex justify-end">
           <app-button-form (click)="onSave()"></app-button-form>
         </div>
+
     </main>
 </div>

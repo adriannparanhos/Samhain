@@ -22,6 +22,8 @@ export class OrcamentoPdfComponent implements OnInit {
   private orcamentoSubscription: Subscription | undefined;
   dataAtual: Date;
   taxInformation: string = '1- ';
+  anexos?: { nome: string; url: string; }[];
+
 
   CONDICOES_GERAL_VENDA_PART1: string = `Nossos produtos são fornecidos 
   de acordo com a ABNT NBR 14.922, para peças semiacabadas. 

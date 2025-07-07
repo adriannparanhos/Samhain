@@ -18,6 +18,8 @@ import { DadosOrcamento } from '../../models/interfaces/dados-orcamento';
 import { SendOrcamentoPayloadService } from '../../services/database/send-orcamento-payload.service';
 import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
 import { NewBudget, EnterpriseData, Cliente } from '../../models/interfaces/dados-orcamento';
+import { AttachmentUploaderComponent } from '../attachment-uploader/attachment-uploader.component';
+import { AttachmentFile } from '../attachment-uploader/attachment-uploader.component'; // Ajuste o caminho
 
 @Component({
   selector: 'app-add-new-budget',
@@ -28,6 +30,7 @@ import { NewBudget, EnterpriseData, Cliente } from '../../models/interfaces/dado
     ReactiveFormsModule,
     ButtonFormComponent,  
     DynamicItemsTableComponent,
+    AttachmentUploaderComponent
   ],
   templateUrl: './add-new-budget.component.html',
   styleUrl: './add-new-budget.component.css'
@@ -42,6 +45,7 @@ export class AddNewBudgetComponent implements OnInit {
   editingPropostaId: string | null = null;
   pageTitle: string = 'Novo Orçamento'; 
   isLoading: boolean = false;
+  anexos: AttachmentFile[] = [];
 
   constructor(
     private router: Router, 
@@ -313,7 +317,12 @@ export class AddNewBudgetComponent implements OnInit {
       emailContato: this.form.get('emailContato')?.value,
       telefoneContato: this.form.get('telefoneContato')?.value,
       prazoEntrega: this.form.get('prazoEntrega')?.value,
-      tipoFrete: this.form.get('tipoFrete')?.value,      
+      tipoFrete: this.form.get('tipoFrete')?.value,     
+      
+      anexos: this.anexos.map(anexo => ({
+        nome: anexo.file.name, 
+        url: anexo.previewUrl  
+      }))
 
     };
 
@@ -340,6 +349,11 @@ export class AddNewBudgetComponent implements OnInit {
           alert('Erro ao salvar orçamento. Verifique o console para detalhes.');
         }
       });
+  }
+
+  onAttachmentsChanged(files: AttachmentFile[]): void {
+    this.anexos = files;
+    console.log('Anexos atualizados no componente pai:', this.anexos);
   }
 
 }

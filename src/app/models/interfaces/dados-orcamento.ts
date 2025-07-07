@@ -34,6 +34,8 @@ export interface DadosOrcamento {
   bairro?: string;
   estado?: string;
   cidade?: string;
+
+  anexos?: { nome: string; url: string; }[]; // Anexos do orçamento, se houver
 }
 
 export interface ItemOrcamentoPayload {

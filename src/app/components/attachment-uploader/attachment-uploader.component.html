@@ -1,0 +1,28 @@
+<div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center transition hover:border-blue-500">
+  <input 
+    type="file" 
+    id="fileInput" 
+    multiple 
+    accept="image/*" 
+    class="hidden"
+    (change)="onFileSelected($event)">
+
+  <label for="fileInput" class="cursor-pointer flex flex-col items-center space-y-2 text-gray-500">
+    <lucide-icon name="upload-cloud" class="w-12 h-12"></lucide-icon>
+    <span class="font-medium">Clique para selecionar ou arraste as imagens aqui</span>
+    <span class="text-xs">PNG, JPG, GIF até 10MB</span>
+  </label>
+</div>
+
+<div *ngIf="attachments.length > 0" class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+  <div *ngFor="let attachment of attachments; let i = index" class="relative group">
+    <img [src]="attachment.previewUrl" alt="Prévia do anexo" class="w-full h-24 object-cover rounded-md">
+    
+    <button 
+      (click)="removeAttachment(i)"
+      class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+      title="Remover anexo">
+      <lucide-icon name="x" class="w-4 h-4"></lucide-icon>
+    </button>
+  </div>
+</div>
