@@ -1,0 +1,39 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-4">
+  
+  <div class="flex flex-col items-center">
+    <h3 class="text-lg font-semibold mb-2 text-slate-700">Diagrama da Báscula / Concha</h3>
+    <img src="../../../assets/images/bascula.jpeg" alt="Diagrama de uma Báscula" class="w-full border rounded-md p-2 bg-white">
+    <div class="mt-4 text-sm text-gray-600 space-y-1 self-start">
+        <p><span class="font-bold">C:</span> Altura da parte reta lateral</p>
+        <p><span class="font-bold">B:</span> Largura da base reta (fundo)</p>
+        <p><span class="font-bold">E:</span> Comprimento total da caçamba</p>
+    </div>
+  </div>
+
+  <div class="w-full">
+    <h3 class="text-lg font-semibold mb-2 text-slate-700">Insira as Medidas (em milímetros)</h3>
+    <form [formGroup]="calcForm" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label for="alturaRetaC" class="block text-sm font-medium text-gray-700">Altura Reta (C)</label>
+                <input id="alturaRetaC" type="number" formControlName="alturaRetaC" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+                <label for="baseRetaB" class="block text-sm font-medium text-gray-700">Base Reta (B)</label>
+                <input id="baseRetaB" type="number" formControlName="baseRetaB" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+                <label for="comprimentoE" class="block text-sm font-medium text-gray-700">Comprimento (E)</label>
+                <input id="comprimentoE" type="number" formControlName="comprimentoE" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+        </div>
+    </form>
+
+    <div *ngIf="calcForm.valid && areaTotal > 0" class="mt-8 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
+      <h4 class="text-xl font-bold text-slate-800">Área de Superfície Calculada:</h4>
+      <p class="text-3xl font-extrabold text-blue-600 mt-1">
+        {{ areaTotal | number:'1.2-2' }} m²
+      </p>
+    </div>
+  </div>
+</div>

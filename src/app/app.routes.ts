@@ -15,6 +15,7 @@ import { SettingsComponent } from './pages/settings/settings.component';
 import { loginGuard } from './guards/login.guard'; 
 import { ServicesFormComponent } from './components/services-form/services-form.component';
 import { ServiceBudgetComponent } from './components/service-budget-data/service-budget-data.component';
+import { ShapeCalculatorComponent } from './components/shape-calculator/shape-calculator.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent, canActivate: [loginGuard] },    
@@ -41,7 +42,8 @@ export const routes: Routes = [
             { path: 'orders', component: PedidosComponent },
             { path: 'settings', component: SettingsComponent },
             { path: 'services', component: ServicesFormComponent },
-            { path: 'service-budget-data', component: ServiceBudgetComponent}
+            { path: 'service-budget-data', component: ServiceBudgetComponent},
+            { path: 'advanced-geometry', component: ShapeCalculatorComponent}
         ]
     },
 

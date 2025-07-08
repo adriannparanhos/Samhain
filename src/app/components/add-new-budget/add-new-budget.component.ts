@@ -98,7 +98,7 @@ export class AddNewBudgetComponent implements OnInit {
       useMask: 'cpfCnpjMask'
     },
     { name: 'razaoSocial', label: 'Razão Social', type: 'text', placeholder: 'Razão Social da empresa', disabled: true },
-    { name: 'condicaoPagamento', label: 'Condição de Pagamento', type: 'select', options: [{ label: '15 DDL', value: '15 DDL' }, { label: '28 DDL', value: '28 DDL' }, { label: '28/42 DDL', value: '28/42 DDL' }, { label: '28/42/56 DDL', value: '28/42/56 DDL' }, { label: 'Pagamento a vista', value: 'Pagamento a vista' }, { label: 'Pagamento para 30 dias', value: 'pagamento para 30 dias' }] },
+    { name: 'condicaoPagamento', label: 'Condição de Pagamento', type: 'text', placeholder: 'Condição de pagamento' },
     { name: 'status', label: 'Status', type: 'select', options: [{ label: 'Aprovado', value: 'Aprovado' }, { label: 'Pendente', value: 'Pendente' }, { label: 'Reprovado', value: 'Reprovado' }] },
     { name: 'nomeContato', label: 'Contato', type: 'text', placeholder: 'Nome do contato'},
     { name: 'emailContato', label: 'Email', type: 'email', placeholder: 'contato@example.com'},

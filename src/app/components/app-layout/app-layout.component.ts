@@ -34,15 +34,16 @@ export class AppLayoutComponent {
     { name: 'Produtos',  path: '/products',  icon: 'package'   },
     { name: 'Orçamentos',path: '/budgets',   icon: 'file-text' },
     { name: 'Pedidos', path: '/orders',    icon: 'file-check' },
-    { name: 'Serviços', path: '/services', icon: 'Hammer'       },
+    { name: 'Serviços', path: '/services', icon: 'Hammer' },
+    { name: 'Figuras trigonometricas', path: '/advanced-geometry', icon: 'Cone' },
   ];
 
   constructor(
     private auth: AuthService,
     private router: Router,
-    private authService: AuthLoginService
+    private authServiceLogin: AuthLoginService
   ) {
-    this.user = this.authService.currentUserValue  
+    this.user = this.authServiceLogin.currentUserValue  
   }
 
   toggleSidebar() {
@@ -50,7 +51,7 @@ export class AppLayoutComponent {
   }
 
   logout(): void {
-    this.authService.logout();
+    this.authServiceLogin.logout();
     this.router.navigate(['/login']);
   }
 }

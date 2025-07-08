@@ -8,6 +8,7 @@ import { TelefonePipe } from '../../pipes/telefone.pipe';
 import { ReturnArrowComponent } from '../return-arrow/return-arrow.component';
 import { Router } from '@angular/router';
 import { ItemOrcamentoPayload } from '../../models/interfaces/dados-orcamento';
+import { AuthLoginService } from '../../services/auth-login.service';
 
 
 @Component({
@@ -113,7 +114,8 @@ export class OrcamentoPdfComponent implements OnInit {
 
   constructor(
     private dadosNovoOrcamentoService: DadosNovoOrcamentoService,
-    private router: Router
+    private router: Router,
+    private authServiceLogin: AuthLoginService
 
   ) {
     this.dataAtual = new Date();
@@ -293,4 +295,9 @@ export class OrcamentoPdfComponent implements OnInit {
   returnPage() {
     this.router.navigate(['budgets/add']);
   }
+
+  get userLogado() {
+    return this.authServiceLogin.currentUserValue.name;
+  }
+
 }

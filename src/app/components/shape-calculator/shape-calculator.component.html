@@ -1,0 +1,52 @@
+<div class="w-full max-w-7xl mx-auto">
+  <header class="flex items-center py-4">
+    <i-lucide name="square-function" class="h-8 w-8 text-slate-500 mr-4"></i-lucide>
+    <h1 class="text-4xl font-medium">Figuras Geométricas</h1>
+  </header>
+
+  <div class="mt-4 bg-white rounded-lg shadow">
+    <div class="border-b border-gray-200">
+      <nav class="-mb-px flex space-x-6 px-6" aria-label="Tabs">
+        <button
+            *ngFor="let item of navigationItems"
+            (click)="selectCalculator(item.id)"
+            
+            class="flex items-center whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors focus:outline-none"
+            
+            [class.border-blue-500]="activeCalculator === item.id"
+            [class.text-blue-600]="activeCalculator === item.id"
+
+            [class.border-transparent]="activeCalculator !== item.id"
+            [class.text-gray-500]="activeCalculator !== item.id"
+            [class.hover:text-gray-700]="activeCalculator !== item.id"
+            [class.hover:border-gray-300]="activeCalculator !== item.id">
+            
+            <i-lucide [name]="item.icon" class="mr-2 h-5 w-5"></i-lucide>
+            {{ item.label }}
+        </button>
+      </nav>
+    </div>
+
+    <div class="p-2 md:p-4">
+      <div [ngSwitch]="activeCalculator">
+        
+        <app-cylindrical-silo-calculator *ngSwitchCase="'cylindrical'"></app-cylindrical-silo-calculator>
+        <app-rectangular-silo-calculator *ngSwitchCase="'rectangular'"></app-rectangular-silo-calculator>
+        <app-bascula-calculator *ngSwitchCase="'bascula'"></app-bascula-calculator>
+
+        <div *ngSwitchCase="'rectangular'">
+          <p class="text-center p-8 text-gray-500">Calculadora para Silo Retangular em desenvolvimento.</p>
+        </div>
+
+        <div *ngSwitchCase="'bascula'">
+          <p class="text-center p-8 text-gray-500">Calculadora para Báscula em desenvolvimento.</p>
+        </div>
+
+        <div *ngSwitchDefault>
+          <p class="text-center p-8 text-gray-500">Por favor, selecione um tipo de cálculo.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

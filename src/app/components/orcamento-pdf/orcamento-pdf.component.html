@@ -10,25 +10,24 @@
     </header>
 
   <div class="text-lg font-medium">
-    <p>Proposta comercial nº: {{proposta}}</p>
+    <p>Proposta comercial nº: {{ proposta }}</p>
   </div>
 
-  <!-- Separar a div em duas partes na vertical -->
   <div class="flex flex-col md:flex-row gap-4">
     <!-- Essa parte ocupa uns 60% -->
     <div class="md:w-3/5">
-      <p class="font-medium">Vendedor: {{vendedorResponsavel}}</p>
+      <p class="font-medium">Vendedor: {{ userLogado }}</p>
       <p class="font-medium">Revisão: </p>
       <h3 class="text-xl font-medium">Dados do cliente: </h3>
       <p>CNPJ: {{cnpj}}</p>
       <p>Razão Social: {{razaoSocial}}</p>
-      <p class="w-[300px] break-words">Endereço: {{endereco}}, {{endereco_numero}}, {{bairro}}, {{estado}}, {{cidade}}</p> <!-- Width fixo e quebra de linha -->
+      <p class="w-[300px] break-words">Endereço: {{ endereco }}, {{ endereco_numero }}, {{ bairro }}, {{ estado }}, {{ cidade }}</p> 
     </div>
 
     <div class="md:w-2/5">
-      <p>A/C: {{nomeContato}}</p>
-      <p>Fone: {{telefoneContato | telefone}}</p>
-      <p>E-mail: {{emailContato}}</p>
+      <p>A/C: {{ nomeContato }}</p>
+      <p>Fone: {{ telefoneContato | telefone}}</p>
+      <p>E-mail: {{ emailContato }}</p>
     </div>
   </div>
 
@@ -86,8 +85,8 @@
     </table>
     <!-- Total dos produtos e total a pagar no canto inferior direito -->
     <div class="flex justify-end space-x-4 mt-4">
-      <p>Total dos produtos: <span class="font-medium text-emerald-600">{{subtotalItens | currency:'BRL':'symbol':'1.2-2':'pt-BR'}}</span></p>
-      <p>Total a pagar: <span class="font-medium text-emerald-600">{{grandTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR'}}</span></p>
+      <p>Total dos produtos: <span class="font-medium text-emerald-600">{{ subtotalItens | currency:'BRL':'symbol':'1.2-2':'pt-BR'}}</span></p>
+      <p>Total a pagar: <span class="font-medium text-emerald-600">{{ grandTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR'}}</span></p>
     </div>
   </div>
 
@@ -105,8 +104,8 @@
     </div>
     <div class="supply-conditions-results">
       <p>{{ dataAtual | date:'dd/MM/yyyy' }}</p>
-      <p>{{condicaoPagamento}}</p>
-      <p>{{prazoEntrega}}</p>
+      <p>{{ condicaoPagamento }}</p>
+      <p>{{ prazoEntrega }}</p>
     </div>
     <div>
       <p>Validade da proposta: </p>
@@ -114,7 +113,7 @@
     </div>
     <div>
       <p>15 dias</p>
-      <p>{{tipoFrete}}</p>
+      <p>{{ tipoFrete }}</p>
     </div>
   </div>
 
@@ -144,7 +143,7 @@
     </div>
   </div>
 
-  <div class="bg-gray-200 text-center py-2 mb-4">
+  <div class="bg-gray-200 text-center mb-4">
     <p class="font-medium">Observações</p>
   </div>
   <p>{{ orcamentoRecebido?.descricao }}</p> 
