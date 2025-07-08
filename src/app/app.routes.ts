@@ -16,6 +16,9 @@ import { loginGuard } from './guards/login.guard';
 import { ServicesFormComponent } from './components/services-form/services-form.component';
 import { ServiceBudgetComponent } from './components/service-budget-data/service-budget-data.component';
 import { ShapeCalculatorComponent } from './components/shape-calculator/shape-calculator.component';
+import { CylindricalSiloCalculatorComponent } from './components/cylindrical-silo-calculator/cylindrical-silo-calculator.component';
+import { RectangularSiloCalculatorComponent } from './components/rectangular-silo-calculator/rectangular-silo-calculator.component';
+import { BasculaCalculatorComponent } from './components/bascula-calculator/bascula-calculator.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent, canActivate: [loginGuard] },    
@@ -43,7 +46,16 @@ export const routes: Routes = [
             { path: 'settings', component: SettingsComponent },
             { path: 'services', component: ServicesFormComponent },
             { path: 'service-budget-data', component: ServiceBudgetComponent},
-            { path: 'advanced-geometry', component: ShapeCalculatorComponent}
+            {
+                path: 'advanced-geometry',
+                component: ShapeCalculatorComponent,
+                children: [
+                { path: 'silo-cilindrico', component: CylindricalSiloCalculatorComponent },
+                { path: 'silo-retangular', component: RectangularSiloCalculatorComponent },
+                { path: 'bascula', component: BasculaCalculatorComponent },
+                { path: '', redirectTo: 'silo-cilindrico', pathMatch: 'full' } 
+                ]
+            },
         ]
     },
 

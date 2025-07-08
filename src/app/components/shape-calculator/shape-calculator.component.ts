@@ -1,5 +1,7 @@
-import { Component, AfterViewInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common'; 
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+
 import { LucideAngularModule } from 'lucide-angular';
 import { CylindricalSiloCalculatorComponent } from '../cylindrical-silo-calculator/cylindrical-silo-calculator.component';
 import { RectangularSiloCalculatorComponent } from '../rectangular-silo-calculator/rectangular-silo-calculator.component';
@@ -10,34 +12,22 @@ type CalculatorType = 'cylindrical' | 'rectangular' | 'bascula';
 @Component({
   selector: 'app-shape-calculator',
   standalone: true,
+  
   imports: [
-    CommonModule, 
-    LucideAngularModule,
-    CylindricalSiloCalculatorComponent,
-    RectangularSiloCalculatorComponent,
-    BasculaCalculatorComponent
+    CommonModule,     
+    RouterModule,     
+    LucideAngularModule
   ],
   templateUrl: './shape-calculator.component.html',
+  styleUrls: ['./shape-calculator.component.css']
 })
-export class ShapeCalculatorComponent implements AfterViewInit{
-
-  constructor(private cdr: ChangeDetectorRef) {}
+export class ShapeCalculatorComponent {
 
   navigationItems = [
-    { id: 'cylindrical', label: 'Silo Cilíndrico', icon: 'cylinder' },
-    { id: 'rectangular', label: 'Silo Retangular', icon: 'box' },
-    { id: 'bascula', label: 'Báscula', icon: 'truck' }
+    { path: 'silo-cilindrico', label: 'Silo Cilíndrico', icon: 'cylinder' },
+    { path: 'silo-retangular', label: 'Silo Retangular', icon: 'box' },
+    { path: 'bascula', label: 'Báscula', icon: 'truck' }
   ];
 
-  activeCalculator: CalculatorType = 'cylindrical';
-
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.cdr.detectChanges();
-    }, 0);
-  }
-
-  selectCalculator(type: string): void {
-    this.activeCalculator = type as CalculatorType;
-  }
+  constructor() {}
 }
