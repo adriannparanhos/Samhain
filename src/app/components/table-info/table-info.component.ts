@@ -71,6 +71,12 @@ export interface TableColumn<T> {
                     <button *ngIf="showDeleteAction" (click)="delete.emit(row)" title="Excluir" class="text-red-600 hover:text-red-800 p-1 rounded hover:bg-gray-100 transition">
                         <lucide-icon [name]="'trash-2'" class="w-5 h-5"></lucide-icon>
                     </button>
+                    <button *ngIf="showCheckListAction" (click)="delete.emit(row)" title="Check-list" class="text-purple-600 hover:text-purple-800 p-1 rounded hover:bg-gray-100 transition">
+                        <lucide-icon [name]="'list-check'" class="w-5 h-5"></lucide-icon>
+                    </button>
+                    <button *ngIf="showProcessAction" (click)="delete.emit(row)" title="Ficha-processo" class="text-green-600 hover:text-green-800 p-1 rounded hover:bg-gray-100 transition">
+                        <lucide-icon [name]="'file-spreadsheet'" class="w-5 h-5"></lucide-icon>
+                    </button>
                 </div>
             </td>
             </tr>
@@ -97,6 +103,8 @@ export class TableInfoComponent<T> {
   @Input() showViewAction: boolean = true;   
   @Input() showEditAction: boolean = true;   
   @Input() showDeleteAction: boolean = true; 
+  @Input() showCheckListAction: boolean = false;
+  @Input() showProcessAction: boolean = false;
 
   get displayActionsColumn(): boolean {
     return this.showViewAction || this.showEditAction || this.showDeleteAction;
@@ -133,6 +141,12 @@ export class TableInfoComponent<T> {
     }
     if (changes['showDeleteAction']) {
       console.log('TableInfo: showDeleteAction mudou para', this.showDeleteAction);
+    }
+    if (changes['showCheckListAction']) {
+      console.log('TableInfo: showCheckListAction mudou para', this.showCheckListAction);
+    }
+    if (changes['showProcessAction']) {
+      console.log('TableInfo: showProcessAction mudou para', this.showProcessAction);
     }
     console.log('TableInfo: displayActionsColumn é', this.displayActionsColumn);
   }
