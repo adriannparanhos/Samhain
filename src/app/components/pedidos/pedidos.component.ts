@@ -123,4 +123,10 @@ export class PedidosComponent implements OnInit {
       }
     });
   }
+
+  onCheckList(pedido: BudgetParaTabela): void {
+    console.log('Check-list Pedido:', pedido);
+    // Navega para a rota filha a partir da rota atual
+    this.router.navigate(['checklist', pedido.proposta]);
+  }
 }

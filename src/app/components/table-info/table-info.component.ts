@@ -71,7 +71,7 @@ export interface TableColumn<T> {
                     <button *ngIf="showDeleteAction" (click)="delete.emit(row)" title="Excluir" class="text-red-600 hover:text-red-800 p-1 rounded hover:bg-gray-100 transition">
                         <lucide-icon [name]="'trash-2'" class="w-5 h-5"></lucide-icon>
                     </button>
-                    <button *ngIf="showCheckListAction" (click)="delete.emit(row)" title="Check-list" class="text-purple-600 hover:text-purple-800 p-1 rounded hover:bg-gray-100 transition">
+                    <button *ngIf="showCheckListAction" (click)="checkList.emit(row)" title="Check-list" class="text-purple-600 hover:text-purple-800 p-1 rounded hover:bg-gray-100 transition">
                         <lucide-icon [name]="'list-check'" class="w-5 h-5"></lucide-icon>
                     </button>
                     <button *ngIf="showProcessAction" (click)="delete.emit(row)" title="Ficha-processo" class="text-green-600 hover:text-green-800 p-1 rounded hover:bg-gray-100 transition">
@@ -99,6 +99,8 @@ export class TableInfoComponent<T> {
   @Output() view = new EventEmitter<T>();
   @Output() edit   = new EventEmitter<T>();
   @Output() delete = new EventEmitter<T>();
+  @Output() checkList = new EventEmitter<T>();
+  @Output() process = new EventEmitter<T>();
 
   @Input() showViewAction: boolean = true;   
   @Input() showEditAction: boolean = true;   

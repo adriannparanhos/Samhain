@@ -1,0 +1,150 @@
+<div class="max-w-4xl mx-auto bg-white p-6 shadow-lg my-8 font-sans text-xs">
+  <form [formGroup]="checklistForm" (ngSubmit)="onSubmit()">
+    <header class="grid grid-cols-[1fr_auto] border-2 border-black">
+      <div class="grid grid-rows-2">
+        <div class="flex items-center p-2 border-b-2 border-black">
+          <img src="../../../assets/images/baron-header-img-removebg-preview.png" alt="Baron Logo" class="h-10 mr-4">
+          <span class="text-lg font-bold">SISTEMA DE GESTÃO INTEGRADO</span>
+        </div>
+        <div class="p-2">
+          <span class="font-bold">TIPO DE DOCUMENTO:</span> CHECK LIST PARA ACEITE DE PEDIDO E FATURAMENTO
+        </div>
+      </div>
+      <div class="grid grid-rows-3 text-center border-l-2 border-black">
+        <div class="p-1 border-b-2 border-black"><span class="font-bold">IDENTIFICAÇÃO</span><br>FOR.12.011</div>
+        <div class="p-1 border-b-2 border-black"><span class="font-bold">REVISÃO</span><br>04</div>
+        <div class="p-1"><span class="font-bold">DATA</span><br>{{ dadosPedido?.cliente ? '02/01/1900' : 'N/A' }}</div>
+      </div>
+    </header>
+
+    <section class="mt-1 border-2 border-black p-2">
+      <h3 class="text-center font-bold bg-gray-200 -m-2 mb-2 p-1">DADOS DO CLIENTE</h3>
+      <div class="grid grid-cols-2 gap-x-4">
+        <p><span class="font-bold">Empresa:</span> {{ dadosPedido?.cliente?.empresa }}</p>
+        <p><span class="font-bold">Cidade:</span> {{ dadosPedido?.cliente?.cidade }}</p>
+        <p><span class="font-bold">CNPJ:</span> {{ dadosPedido?.cliente?.cnpj }}</p>
+        <p><span class="font-bold">Estado:</span> {{ dadosPedido?.cliente?.estado }}</p>
+        <p><span class="font-bold">IE:</span> {{ dadosPedido?.cliente?.ie }}</p>
+        <div class="flex items-center">
+            <label class="font-bold mr-2">Nº Pedido:</label>
+            <input type="text" formControlName="numeroPedido" class="border border-gray-400 px-1 w-full">
+        </div>
+      </div>
+      <p class="mt-1"><span class="font-bold">Endereço e CNPJ de Faturamento:</span> {{ dadosPedido?.cliente?.enderecoFaturamento }}</p>
+      <p><span class="font-bold">Endereço e CNPJ de Entrega:</span> {{ dadosPedido?.cliente?.enderecoEntrega }}</p>
+      <p><span class="font-bold">Endereço de Cobrança:</span> {{ dadosPedido?.cliente?.enderecoCobranca }}</p>
+      <div class="flex items-center space-x-4 mt-1">
+        <span class="font-bold">Contribuinte ICMS:</span>
+        <label class="flex items-center"><input type="checkbox" [checked]="dadosPedido?.cliente?.contribuinteIcms" class="mr-1"> SIM</label>
+        <label class="flex items-center"><input type="checkbox" class="mr-1"> NÃO</label>
+        <label class="flex items-center ml-auto"><input type="checkbox" [checked]="dadosPedido?.cliente?.clienteFinal" class="mr-1"> Cliente Final</label>
+      </div>
+    </section>
+
+    <section class="mt-1 grid grid-cols-2 border-2 border-black">
+      <div class="p-2 border-r-2 border-black">
+        <h3 class="text-center font-bold bg-gray-200 -m-2 mb-2 p-1">FORMA DE PAGAMENTO</h3>
+        <div class="flex flex-col space-y-1">
+          <label class="flex items-center"><input type="checkbox" formControlName="pagamentoBoleto" class="mr-2"> BOLETO BANCÁRIO</label>
+          <label class="flex items-center"><input type="checkbox" formControlName="pagamentoDeposito" class="mr-2"> DEPÓSITO EM CONTA</label>
+        </div>
+      </div>
+      <div class="p-2">
+        <h3 class="text-center font-bold bg-gray-200 -m-2 mb-2 p-1">CONDIÇÕES DE PAGAMENTO</h3>
+        <p>{{ dadosPedido?.condicoesPagamento }}</p>
+      </div>
+    </section>
+
+    <section class="mt-1 border-2 border-black">
+      <h3 class="text-center font-bold bg-gray-200 p-1">CONTATOS</h3>
+      <div class="grid grid-cols-[1fr_1fr_1fr_1fr] text-center font-bold border-b-2 border-black">
+        <div class="p-1 border-r-2 border-black">Finalidade</div>
+        <div class="p-1 border-r-2 border-black">Nome</div>
+        <div class="p-1 border-r-2 border-black">Telefone</div>
+        <div class="p-1">E-mail</div>
+      </div>
+      <div *ngFor="let contato of dadosPedido?.contatos" class="grid grid-cols-[1fr_1fr_1fr_1fr] border-b border-gray-300">
+        <div class="p-1 border-r-2 border-black font-bold">{{ contato.finalidade }}</div>
+        <div class="p-1 border-r-2 border-black">{{ contato.nome }}</div>
+        <div class="p-1 border-r-2 border-black">{{ contato.telefone }}</div>
+        <a href="mailto:{{contato.email}}" class="p-1 text-blue-600 underline truncate">{{ contato.email }}</a>
+      </div>
+      <div class="grid grid-cols-[1fr_1fr_1fr_1fr] border-b border-gray-300">
+        <div class="p-1 border-r-2 border-black font-bold">Envio de NF, XML e Boletos</div>
+        <input class="p-1 border-r-2 border-black font-bold">
+        <input class="p-1 border-r-2 border-black font-bold">
+        <input class="p-1 border-r-2 border-black font-bold">
+      </div>
+      <div class="grid grid-cols-[1fr_1fr_1fr_1fr] border-b border-gray-300">
+        <div class="p-1 border-r-2 border-black font-bold">Financeiro / Contas a Pagar</div>
+        <input class="p-1 border-r-2 border-black font-bold">
+        <input class="p-1 border-r-2 border-black font-bold">
+        <input class="p-1 border-r-2 border-black font-bold">
+      </div>
+    </section>
+    <section class="mt-1 border-2 border-black p-2">
+      <h3 class="text-center font-bold bg-gray-200 -m-2 mb-2 p-1">TRANSPORTADORA</h3>
+      <div class="grid grid-cols-[max-content_1fr] gap-x-2 gap-y-1 items-center">
+        <label class="font-bold" for="nome-transportadora">Nome Transportadora</label>
+        <input id="nome-transportadora" type="text" formControlName="nomeTransportadora" class="border border-gray-400 px-1 w-full">
+        
+        <label class="font-bold" for="cnpj-transportadora">CNPJ</label>
+        <input id="cnpj-transportadora" type="text" formControlName="cnpjTransportadora" class="border border-gray-400 px-1 w-full">
+
+        <label class="font-bold" for="contato-transportadora">Telefone / Nome do Contato</label>
+        <input id="contato-transportadora" type="text" formControlName="contatoTransportadora" class="border border-gray-400 px-1 w-full">
+        
+        <label class="font-bold" for="email-transportadora">E-mail</label>
+        <input id="email-transportadora" type="email" formControlName="emailTransportadora" class="border border-gray-400 px-1 w-full">
+        
+        <label class="font-bold">Frete:</label>
+        <div class="flex space-x-4">
+          <label class="flex items-center"><input type="checkbox" formControlName="freteFOB" class="mr-2"> FOB</label>
+          <label class="flex items-center"><input type="checkbox" formControlName="freteCIF" class="mr-2"> CIF</label>
+        </div>
+
+        <label class="font-bold" for="pesoMedidas">Peso e medidas (AxLxC)</label>
+        <input id="pesoMedidas" type="text" formControlName="" class="border border-gray-400 px-1 w-full">
+      </div>
+    </section>
+    <section class="mt-4 border-2 border-black p-2 flex flex-col">
+        <h3 class="text-center font-bold bg-gray-200 -m-2 p-1">Conferido</h3>
+
+        <div class="flex justify-center items-center space-x-12 mt-16">
+
+            <div class="text-center">
+                <div class="w-80 border-b-2 border-black"></div> <p class="text-sm mt-1">Departamento Comercial</p>
+            </div>
+
+            <div class="text-center">
+                <div class="w-32 border-b-2 border-black"></div> <p class="text-sm mt-1">Data</p>
+            </div>
+
+        </div>
+    </section>
+    <section class="mt-4 border-2 border-black p-2 flex flex-col">
+        <h3 class="text-center font-bold bg-gray-200 -m-2 p-1">Conferido</h3>
+
+        <div class="flex justify-center items-center space-x-12 mt-16">
+
+            <div class="text-center">
+                <div class="w-72 border-b-2 border-black"></div> <p class="text-sm mt-1">Departamento Adm/Financeiro</p>
+            </div>
+
+        </div>
+    </section>
+    <section class="mt-4 border-2 border-black p-2 flex flex-col">
+        <p class="text-red-500 font-bold">OBS: Qualquer informação errada que acarrete no cancelamento de notas e boletos, gerando despesas, será avaliado para posterior desconto.</p>     
+    </section>
+    <section class="mt-4 border-2 border-black p-2 flex flex-col">
+            <h3 class="text-center font-bold bg-gray-200 -m-2 p-1">Observações importantes</h3>
+            <textarea name="" id="" class="mt-4 placeholder:text-gray-400" placeholder="Campo destinado a informações adicionais"></textarea>
+    </section>
+
+    <div class="mt-8 flex justify-end">
+        <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors">
+            Salvar Aceite
+        </button>
+    </div>
+  </form>
+</div>

@@ -19,6 +19,7 @@ import { ShapeCalculatorComponent } from './components/shape-calculator/shape-ca
 import { CylindricalSiloCalculatorComponent } from './components/cylindrical-silo-calculator/cylindrical-silo-calculator.component';
 import { RectangularSiloCalculatorComponent } from './components/rectangular-silo-calculator/rectangular-silo-calculator.component';
 import { BasculaCalculatorComponent } from './components/bascula-calculator/bascula-calculator.component';
+import { ChecklistComponent } from './components/checklist/checklist.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent, canActivate: [loginGuard] },    
@@ -56,6 +57,7 @@ export const routes: Routes = [
                 { path: '', redirectTo: 'silo-cilindrico', pathMatch: 'full' } 
                 ]
             },
+            { path: 'checklist/:proposta', component: ChecklistComponent}
         ]
     },
 
