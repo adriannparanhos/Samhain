@@ -72,6 +72,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     const sub1 = this.fetchProductsService.standardProductsGrouped$.subscribe(groupedData => {
       this.standardProductsGrouped = groupedData;
       this.standardProductFamilies = Object.keys(groupedData);
+      console.log('PRODUTOS DE CATÁLOGO AGRUPADOS:', this.standardProductsGrouped);
       this.cdRef.detectChanges();
     });
 

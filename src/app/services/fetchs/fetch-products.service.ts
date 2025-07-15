@@ -66,7 +66,8 @@ export class FetchProductsService {
       tap(rawData => {
         console.log('[DEBUG-SERVICE] Dados BRUTOS recebidos da API de Catálogo:', rawData);
         if (rawData && rawData.length > 0) {
-          console.log('[DEBUG-SERVICE] Exemplo do primeiro item bruto:', rawData[0]);
+          console.log('[DEBUG-SERVICE] Exemplo do primeiro item bruto:', rawData);
+          console.log('[DEBUG-SERVICE] Exemplo do item bruto - produto:', rawData);
         }
       }),
       map(data => this.groupStandardProducts(data)), 

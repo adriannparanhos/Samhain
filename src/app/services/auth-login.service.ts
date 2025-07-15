@@ -90,6 +90,8 @@ export class AuthLoginService {
         photoUrl = 'assets/images/profiles/celia.jpeg'
       } else if (payload.sub === 'alan') {
         photoUrl = 'assets/images/profiles/alan.jpeg'
+      } else if (payload.sub === 'alex') {
+        photoUrl = 'assets/images/profiles/alex.jpeg'
       }
 
       return { 

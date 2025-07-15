@@ -46,7 +46,6 @@ export class AddNewFormComponent implements OnInit {
       }
     this.form = this.fb.group(group);
     if (this.initialData) {
-      // ... use o método patchValue para preencher os campos correspondentes.
       this.form.patchValue(this.initialData);
     }
     this.formReady.emit(this.form);
