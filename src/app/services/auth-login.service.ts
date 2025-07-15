@@ -10,8 +10,8 @@ export class AuthLoginService {
   // private apiUrl = 'http://localhost:8080/login';
   // private url = 'http://localhost:8080/user';
 
-  private apiUrl = 'https://calculadora.backend.baron.dev.br/login';
-  private url = 'https://calculadora.backend.baron.dev.br/user';
+  private apiUrl = 'https://v2.calculadora.backend.baron.dev.br/login';
+  private url = 'https://v2.calculadora.backend.baron.dev.br/user';
   
   private currentUserSubject: BehaviorSubject<any>;
 
