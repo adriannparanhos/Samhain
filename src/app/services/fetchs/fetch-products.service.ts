@@ -19,11 +19,11 @@ export interface SpecialProduct {
   providedIn: 'root'
 })
 export class FetchProductsService {
-  // private apiUrl = 'https://v2.calculadora.backend.baron.dev.br/api/produtos/lista'; 
-  // private apiUrlEspeciais = 'https://v2.calculadora.backend.baron.dev.br/api/produtosEspeciais/listar'; 
+  private apiUrl = 'https://v2.calculadora.backend.baron.dev.br/api/produtos/lista'; 
+  private apiUrlEspeciais = 'https://v2.calculadora.backend.baron.dev.br/api/produtosEspeciais/listar'; 
 
-  private apiUrl = 'https://v2.calculadora.backend.baron.dev.br/lista'; 
-  private apiUrlEspeciais = 'https://v2.calculadora.backend.baron.dev.br/listar'; 
+  // private apiUrl = 'https://v2.calculadora.backend.baron.dev.br/lista'; 
+  // private apiUrlEspeciais = 'https://v2.calculadora.backend.baron.dev.br/listar'; 
 
 
   private standardProductsState = new BehaviorSubject<Record<string, OrcamentoItemNaTabela[]>>({});

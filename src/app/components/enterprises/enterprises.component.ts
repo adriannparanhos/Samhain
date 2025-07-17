@@ -53,14 +53,10 @@ export class EnterprisesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadEnterprises();
 
-    // 6. Configure o "ouvinte" da busca com Debounce
     this.searchSubscription = this.searchSubject.pipe(
-      // Espera 400ms após o usuário parar de digitar
       debounceTime(400),
-      // Só emite se o texto for diferente do anterior (evita buscas repetidas)
       distinctUntilChanged()
     ).subscribe(searchTerm => {
-      // Quando o tempo de espera passar, esta lógica é executada
       this.searchTerm = searchTerm;
       this.currentPage = 0;
       this.loadEnterprises();
