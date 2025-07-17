@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthLoginService } from '../../services/auth-login.service'; 
 import { LucideAngularModule } from 'lucide-angular';
-import { of } from 'rxjs'; 
 import { EnvironmentVariablesService } from '../../services/fetchs/environment-variables.service';
 import { FormatKeyPipe } from '../../pipes/format-key.pipe';
 import { FieldConfig } from '../../components/add-new-form/add-new-form.component';
