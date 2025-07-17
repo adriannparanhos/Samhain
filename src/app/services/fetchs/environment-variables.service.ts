@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class EnvironmentVariablesService {
-  private url = 'http://localhost:8080/api/variables'
+  private url = 'https://v2.calculadora.backend.baron.dev.br/api/variables'
 
   constructor(
     private http: HttpClient

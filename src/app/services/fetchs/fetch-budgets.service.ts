@@ -16,12 +16,12 @@ export interface Page<T> {
   providedIn: 'root'
 })
 export class FetchBudgetsService {
-  private apiUrlOrcamentos = 'http://localhost:8080/api/orcamentos'; 
+  private apiUrlOrcamentos = 'https://v2.calculadora.backend.baron.dev.br/api/orcamentos'; 
 
   constructor(private http: HttpClient) { }
 
   getBudgets(): Observable<DadosOrcamento[]> {
-    const url = 'http://localhost:8080/api/orcamentos/listar';
+    const url = 'https://v2.calculadora.backend.baron.dev.br/api/orcamentos/listar';
     return this.http.get<DadosOrcamento[]>(url);
   }
 

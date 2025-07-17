@@ -19,8 +19,11 @@ export interface SpecialProduct {
   providedIn: 'root'
 })
 export class FetchProductsService {
-  private apiUrl = 'http://localhost:8080/api/produtos/lista'; 
-  private apiUrlEspeciais = 'http://localhost:8080/api/produtosEspeciais/listar'; 
+  // private apiUrl = 'https://v2.calculadora.backend.baron.dev.br/api/produtos/lista'; 
+  // private apiUrlEspeciais = 'https://v2.calculadora.backend.baron.dev.br/api/produtosEspeciais/listar'; 
+
+  private apiUrl = 'https://v2.calculadora.backend.baron.dev.br/lista'; 
+  private apiUrlEspeciais = 'https://v2.calculadora.backend.baron.dev.br/listar'; 
 
 
   private standardProductsState = new BehaviorSubject<Record<string, OrcamentoItemNaTabela[]>>({});
@@ -123,12 +126,12 @@ export class FetchProductsService {
   }
 
   deleteProduct(id: number | undefined): Observable<void> {
-    const url = `http://localhost:8080/api/produtosEspeciais/deletar?id=${id}`;
+    const url = `https://v2.calculadora.backend.baron.dev.br/api/produtosEspeciais/deletar?id=${id}`;
     return this.http.delete<void>(url);
   }
 
   payloadProducts(data: Product[]): Observable<Product[]> {
-    const url = 'http://localhost:8080/api/produtosEspeciais/cadastro';
+    const url = 'https://v2.calculadora.backend.baron.dev.br/api/produtosEspeciais/cadastro';
     return this.http.post<Product[]>(url, data, {
       responseType: 'json'
     });
