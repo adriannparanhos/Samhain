@@ -24,7 +24,7 @@ export class OrcamentoPdfComponent implements OnInit {
   dataAtual: Date;
   taxInformation: string = '1- ';
   anexos?: { nome: string; url: string; }[];
-
+  public isDataLoaded: boolean = false;
 
   CONDICOES_GERAL_VENDA_PART1: string = `Nossos produtos são fornecidos 
   de acordo com a ABNT NBR 14.922, para peças semiacabadas. 
@@ -134,6 +134,7 @@ export class OrcamentoPdfComponent implements OnInit {
           this.preencherDadosGerais();
           this.calcularInformacaoImposto();
           const itensDoOrcamento = this.orcamentoRecebido.itens;
+          this.isDataLoaded = true;
           console.log("Itens do orçamento:", itensDoOrcamento);
 
         } else {
@@ -154,11 +155,10 @@ export class OrcamentoPdfComponent implements OnInit {
     if (this.orcamentoRecebido && this.orcamentoRecebido.proposta) {
       document.title = `${this.orcamentoRecebido.proposta} - proposta comercial`;
     } else {
-      document.title = 'proposta comercial'; // Fallback if no proposal number
+      document.title = 'proposta comercial'; 
     }
   }
 
-  // Listen for the 'beforeprint' and 'afterprint' events
   @HostListener('window:beforeprint')
   onBeforePrint() {
     this.setPrintFileName();
@@ -166,7 +166,6 @@ export class OrcamentoPdfComponent implements OnInit {
 
   @HostListener('window:afterprint')
   onAfterPrint() {
-    // Restore the original document title after printing is complete
     document.title = this.originalDocumentTitle;
   }
 
@@ -321,6 +320,14 @@ export class OrcamentoPdfComponent implements OnInit {
 
   get userLogado() {
     return this.authServiceLogin.currentUserValue.name;
+  }
+
+  public printPage(): void {
+    if (this.isDataLoaded) {
+        window.print();
+    } else {
+        alert('Por favor, aguarde o carregamento completo dos dados antes de imprimir.');
+    }
   }
 
 }

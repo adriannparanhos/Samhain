@@ -165,4 +165,8 @@
       </div>
     </div>
   </section>
+
+  <button (click)="printPage()" [disabled]="!isDataLoaded" class="print:hidden">
+    Imprimir
+  </button>
 </div>

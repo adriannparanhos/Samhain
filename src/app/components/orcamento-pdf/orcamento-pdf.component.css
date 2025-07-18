@@ -19,5 +19,17 @@ header {
     header {
         height: 70px !important;
         margin-top: -20px !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    body, .orcamento-container {
+        color: #000 !important;
+        background-color: #fff !important;
+    }
+
+    /* Esconde elementos desnecessários de forma explícita */
+    .no-print, .print\:hidden {
+        display: none !important;
     }
 }
