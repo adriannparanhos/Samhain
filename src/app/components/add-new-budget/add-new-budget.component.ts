@@ -102,7 +102,8 @@ export class AddNewBudgetComponent implements OnInit {
     { name: 'status', label: 'Status', type: 'select', options: [{ label: 'Aprovado', value: 'Aprovado' }, { label: 'Pendente', value: 'Pendente' }, { label: 'Reprovado', value: 'Reprovado' }] },
     { name: 'nomeContato', label: 'Contato', type: 'text', placeholder: 'Nome do contato'},
     { name: 'emailContato', label: 'Email', type: 'email', placeholder: 'contato@example.com'},
-    { name: 'telefoneContato', label: 'Telefone', type: 'text', placeholder: 'Nome do contato'},
+    { name: 'telefoneContato', label: 'Telefone', type: 'text', placeholder: '(16)9 9999-8888'},
+    { name: 'prazoEntrega', label: 'Prazo de entrega', type: 'text', placeholder: 'Ex: 25 dias úteis'},
     { name: 'tipoFrete', label: 'Frete', type: 'select', options: [{ label: 'FOB', value: 'FOB' }, { label: 'CIF', value: 'CIF' }] },
     { name: 'descricao', label: 'Descrição', type: 'textarea', placeholder: 'Descrição do orçamento' }
   ];
