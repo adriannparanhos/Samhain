@@ -132,11 +132,6 @@
   <div class="bg-gray-200 text-center py-2 h-[20px] flex items-center justify-center mt-2">
     <p class="font-medium">Condições gerais de venda</p>
   </div>
-  
-  <div class="bg-gray-200 text-center mb-4">
-    <p class="font-medium">Observações</p>
-  </div>
-  <p>{{ orcamentoRecebido?.descricao }}</p> 
 
   <!-- Separar em metades de 50% verticalmente -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 text-[10px]">
@@ -147,6 +142,11 @@
       <p>{{CONDICOES_GERAL_VENDA_PART2}}</p>
     </div>
   </div>
+
+  <div class="bg-gray-200 text-center mb-4">
+    <p class="font-medium">Observações</p>
+  </div>
+  <p>{{ orcamentoRecebido?.descricao }}</p> 
 
   <section *ngIf="orcamentoRecebido?.anexos && orcamentoRecebido?.anexos!.length > 0" class="mt-4 break-before-page">
     <div class="bg-gray-200 text-center py-2 mb-4">
