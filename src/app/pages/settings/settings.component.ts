@@ -89,7 +89,7 @@ export class SettingsComponent implements OnInit {
       mark_up_black: [null, Validators.required],
       mark_up_natural: [null, Validators.required],
       mark_up_ultra: [null, Validators.required],
-      resinValue: [null, Validators.required],
+      resin_value: [null, Validators.required],
       rapido: [null, Validators.required],
       medio: [null, Validators.required],
       lento: [null, Validators.required],

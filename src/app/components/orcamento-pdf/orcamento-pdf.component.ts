@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener  } from '@angular/core';
 import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcamento.service';
 import { DadosOrcamento } from '../../models/interfaces/dados-orcamento';
 import { Subscription } from 'rxjs';
@@ -111,6 +111,7 @@ export class OrcamentoPdfComponent implements OnInit {
   bairro: string | undefined = '';
   estado: string | undefined = '';
   cidade: string | undefined = '';
+  private originalDocumentTitle: string = '';
 
   constructor(
     private dadosNovoOrcamentoService: DadosNovoOrcamentoService,
@@ -123,6 +124,7 @@ export class OrcamentoPdfComponent implements OnInit {
 
 
    ngOnInit(): void {
+    this.originalDocumentTitle = document.title;
     this.orcamentoSubscription = this.dadosNovoOrcamentoService.orcamentoAtual$.subscribe(
       (dados: DadosOrcamento | null) => {
         this.orcamentoRecebido = dados;
@@ -145,6 +147,27 @@ export class OrcamentoPdfComponent implements OnInit {
     if (this.orcamentoSubscription) {
       this.orcamentoSubscription.unsubscribe();
     }
+    document.title = this.originalDocumentTitle;
+  }
+
+   setPrintFileName(): void {
+    if (this.orcamentoRecebido && this.orcamentoRecebido.proposta) {
+      document.title = `${this.orcamentoRecebido.proposta} - proposta comercial`;
+    } else {
+      document.title = 'proposta comercial'; // Fallback if no proposal number
+    }
+  }
+
+  // Listen for the 'beforeprint' and 'afterprint' events
+  @HostListener('window:beforeprint')
+  onBeforePrint() {
+    this.setPrintFileName();
+  }
+
+  @HostListener('window:afterprint')
+  onAfterPrint() {
+    // Restore the original document title after printing is complete
+    document.title = this.originalDocumentTitle;
   }
 
   preencherDadosGerais(): void {
