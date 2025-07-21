@@ -32,6 +32,7 @@ export interface Page<T> {
 })
 export class FetchEnterpriseService {
   private apiUrl = 'https://v2.calculadora.backend.baron.dev.br/api/v1/enterprises/listar'; 
+  // private apiUrl = 'http://localhost:8080/api/v1/enterprises/listar'; 
 
   private enterprisesState = new BehaviorSubject<IEnterprise[]>([]);
 
@@ -49,6 +50,8 @@ export class FetchEnterpriseService {
 
   getEnterpriseByCnpj(cnpj: string): Observable<IEnterprise> {
     const url = `https://v2.calculadora.backend.baron.dev.br/api/v1/enterprises/byCnpj?cnpj=${cnpj}`;
+    // const url = `http://localhost:8080/api/v1/enterprises/byCnpj?cnpj=${cnpj}`;
+
     return this.http.get<IEnterprise>(url);
   }
 

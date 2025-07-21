@@ -26,6 +26,7 @@ export interface DadosOrcamento {
   difal?: number;
   outrasTaxas?: number; 
   grandTotal: number;
+  peso?: number;
 
   vendedorResponsavel?: string;
   dataUltimaModificacao?: string | null; 
@@ -63,6 +64,8 @@ export interface ItemOrcamentoPayload {
   largura?: number;
   comprimento?: number;
   quantidadeConjuntos?: number;
+  pesoTotal?: number;
+  pesoItem?: number;
 }
 
 export interface ListarOrcamentosDTOBackend {

@@ -2,12 +2,10 @@ import { Component, ViewChild, OnInit } from '@angular/core';
 import { ReturnArrowComponent } from '../return-arrow/return-arrow.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AddNewFormComponent } from '../add-new-form/add-new-form.component';
-import { ButtonComponent } from '../button/button.component';
 import { LucideAngularModule } from 'lucide-angular';
 import { FieldConfig } from '../add-new-form/add-new-form.component';
 import { ButtonFormComponent } from '../button-form/button-form.component';
 import { Item } from '../../models/constantes';
-import { TableInfoComponent } from '../table-info/table-info.component';
 import { DynamicItemsTableComponent } from '../dynamic-items-table/dynamic-items-table.component';
 import { FetchEnterpriseService } from '../../services/fetchs/fetch-enterprise.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -19,7 +17,7 @@ import { SendOrcamentoPayloadService } from '../../services/database/send-orcame
 import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
 import { NewBudget, EnterpriseData, Cliente } from '../../models/interfaces/dados-orcamento';
 import { AttachmentUploaderComponent } from '../attachment-uploader/attachment-uploader.component';
-import { AttachmentFile } from '../attachment-uploader/attachment-uploader.component'; // Ajuste o caminho
+import { AttachmentFile } from '../attachment-uploader/attachment-uploader.component'; 
 
 @Component({
   selector: 'app-add-new-budget',
@@ -288,6 +286,7 @@ export class AddNewBudgetComponent implements OnInit {
         largura: item.largura ? Number(item.largura) : undefined,
         comprimento: item.comprimento ? Number(item.comprimento) : undefined,
         quantidadeConjuntos: item.quantidadeConjuntos,
+        pesoItem: item.pesoTotal,
       };
     });
 
@@ -308,6 +307,7 @@ export class AddNewBudgetComponent implements OnInit {
       valorDoFrete: this.table.valorFrete || 0,
       difal: this.table.valorDifal || 0,
       grandTotal: this.table.grandTotal,
+      peso: this.table.pesoTotal || 0,
       cep: this.empresaSelecionada?.address?.cep,
       endereco: this.empresaSelecionada?.address?.endereco,
       endereco_numero: String(this.empresaSelecionada?.address?.endereco_numero), 

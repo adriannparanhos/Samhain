@@ -16,6 +16,7 @@ export interface CalcResponse {
 @Injectable({ providedIn: 'root' })
 export class CalculateValueStandartService {
   private url = 'https://v2.calculadora.backend.baron.dev.br/api/calculate-item';
+  // private url = 'http://localhost:8080/api/calculate-item';
 
   constructor(private http: HttpClient) { }
 

@@ -127,7 +127,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     this.updateTotals();
   }
 
-  public setLoadedData(data: { items: BackendItemOrcamentoPayload[], descontoGlobal?: number, valorFrete?: number, valorDifal?: number }): void {
+  public setLoadedData(data: { items: BackendItemOrcamentoPayload[], descontoGlobal?: number, valorFrete?: number, valorDifal?: number}): void {
     this.items = []; 
 
     data.items.forEach(backendItem => {
@@ -156,7 +156,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
         categoria: '', 
         espessura: 0, 
         isPanelVisible: false,
-        pesoTotal: 0,
+        pesoTotal: backendItem.pesoItem || 0,
       };
       this.items.push(newItem);
     });
@@ -172,7 +172,6 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
       this.valorFrete = data.valorFrete || 0;
       this.valorDifal = data.valorDifal || 0;
     }
-
 
     this.updateTotals(); 
     this.formValidated = false; 

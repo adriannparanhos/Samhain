@@ -92,6 +92,8 @@ export class OrcamentoPdfComponent implements OnInit {
   difal?: number | undefined;           
   outrasTaxas?: number | undefined;      
   grandTotal: number | undefined;     
+  pesoTotal: number | undefined; 
+  valorKg: number | undefined;
   
   vendedorResponsavel?: string;
   dataUltimaModificacao?: string | null;
@@ -191,6 +193,7 @@ export class OrcamentoPdfComponent implements OnInit {
     this.difal = this.orcamentoRecebido.difal;
     this.outrasTaxas = this.orcamentoRecebido.outrasTaxas;
     this.grandTotal = this.orcamentoRecebido.grandTotal;
+    this.pesoTotal = this.orcamentoRecebido.peso;
     this.vendedorResponsavel = this.orcamentoRecebido.vendedorResponsavel;
     this.dataUltimaModificacao = this.orcamentoRecebido.dataUltimaModificacao;
     this.cep = this.orcamentoRecebido.cep;
@@ -200,6 +203,12 @@ export class OrcamentoPdfComponent implements OnInit {
     this.estado = this.orcamentoRecebido.estado;
     this.cidade = this.orcamentoRecebido.cidade;
 
+    if (this.subtotalItens && this.pesoTotal && this.pesoTotal > 0) {
+      this.valorKg = this.subtotalItens / this.pesoTotal;
+    } else {
+      this.valorKg = 0;
+    }
+
 
   }
 
@@ -207,6 +216,8 @@ export class OrcamentoPdfComponent implements OnInit {
     this.proposta = undefined;
     this.dataEmissao = undefined;
     this.grandTotal = undefined;
+    this.pesoTotal = undefined; 
+    this.valorKg = undefined;
   }
 
   determinarUnidadeParaItem(item: ItemOrcamentoPayload): string {

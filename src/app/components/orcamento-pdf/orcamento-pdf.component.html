@@ -14,7 +14,6 @@
   </div>
 
   <div class="flex flex-col md:flex-row gap-4">
-    <!-- Essa parte ocupa uns 60% -->
     <div class="md:w-3/5">
       <p class="font-medium">Vendedor: {{ userLogado }}</p>
       <p class="font-medium">Revisão: </p>
@@ -31,7 +30,15 @@
     </div>
   </div>
 
-  <!-- Centralizado, background cinza, altura fixa -->
+  <div class="flex justify-end items-end space-x-4 mt-2 text-sm">
+    <p>
+      <span class="font-bold">{{ valorKg | currency:'BRL':'':'1.2-2' }}</span>
+    </p>
+    <p>
+      <span class="font-bold">{{ pesoTotal | number:'1.2-2' }}</span>
+    </p>
+  </div>
+
   <div class="bg-gray-200 text-center py-2 h-[20px] flex items-center justify-center mb-2">
     <p class="font-medium">Produto(s)</p>
   </div>
@@ -83,19 +90,16 @@
             </tr>
         </tbody>
     </table>
-    <!-- Total dos produtos e total a pagar no canto inferior direito -->
     <div class="flex justify-end space-x-4 mt-4">
       <p>Total dos produtos: <span class="font-medium text-emerald-600">{{ subtotalItens | currency:'BRL':'symbol':'1.2-2':'pt-BR'}}</span></p>
       <p>Total a pagar: <span class="font-medium text-emerald-600">{{ grandTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR'}}</span></p>
     </div>
   </div>
 
-  <!-- Centralizado, background cinza, altura fixa -->
   <div class="bg-gray-200 text-center py-2 h-[20px] flex items-center justify-center mt-2 mb-2">
     <p class="font-medium">Condições gerais de fornecimento</p>
   </div>
 
-  <!-- Separar em 4 partes iguais, alinhadas horizontalmente -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
     <div>
       <p>Data de envio da Proposta: </p>
@@ -117,7 +121,6 @@
     </div>
   </div>
 
-  <!-- Centralizado, background cinza, altura fixa -->
   <div class="bg-gray-200 text-center py-2 h-[20px] flex items-center justify-center mb-2">
     <p class="font-medium">Observações complementares</p>
   </div>
@@ -128,12 +131,10 @@
     <p>3- Para pedidos de peças específicas conforme projetos do cliente, não aceitamos o cancelamento do pedido após o envio da ordem de compra ou na sua confirmação</p>
   </div>
 
-  <!-- Centralizado, background cinza, altura fixa -->
   <div class="bg-gray-200 text-center py-2 h-[20px] flex items-center justify-center mt-2">
     <p class="font-medium">Condições gerais de venda</p>
   </div>
 
-  <!-- Separar em metades de 50% verticalmente -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 text-[10px]">
     <div>
       <p>{{CONDICOES_GERAL_VENDA_PART1}}</p>
