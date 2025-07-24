@@ -2,11 +2,15 @@ import { Injectable, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthLoginService {
+  private apiLoginUrl = `${environment.apiUrl}/login`;
+  private apiUserUrl = `${environment.apiUrl}/user`;
+
   // private apiUrl = 'http://localhost:8080/login';
   // private url = 'http://localhost:8080/user';
 

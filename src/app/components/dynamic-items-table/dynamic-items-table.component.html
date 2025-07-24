@@ -90,10 +90,10 @@
             </td>
             <td class="px-6 py-4">
               <div class="relative">
-                <input type="number" [(ngModel)]="item.desconto" (ngModelChange)="onFieldChange(item)" class="w-full rounded-md border-slate-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" [class.border-red-500]="isItemInvalid(item) && (item.desconto < 0 || item.desconto > 100)" step="0.01" min="0" max="100" />
+                <input type="number" [(ngModel)]="item.desconto" (ngModelChange)="onFieldChange(item)" class="w-full rounded-md border-slate-300 shadow-sm px-3 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" [class.border-red-500]="isItemInvalid(item) && (item.desconto > 100)" step="0.01" min="0" max="100" />
                 <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-500 text-sm">%</span>
               </div>
-              <p *ngIf="isItemInvalid(item) && (item.desconto < 0 || item.desconto > 100)" class="mt-1 text-xs text-red-600">Inválido</p>
+              <p *ngIf="isItemInvalid(item) && (item.desconto > 100)" class="mt-1 text-xs text-red-600">Inválido</p>
             </td>
             <td class="px-6 py-4 font-semibold text-right text-slate-800">
               {{ item.totalCIPI | currency:'BRL':'symbol':'1.2-2' }}

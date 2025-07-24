@@ -454,7 +454,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
         (!item.largura || item.largura <= 0 || !item.comprimento || item.comprimento <= 0)) {
       return true;
     }
-    if (item.desconto < 0 || item.desconto > 100) return true;
+    if (item.desconto > 100) return true;
     return false;
   }
 
