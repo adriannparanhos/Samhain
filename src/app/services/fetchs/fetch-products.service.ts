@@ -5,11 +5,10 @@ import { tap, map } from 'rxjs/operators';
 import { OrcamentoItemNaTabela } from '../../models/orcamento-item';
 import { Product } from '../../models/interfaces/produtos';
 import { ListarProdutosDTOBackend } from '../../models/interfaces/dados-orcamento';
-import { environment } from '../../../environments/environment';
 
 export interface SpecialProduct {
   id: number;
-  modelo: string;
+  modelo: string; 
   produto: string;
   valorUnitario: number;
   ncm: string;
@@ -20,8 +19,11 @@ export interface SpecialProduct {
   providedIn: 'root'
 })
 export class FetchProductsService {
-  private apiUrl = `${environment.apiUrl}/produtos`;
-  private apiUrlEspeciais = `${environment.apiUrl}/produtosEspeciais`;
+  private apiUrl = 'https://v2.calculadora.backend.baron.dev.br/api/produtos/lista'; 
+  private apiUrlEspeciais = 'https://v2.calculadora.backend.baron.dev.br/api/produtosEspeciais/listar'; 
+
+  // private apiUrl = 'http://localhost:8080/api/produtos/lista'; 
+  // private apiUrlEspeciais = 'http://localhost:8080/api/produtosEspeciais/listar'; 
 
   private standardProductsState = new BehaviorSubject<Record<string, OrcamentoItemNaTabela[]>>({});
   public standardProductsGrouped$ = this.standardProductsState.asObservable();
@@ -29,7 +31,9 @@ export class FetchProductsService {
   private specialProductsState = new BehaviorSubject<Record<string, SpecialProduct[]>>({});
   public specialProductsGrouped$ = this.specialProductsState.asObservable();
 
+
   private _productSaved$ = new Subject<void>();
+
 
   get productSaved$(): Observable<void> {
     return this._productSaved$.asObservable();
@@ -40,8 +44,9 @@ export class FetchProductsService {
   }
 
   constructor(private http: HttpClient) {
-    this.loadStandardProducts();
+    this.loadStandardProducts(); 
     this.loadSpecialProducts();
+
   }
 
   public refreshProducts(): void {
@@ -50,34 +55,35 @@ export class FetchProductsService {
   }
 
   private loadAndProcessProducts(): void {
-    this.http.get<OrcamentoItemNaTabela[]>(`${this.apiUrl}/lista`).pipe(
-      map(data => this.processAndGroupData(data)),
+    this.http.get<OrcamentoItemNaTabela[]>(this.apiUrl).pipe(
+      map(data => this.processAndGroupData(data)), 
       tap(() => console.log("Dados de produtos carregados, processados e disponíveis."))
     ).subscribe(processedData => {
-      this.standardProductsState.next(processedData);
+      this.standardProductsState.next(processedData); 
     });
   }
 
   private loadStandardProducts(): void {
-    this.http.get<OrcamentoItemNaTabela[]>(`${this.apiUrl}/lista`).pipe(
+    this.http.get<OrcamentoItemNaTabela[]>(this.apiUrl).pipe(
       tap(rawData => {
         console.log('[DEBUG-SERVICE] Dados BRUTOS recebidos da API de Catálogo:', rawData);
         if (rawData && rawData.length > 0) {
-          console.log('[DEBUG-SERVICE] Exemplo do primeiro item bruto:', rawData[0]);
+          console.log('[DEBUG-SERVICE] Exemplo do primeiro item bruto:', rawData);
+          console.log('[DEBUG-SERVICE] Exemplo do item bruto - produto:', rawData);
         }
       }),
-      map(data => this.groupStandardProducts(data)),
+      map(data => this.groupStandardProducts(data)), 
       tap(groupedData => {
         console.log('[DEBUG-SERVICE] Dados APÓS o agrupamento:', groupedData);
       })
     ).subscribe(processedData => {
       console.log('[DEBUG-SERVICE] Emitindo para standardProductsState.next():', processedData);
-      this.standardProductsState.next(processedData);
+      this.standardProductsState.next(processedData); 
     });
   }
 
-  private loadSpecialProducts(): void {
-    this.http.get<SpecialProduct[]>(`${this.apiUrlEspeciais}/listar`).pipe(
+   private loadSpecialProducts(): void {
+    this.http.get<SpecialProduct[]>(this.apiUrlEspeciais).pipe(
       map(data => this.groupSpecialProducts(data)),
       tap(() => console.log("Produtos ESPECIAIS/CADASTRADOS carregados e AGRUPADOS."))
     ).subscribe(groupedData => {
@@ -85,11 +91,12 @@ export class FetchProductsService {
     });
   }
 
-  private groupStandardProducts(data: OrcamentoItemNaTabela[]): Record<string, OrcamentoItemNaTabela[]> {
+   private groupStandardProducts(data: OrcamentoItemNaTabela[]): Record<string, OrcamentoItemNaTabela[]> {
     if (!data || data.length === 0) {
       console.warn('[DEBUG-SERVICE] groupStandardProducts recebeu dados vazios ou nulos. Retornando {}.');
-      return {};
+      return {}; 
     }
+    
     return data.reduce((acc, item) => {
       const family = item.produto || 'Sem Categoria';
       if (!acc[family]) {
@@ -102,6 +109,7 @@ export class FetchProductsService {
 
   private groupSpecialProducts(data: SpecialProduct[]): Record<string, SpecialProduct[]> {
     if (!data) return {};
+    
     return data.reduce((acc, item) => {
       const family = item.produto || 'Produtos Especiais';
       if (!acc[family]) {
@@ -113,21 +121,24 @@ export class FetchProductsService {
   }
 
   getProducts(): Observable<ListarProdutosDTOBackend[]> {
-    return this.http.get<ListarProdutosDTOBackend[]>(`${this.apiUrlEspeciais}/listar`);
+    return this.http.get<ListarProdutosDTOBackend[]>(this.apiUrlEspeciais);
   }
 
   deleteProduct(id: number | undefined): Observable<void> {
-    const url = `${this.apiUrlEspeciais}/deletar?id=${id}`;
+    const url = `https://v2.calculadora.backend.baron.dev.br/api/produtosEspeciais/deletar?id=${id}`;
+    // const url = `http://localhost:8080/api/produtosEspeciais/deletar?id=${id}`;
     return this.http.delete<void>(url);
   }
 
   payloadProducts(data: Product[]): Observable<Product[]> {
-    const url = `${this.apiUrlEspeciais}/cadastro`;
+    const url = 'https://v2.calculadora.backend.baron.dev.br/api/produtosEspeciais/cadastro';
+    // const url = 'http://localhost:8080/api/produtosEspeciais/cadastro';
     return this.http.post<Product[]>(url, data, {
       responseType: 'json'
     });
+
   }
-  
+
   private processAndGroupData(data: OrcamentoItemNaTabela[]): Record<string, OrcamentoItemNaTabela[]> {
     
     const normalizedData = data.map(item => {
@@ -157,7 +168,7 @@ export class FetchProductsService {
   }
 
   private customSort = (textA: string, textB: string): number => {
-    const re = /(\d+)/g;
+    const re = /(\d+)/g; 
 
     const partsA = textA.split(re).filter(Boolean);
     const partsB = textB.split(re).filter(Boolean);
@@ -175,12 +186,12 @@ export class FetchProductsService {
         const numA = Number(partA);
         const numB = Number(partB);
         if (numA !== numB) {
-          return numA - numB;
+          return numA - numB; 
         }
       } else {
         const textualCompare = partA.localeCompare(partB);
         if (textualCompare !== 0) {
-          return textualCompare;
+          return textualCompare; 
         }
       }
     }

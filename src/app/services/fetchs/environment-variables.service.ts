@@ -1,17 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EnvironmentVariablesService {
-  private url = `${environment.apiUrl}/variables`;
-
-  // private url = 'https://v2.calculadora.backend.baron.dev.br/api/variables'
+  private url = 'https://v2.calculadora.backend.baron.dev.br/api/variables'
   // private url = 'http://localhost:8080/api/variables'
-  
   constructor(
     private http: HttpClient
   ) {}
