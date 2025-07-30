@@ -1,12 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LucideAngularModule } from 'lucide-angular';
-import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
-import { Subject } from 'rxjs';
-import { takeUntil, debounceTime, distinctUntilChanged, switchMap, filter, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
 import { Router } from '@angular/router';
+import { Subject, of } from 'rxjs';
+import { takeUntil, debounceTime, distinctUntilChanged, switchMap, filter, catchError } from 'rxjs/operators';
+import { DadosNovoServicoService } from '../../services/datas/dados-novo-servico.service';
+import { ServiceBudgetData } from '../../models/interfaces/dados-orcamento';
+import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-services-form',
@@ -16,14 +17,29 @@ import { Router } from '@angular/router';
 })
 export class ServicesFormComponent implements OnInit, OnDestroy {
   servicesForm: FormGroup;
-  private destroy$ = new Subject<void>(); 
+  private destroy$ = new Subject<void>();
+  private originalBudget: any = null; 
 
-  constructor(private fb: FormBuilder, private fetchBudgetsService: FetchBudgetsService, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private fetchBudgetsService: FetchBudgetsService,
+    private router: Router,
+    private dadosNovoServicoService: DadosNovoServicoService
+  ) {
     this.servicesForm = this.fb.group({
       proposalNumber: ['', Validators.required],
-      cnpj: ['', [Validators.required]],
-      razaoSocial: ['', Validators.required],
-      metragem: ['', [Validators.required, Validators.min(1)]],
+      cnpj: [{ value: '', disabled: false }, Validators.required],
+      razaoSocial: [{ value: '', disabled: false }, Validators.required],
+      contato: [''],
+      telefone: [''], 
+      email: [''],    
+      metragem: [{ value: '', disabled: true }, [Validators.required, Validators.min(1)]],
+      endereco: [''],
+      enderecoNumero: [''],
+      bairro: [''],
+      cidade: [''],
+      estado: [''],
+      cep: [''],
       installationEfficiency: ['1', Validators.required],
       workingHoursPerDay: ['8', Validators.required],
       numberOfTeams: ['1', Validators.required],
@@ -33,8 +49,8 @@ export class ServicesFormComponent implements OnInit, OnDestroy {
       semiFinishedPlatesCoating: [false],
       temporaryLabor: [false],
       baronSafetyTechnician: [false],
-      electricity: [true],
-      compressedAir: [true],
+      electricity: [false],
+      compressedAir: [false],
       weldingWire: [false],
       maintenanceShutdown: [false],
       installationLocation: ['', Validators.required],
@@ -50,68 +66,146 @@ export class ServicesFormComponent implements OnInit, OnDestroy {
 
   private setupProposalNumberSearch(): void {
     this.servicesForm.get('proposalNumber')?.valueChanges.pipe(
-      debounceTime(3000),
+      debounceTime(1500),
       distinctUntilChanged(),
-      filter(proposalNumber => proposalNumber && proposalNumber.trim().length > 0),
-      switchMap(proposalNumber => {
-        return this.fetchBudgetsService.getBudgetByProposta(proposalNumber).pipe(
+      filter(proposalNumber => !!proposalNumber),
+      switchMap(proposalNumber =>
+        this.fetchBudgetsService.getBudgetByProposta(proposalNumber).pipe(
           catchError(error => {
             console.error('Erro ao buscar orçamento:', error);
-            alert('Erro ao buscar orçamento. Verifique o número da proposta e tente novamente.');
-            this.clearClientData(); 
-            return of(null); 
+            this.clearClientData();
+            return of(null);
           })
-        );
-      }),
+        )
+      ),
       takeUntil(this.destroy$)
     ).subscribe(budget => {
       if (budget) {
-        console.log('Orçamento encontrado:', budget);
+        this.originalBudget = budget; 
         const metragemTotal = budget.itens?.reduce((soma, item) => soma + (Number(item.quantidade) || 0), 0) || 0;
-        console.log('Metragem total calculada:', metragemTotal);
-
+        
         this.servicesForm.patchValue({
           cnpj: budget.cnpj,
           razaoSocial: budget.razaoSocial,
-          metragem: metragemTotal
+          contato: budget.nomeContato,
+          telefone: budget.telefoneContato, 
+          email: budget.emailContato,       
+          metragem: metragemTotal,
+          endereco: budget.endereco,
+          enderecoNumero: budget.enderecoNumero,
+          bairro: budget.bairro,
+          cidade: budget.cidade,
+          estado: budget.estado,
+          cep: budget.cep
         });
       } else {
-        alert('Nenhum orçamento encontrado para o número da proposta informado.');
         this.clearClientData();
       }
     });
   }
 
   private clearClientData(): void {
+    this.originalBudget = null; 
     this.servicesForm.patchValue({
       cnpj: '',
       razaoSocial: '',
+      contato: '',
+      telefone: '',
+      email: '',
       metragem: ''
     });
   }
 
+
+onSubmit(): void {
+  if (this.servicesForm.invalid) {
+    this.servicesForm.markAllAsTouched();
+    alert('Por favor, preencha todos os campos obrigatórios.');
+    return;
+  }
+
+  const formValue = this.servicesForm.getRawValue();
+  const efficiencyMap: { [key: string]: string } = { '1': 'rapido', '2': 'medio', '3': 'lento' };
+
+  const finalPayload = {
+    cotacao: `${crypto.randomUUID()} - ${formValue.proposalNumber || 'TESTE'}`,
+    numeroProposta: formValue.proposalNumber,
+    cnpj: formValue.cnpj,
+    razaoSocial: formValue.razaoSocial,
+    metragem: Number(formValue.metragem),
+    eficienciaInstalacao: efficiencyMap[formValue.installationEfficiency] || 'medio',
+    horasTrabalhadasPorDia: parseInt(formValue.workingHoursPerDay, 10),
+    numeroDeTimes: parseInt(formValue.numberOfTeams, 10),
+    servicoRealizadoNaBaron: formValue.serviceProvidedByBaron,
+    remocaoRevestimentoAntigo: formValue.removeOldCoating,
+    comTampoes: formValue.withPlugs,
+    comChapasSemiAcabadas: formValue.semiFinishedPlatesCoating,
+    maoDeObraTemporaria: formValue.temporaryLabor,
+    tecnicoSegurancaBaron: formValue.baronSafetyTechnician,
+    eletricidadeFornecida: formValue.electricity,
+    arComprimidoFornecido: formValue.compressedAir,
+    starGoldFornecido: formValue.weldingWire, 
+    paradaParaManutencaoGeral: formValue.maintenanceShutdown,
+    areaRevestida: Number(formValue.coatedArea),
+    diasIntegracao: Number(formValue.integrationDays),
+    descricaoEquipamento: formValue.equipmentDescription,
+    distanciaEmKm: Number(formValue.installationLocation)
+  };
+
+  this.fetchBudgetsService.gerarOrcamentoDeServico(finalPayload).pipe(
+    takeUntil(this.destroy$)
+    ).subscribe({
+      next: (response) => {
+        alert('Orçamento de serviço gerado com sucesso!');
+
+        const servicoCompleto: ServiceBudgetData = {
+          proposalNumber: formValue.proposalNumber,
+          cnpj: formValue.cnpj,
+          razaoSocial: formValue.razaoSocial,
+          equipmentDescription: formValue.equipmentDescription,
+          coatedArea: Number(formValue.coatedArea),
+          serviceProvidedByBaron: formValue.serviceProvidedByBaron,
+          removeOldCoating: formValue.removeOldCoating,
+          withPlugs: formValue.withPlugs,
+          semiFinishedPlatesCoating: formValue.semiFinishedPlatesCoating,
+          temporaryLabor: formValue.temporaryLabor,
+          baronSafetyTechnician: formValue.baronSafetyTechnician,
+          electricity: formValue.electricity,
+          compressedAir: formValue.compressedAir,
+          starGoldFornecido: formValue.weldingWire,
+          maintenanceShutdown: formValue.maintenanceShutdown,
+
+          nomeContato: formValue.contato,
+          telefoneContato: formValue.telefone,
+          email: formValue.email,
+          endereco: formValue.endereco,
+          enderecoNumero: formValue.enderecoNumero,
+          cidade: formValue.cidade,
+          bairro: formValue.bairro,
+          estado: formValue.estado,
+          cep: formValue.cep,
+        
+          vendedorResponsavel: this.originalBudget?.vendedorResponsavel || 'Vendas Internas',
+          paymentConditions: this.originalBudget?.condicaoPagamento || 'A combinar',
+          proposalValidity: this.originalBudget?.validadeProposta || '30 dias',
+
+          totalAPagar: response.totalAPagar,
+          diasPrevistoParaTermino: response.diasPrevistoParaTermino,
+          resultadoRendimentoInstalacao: response.resultadoRendimentoInstalacao
+        };
+
+        this.dadosNovoServicoService.setServico(servicoCompleto);
+        this.router.navigate(['/service-budget-data']);
+      },
+      error: (error) => {
+        console.error('Erro ao gerar o orçamento de serviço:', error);
+        alert('Ocorreu um erro ao gerar o orçamento. Tente novamente.');
+      }
+    });
+  }
+  
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  onSubmit(): void {
-    if (this.servicesForm.valid) {
-      console.log('Formulário de Serviços Enviado:', this.servicesForm.value);
-      alert('Dados do serviço enviados com sucesso! (simulação)');
-      this.routeToBudgetData();
-    } else {
-      console.error('Formulário de Serviços Inválido');
-    }
-  }
-
-  routeToBudgetData(): void {
-    if (this.servicesForm.valid) {
-      const formData = this.servicesForm.value;
-      this.router.navigate(['/service-budget-data'], { state: { formData } });
-    } else {
-      alert('Por favor, preencha todos os campos obrigatórios antes de prosseguir.');
-    }
-    
   }
 }

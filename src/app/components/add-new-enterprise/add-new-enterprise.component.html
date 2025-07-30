@@ -14,8 +14,8 @@
             </div>
             <div class="p-6">
                 <app-add-new-form
-                [fields]="formFields"
-                (submitForm)="onFormSubmit($event)">
+                #enterpriseForm [fields]="formFields"
+                >
                 </app-add-new-form>
             </div>
         </section>
@@ -26,13 +26,13 @@
             </div>
             <div class="p-6">
                 <app-add-new-form
-                [fields]="formFieldsEndereco"
-                (submitForm)="onFormSubmit($event)">
+                #addressForm [fields]="formFieldsEndereco"
+                >
                 </app-add-new-form>
             </div>
         </section>
         <div class="w-full max-w-4xl flex justify-end">
-          <app-button-form></app-button-form>
+          <app-button-form (save)="onSave()"></app-button-form>
         </div>
     </main>
 </div>

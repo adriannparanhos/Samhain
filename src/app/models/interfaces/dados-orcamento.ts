@@ -1,4 +1,4 @@
-import { SafeUrl } from '@angular/platform-browser'; // ✅ Importe
+import { SafeUrl } from '@angular/platform-browser'; 
 
 export interface DadosOrcamento {
   proposta: string | null; 
@@ -39,7 +39,8 @@ export interface DadosOrcamento {
   cidade?: string;
 
   anexos?: { nome: string; url: SafeUrl | string; }[];
-
+  contato?: string; 
+  enderecoNumero?: string | number | null | undefined; 
 }
 
 export interface ItemOrcamentoPayload {
@@ -124,4 +125,44 @@ export interface Cliente {
   telefoneContato?: string | undefined;
   prazoEntrega: string | undefined;
   tipoFrete: string | undefined;
+}
+
+export interface ServiceBudgetData {
+  proposalNumber: string;
+  cnpj: string;
+  razaoSocial: string;
+  equipmentDescription: string;
+  coatedArea: number;
+  serviceProvidedByBaron: boolean;
+  removeOldCoating: boolean;
+  withPlugs: boolean;
+  semiFinishedPlatesCoating: boolean;
+  temporaryLabor: boolean;
+  baronSafetyTechnician: boolean;
+  electricity: boolean;
+  compressedAir: boolean;
+  starGoldFornecido: boolean; 
+  maintenanceShutdown: boolean;
+  totalAPagar: number;
+  diasPrevistoParaTermino: number;
+  nomeContato: string;
+  telefoneContato: string;
+  email: string;
+  paymentConditions: string;
+  proposalValidity: string;
+  endereco: string;
+  enderecoNumero: string | number | null | undefined;
+  bairro: string;
+  estado: string;
+  cep: string;
+  cidade: string;
+  vendedorResponsavel: string;
+  resultadoRendimentoInstalacao: number;
+}
+
+export interface ServiceBudgetResponse {
+  totalAPagar: number;
+  diasPrevistoParaTermino: string;
+  resultadoRendimentoInstalacao: number;
+  vendedorResponsavel?: string; 
 }

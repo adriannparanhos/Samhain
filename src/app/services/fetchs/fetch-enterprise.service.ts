@@ -70,4 +70,13 @@ export class FetchEnterpriseService {
 
     return this.http.get<Page<IEnterprise>>(this.apiUrl, {params})
   }
+
+  addEnterprise(enterprise: any): Observable<any> {
+    // const url = 'http://localhost:8080/api/v1/enterprises/save';
+    const url = 'https://v2.calculadora.backend.baron.dev.br/api/v1/enterprises/save';
+
+    return this.http.post<any[]>(url, enterprise, {
+      responseType: 'json'
+    });
+  }
 }

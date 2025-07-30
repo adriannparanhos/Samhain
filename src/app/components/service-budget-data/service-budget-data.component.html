@@ -1,13 +1,14 @@
-<form [formGroup]="pdfForm" class="bg-gray-100 p-4 print:bg-white print:p-0">
-  <div id="pdfElements" class="max-w-4xl mx-auto bg-white p-6 font-sans text-xs">
+<form *ngIf="formData" class="bg-gray-100 p-4 print:bg-white print:p-0">
+  <div id="pdfElements" class="max-w-4xl mx-auto bg-white p-6 font-sans text-xs print:p-6 print:shadow-none print:bg-white print:text-black print:font-sans print:text-xs">
 
-    <header class="flex justify-between items-start mb-4">
+    <!-- Cabeçalho -->
+    <header class="flex justify-between items-start mb-4 break-inside-avoid print:break-inside-avoid">
       <div class="w-1/4">
-        <img src="../../../assets/images/baron-header-img-removebg-preview.png" alt="Baron Logo" class="w-full">
+        <img src="assets/images/baron-header-img-removebg-preview.png" alt="Baron Logo" class="w-full">
       </div>
       <div class="w-1/2 text-center">
-        <h2 class="text-xl font-bold">Proposta Comercial nº: {{ formData.proposalNumber || 'XX-XX-XXX-A' }}</h2>
-        <p class="text-sm">Responsável: Vendas Internas</p>
+        <h2 class="text-xl font-bold">Proposta de Serviço nº: {{ formData.proposalNumber }}</h2>
+        <p class="text-sm">Responsável: {{ formData.vendedorResponsavel }}</p>
       </div>
       <div class="w-1/4 text-right text-[10px] leading-tight">
         <p class="font-bold">Baron S.A.</p>
@@ -19,100 +20,100 @@
       </div>
     </header>
 
+    <!-- Informações do Cliente -->
     <section class="grid grid-cols-3 gap-x-6 border-t border-b border-gray-300 py-2">
       <div class="col-span-2">
         <p class="font-bold">Informações do Cliente</p>
         <div class="grid grid-cols-[max-content,1fr] gap-x-2">
-          <span class="font-semibold">Nome:</span>   <span>{{ formData.corporateName || 'N/A' }}</span>
-          <span class="font-semibold">CNPJ:</span>   <span>{{ formData.cnpj || 'N/A' }}</span>
-          <span class="font-semibold">Endereço:</span> <span>{{ formData.address.street || 'N/A' }} - {{ formData.address.number }} - {{ formData.address.neighborhood }} - CEP: {{ formData.address.cep }}</span>
-          <span class="font-semibold">Cidade:</span> <span>{{ formData.address.city || 'N/A' }} - {{ formData.address.state || 'N/A' }}</span>
+          <span class="font-semibold">Nome:</span>   <span>{{ formData.razaoSocial }}</span>
+          <span class="font-semibold">CNPJ:</span>   <span>{{ formData.cnpj }}</span>
+          <span class="font-semibold">Endereço:</span> <span>{{ formData.endereco }} - {{ formData.enderecoNumero }} - {{ formData.bairro }} - CEP: {{ formData.cep }}</span>
+          <span class="font-semibold">Cidade/Estado:</span> <span>{{ formData.cidade }} - {{ formData.estado }}</span>
         </div>
       </div>
       <div class="col-span-1">
         <div class="grid grid-cols-[max-content,1fr] gap-x-2 mt-4">
-          <span class="font-semibold">A/C:</span>    <span>{{ formData.contato || 'N/A' }}</span>
-          <span class="font-semibold">Fone:</span>   <span>{{ formData.phone || 'N/A' }}</span>
-          <span class="font-semibold">E-mail:</span> <span>{{ formData.email || 'N/A' }}</span>
+          <span class="font-semibold">A/C:</span>    <span>{{ formData.nomeContato }}</span>
+          <span class="font-semibold">Fone:</span>   <span>{{ formData.telefoneContato }}</span>
+          <span class="font-semibold">E-mail:</span> <span>{{ formData.email }}</span>
         </div>
       </div>
     </section>
 
+    <!-- Tabela de Serviços -->
     <section class="mt-2">
       <div class="text-center font-bold bg-gray-200 p-1 border-x border-t border-gray-400">Serviços de Instalação</div>
       
-      <div class="grid grid-cols-[55%,25%,20%] font-bold border-x border-t border-b border-gray-400">
-        <div class="p-1 border-r border-gray-400">Descrição</div>
-        <div class="p-1 border-r border-gray-400 text-center">Área Total (m²)</div>
-        <div class="p-1 text-center">Total</div>
-      </div>
-      
-      <div *ngFor="let service of formData.services" class="grid grid-cols-[55%,25%,20%] border-x border-b border-gray-400">
-        <div class="p-1 border-r border-gray-400">{{ service.description }}</div>
-        <div class="p-1 border-r border-gray-400 text-center">{{ service.quantity }}</div>
-        <div class="p-1 text-right font-semibold">{{ service.totalPrice | currency:'BRL':'R$':'1.2-2':'pt-BR' }}</div>
-      </div>
-
-      <div class="grid grid-cols-1 border-x border-b border-gray-400">
-        <div class="p-1 h-20">
-          <span class="font-semibold">Descrição: </span>
-          <p class="whitespace-pre-wrap">{{ formData.observations }}</p>
-          <!-- <p class="whitespace-pre-wrap">{{ formData.detailedDescription || 'N/A' }}</p> -->
+      <div class="grid grid-cols-1 border-x border-gray-400 p-1">
+        <div class="p-1">
+          <p class="font-semibold">Descrição: <span class="font-light">{{ formData.equipmentDescription }}</span></p>
+          <div class="grid grid-cols-[55%,25%,20%] mt-1">
+            <div class="font-bold">Área a ser revestida: <span class="font-light">{{ formData.coatedArea | number:'1.0-2' }} m²</span></div>
+          </div>
         </div>
       </div>
       
       <div class="grid grid-cols-[80%,20%] font-bold border-x border-b border-gray-400">
-        <div class="p-1 border-r border-gray-400 text-right">TOTAL A PAGAR</div>
-        <div class="p-1 text-right bg-gray-200">{{ formData.total | currency:'BRL':'R$':'1.2-2':'pt-BR' }}</div>
+        <div class="flex justify-end p-1 bg-gray-200 text-green-500">
+          <p class="text-gray-800 font-bold mr-2">TOTAL:</p>
+          <span class="font-bold">{{ formData.totalAPagar | currency:'BRL':'R$':'1.2-2':'pt-BR' }}</span>
+        </div>
       </div>
     </section>
 
-    <section class="mt-2">
-      <div class="text-center font-bold bg-gray-200 p-1 border-x border-t border-gray-400">Condições Gerais de Fornecimento</div>
-      <div class="grid grid-cols-4 border-x border-t border-b border-gray-400">
-        <div class="p-1 border-r border-gray-400"><span class="font-semibold">Data de envio da proposta:</span></div>
-        <div class="p-1 border-r border-gray-400">{{ getCurrentDate() }}</div>
-        <div class="p-1 border-r border-gray-400"><span class="font-semibold">Validade da prop:</span></div>
-        <div class="p-1">{{ formData.proposalValidity || 'N/A' }}</div>
-      </div>
-      <div class="grid grid-cols-4 border-x border-b border-gray-400">
-        <div class="p-1 border-r border-gray-400"><span class="font-semibold">Data Prevista para início:</span></div>
-        <div class="p-1 border-r border-gray-400">Data de inicio</div>
-        <!-- <div class="p-1 border-r border-gray-400">{{ formData.startDate || 'A combinar' }}</div> -->
-        <div class="p-1 border-r border-gray-400"><span class="font-semibold">Condição de pag:</span></div>
-        <div class="p-1">{{ formData.paymentConditions || 'N/A' }}</div>
-      </div>
-      <div class="grid grid-cols-4 border-x border-b border-gray-400">
-        <div class="p-1 border-r border-gray-400"><span class="font-semibold">Data Prevista para término:</span></div>
-        <div class="p-1 border-r border-gray-400">Previsão de termino</div>
-        <!-- <div class="p-1 border-r border-gray-400">{{ formData.endDate || 'A combinar' }}</div> -->
-        <div class="p-1 border-r border-gray-400"></div>
-        <div class="p-1"></div>
-      </div>
-    </section>
-
+    <!-- Resumo do Fornecimento -->
     <section class="mt-2">
       <div class="text-center font-bold bg-gray-200 p-1 border-x border-t border-gray-400">Resumo do Fornecimento</div>
-      <div class="grid grid-cols-[50%,8%,42%] text-left border-x border-b border-gray-400">
-        <div class="p-1"><span class="font-semibold">Haverá remoção de revestimento antigo?</span></div>
-        <div class="p-1 border-x border-gray-400 text-center font-bold">remoção de revestimeto antigo ?</div>
-        <!-- <div class="p-1 border-x border-gray-400 text-center font-bold">{{ formData.summary.removeOldCoating ? 'SIM' : 'NÃO' }}</div> -->
-        <div class="p-1"></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 border-x border-b border-gray-400 p-2 text-sm">
+        <div class="space-y-1">
+          <div class="flex justify-between items-center py-1 border-b border-gray-200"><span class="font-semibold">Serviço realizado na Baron?</span><span class="font-bold text-center w-12">{{ formData.serviceProvidedByBaron ? 'SIM' : 'NÃO' }}</span></div>
+          <div class="flex justify-between items-center py-1 border-b border-gray-200"><span class="font-semibold">Haverá remoção de revestimento antigo?</span><span class="font-bold text-center w-12">{{ formData.removeOldCoating ? 'SIM' : 'NÃO' }}</span></div>
+          <div class="flex justify-between items-center py-1 border-b border-gray-200"><span class="font-semibold">Com Instalação de tampões?</span><span class="font-bold text-center w-12">{{ formData.withPlugs ? 'SIM' : 'NÃO' }}</span></div>
+          <div class="flex justify-between items-center py-1 border-b border-gray-200"><span class="font-semibold">Instalação de chapas semiacabadas?</span><span class="font-bold text-center w-12">{{ formData.semiFinishedPlatesCoating ? 'SIM' : 'NÃO' }}</span></div>
+          <div class="flex justify-between items-center py-1"><span class="font-semibold">Mão de obra temporária permitida?</span><span class="font-bold text-center w-12">{{ formData.temporaryLabor ? 'SIM' : 'NÃO' }}</span></div>
+        </div>
+        <div class="space-y-1">
+          <div class="flex justify-between items-center py-1 border-b border-gray-200"><span class="font-semibold">Técnico de segurança da Baron?</span><span class="font-bold text-center w-12">{{ formData.baronSafetyTechnician ? 'SIM' : 'NÃO' }}</span></div>
+          <div class="flex justify-between items-center py-1 border-b border-gray-200"><span class="font-semibold">Eletricidade fornecida pelo cliente?</span><span class="font-bold text-center w-12">{{ formData.electricity ? 'SIM' : 'NÃO' }}</span></div>
+          <div class="flex justify-between items-center py-1 border-b border-gray-200"><span class="font-semibold">Ar comprimido fornecido pelo cliente?</span><span class="font-bold text-center w-12">{{ formData.compressedAir ? 'SIM' : 'NÃO' }}</span></div>
+          <div class="flex justify-between items-center py-1 border-b border-gray-200"><span class="font-semibold">Stargold fornecido pelo cliente?</span><span class="font-bold text-center w-12">{{ formData.starGoldFornecido ? 'SIM' : 'NÃO' }}</span></div>
+          <div class="flex justify-between items-center py-1"><span class="font-semibold">Parada geral de manutenção?</span><span class="font-bold text-center w-12">{{ formData.maintenanceShutdown ? 'SIM' : 'NÃO' }}</span></div>
+        </div>
       </div>
-      <div class="grid grid-cols-[50%,8%,42%] text-left border-x border-b border-gray-400">
-        <div class="p-1"><span class="font-semibold">Com Instalação de tampões?</span></div>
-        <!-- <div class="p-1 border-x border-gray-400 text-center font-bold">{{ formData.summary.withPlugs ? 'SIM' : 'NÃO' }}</div> -->
-        <div class="p-1 border-x border-gray-400 text-center font-bold">Com tampao ?</div>
-        <div class="p-1"></div>
-      </div>
-      </section>
+    </section>
 
+    <section class="mt-2">
+      <div class="text-center font-bold bg-gray-200 p-1 border-x border-t border-gray-400">Observações complementares</div>
+      <div class="gap-x-6 border-x border-b border-gray-400 p-2 text-xs">
+        <p>{{ OBSERVACOES_COMPLEMENTARES_UM }}</p>
+        <p>{{ OBSERVACOES_COMPLEMENTARES_DOIS }}</p>
+        <p>{{ OBSERVACOES_COMPLEMENTARES_TRES }}</p>
+      </div>
+    </section>
+
+    <section class="mt-2">
+      <div class="text-center font-bold bg-gray-200 p-1 border-x border-t border-gray-400">Condições gerais de venda</div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 border-x border-b border-gray-400 p-2 text-xs">
+        <div class="space-y-1">
+          <p>{{ CONDICAO_UM }}</p>
+        </div>
+        <div class="space-y-1">
+          <p>{{ CONDICAO_DOIS }}</p>
+        </div>
+      </div>
+    </section>
   </div>
 </form>
 
 <div class="mt-8 flex justify-center print:hidden">
-  <button mat-raised-button color="accent" (click)="generatePDF()">
-    <i-lucide name="printer" class="mr-2 w-5 h-5"></i-lucide>
-    Gerar PDF / Imprimir
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="generatePDF()"
+    class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl shadow-md bg-accent text-white hover:bg-accent-dark transition-all duration-200"
+    aria-label="Gerar PDF ou imprimir"
+  >
+    <span class="text-base font-medium">Gerar PDF / Imprimir</span>
   </button>
 </div>
+

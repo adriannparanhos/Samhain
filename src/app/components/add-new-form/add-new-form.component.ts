@@ -59,4 +59,11 @@ export class AddNewFormComponent implements OnInit {
     }
   }
 
+  public getFormValue(): any {
+    if (this.form.valid) {
+      return this.form.getRawValue(); 
+    }
+    return null; 
+  }
+
 }

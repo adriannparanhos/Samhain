@@ -12,6 +12,41 @@ export interface Page<T> {
   number: number; 
 }
 
+export interface ServiceFormData {
+  cotacao: string;
+  numeroProposta: string;
+  cnpj: string;
+  razaoSocial: string;
+  metragem: number;
+  eficienciaInstalacao: string;
+  horasTrabalhadasPorDia: number;
+  numeroDeTimes: number;
+  servicoRealizadoNaBaron: boolean;
+  remocaoRevestimentoAntigo: boolean;
+  comTampoes: boolean;
+  comChapasSemiAcabadas: boolean;
+  maoDeObraTemporaria: boolean;
+  tecnicoSegurancaBaron: boolean;
+  eletricidadeFornecida: boolean;
+  arComprimidoFornecido: boolean;
+  starGoldFornecido: boolean;
+  paradaParaManutencaoGeral: boolean;
+  areaRevestida: number;
+  diasIntegracao: number;
+  descricaoEquipamento: string;
+  distanciaEmKm: number;
+}
+
+export interface ServiceBudgetResponse {
+  id: number;
+  valorTotalOrcamento: number;
+  prazoPrevistoDias: number;
+  totalAPagar: number;
+  diasPrevistoParaTermino: number;
+  resultadoRendimentoInstalacao: number;
+  vendedorResponsavel?: string; 
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -112,6 +147,12 @@ export class FetchBudgetsService {
       params = params.set('searchTerm', searchTerm);
     }
     return this.http.get<Page<ListarOrcamentosDTOBackend>>(`${this.apiUrlOrcamentos}/listar`, { params });
+  }
+
+  gerarOrcamentoDeServico(formData: ServiceFormData): Observable<ServiceBudgetResponse> {
+    const url = 'https://v2.calculadora.backend.baron.dev.br/api/servico/gerar-orcamento';
+    // const url = 'http://localhost:8080/api/servico/gerar-orcamento'; 
+    return this.http.post<ServiceBudgetResponse>(url, formData);
   }
 
 }

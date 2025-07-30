@@ -3,7 +3,10 @@
 
     <div class="p-6 space-y-6">
         <section>
-            <h3 class="text-lg font-medium text-gray-900 mb-4">Dados do cliente</h3>
+            <h3 class="flex items-center text-lg font-medium text-gray-900 mb-4">
+                <lucide-icon name="user-round" class="mr-2 h-5 w-5 text-blue-500"></lucide-icon>
+                Dados do cliente
+            </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="proposalNumber" class="block text-sm font-medium text-gray-700">Número da proposta: </label>
@@ -23,10 +26,10 @@
                     <label for="razaoSocial" class="block text-sm font-medium text-gray-700">Razao Social: </label>
                     <input type="text" id="razaoSocial" formControlName="razaoSocial" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-300" placeholder="Empresa XYZ LTDA">
                 </div>
-                <div>
+                <!-- <div>
                     <label for="metragem" class="block text-sm font-medium text-gray-700">Metro quadrado: </label>
                     <input type="text" id="metragem" formControlName="metragem" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-300" placeholder="50 m²">
-                </div>
+                </div> -->
             </div>
         </section>
     </div>
@@ -34,7 +37,10 @@
     <div class="p-6 space-y-6">
 
       <section>
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Dados do Serviço</h3>
+        <h3 class="flex items-center text-lg font-medium text-gray-900 mb-4">
+          <lucide-icon name="wrench" class="mr-2 h-5 w-5 text-blue-500"></lucide-icon>
+          Dados do Serviço
+        </h3>
         <div class="grid grid-cols-1 gap-6">
           <div>
             <label for="installationEfficiency" class="block text-sm font-medium text-gray-700">Velocidade de Instalação</label>

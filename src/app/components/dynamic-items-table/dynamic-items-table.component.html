@@ -86,7 +86,7 @@
               </div>
             </td>
             <td class="px-6.py-4.font-medium.text-slate-700 text-center">
-                {{ (item.produto === 'chapasPersonalizadas' || item.produto === 'pecasPersonalizadas' ? (item.ipi! / 100) : (item.ipi! - 1)) | percent:'1.2-2' }}
+                {{ (item.produto === 'chapasPersonalizadas' || item.produto === 'pecasPersonalizadas' ? (item.ipi! - 1) : (item.ipi! - 1)) | percent:'1.2-2' }}
             </td>
             <td class="px-6 py-4">
               <div class="relative">
@@ -117,7 +117,7 @@
                  <div class="p-4 border border-slate-200 rounded-lg bg-white">
                     <h5 class="font-semibold text-slate-700 mb-4">Detalhes Adicionais do Item</h5>
                     <div *ngIf="item.produto === 'Peça Usinada'" class="space-y-3">
-                        <mat-checkbox [(ngModel)]="item.clienteForneceuDesenho" (ngModelChange)="onFieldChange(item)">Cliente forneceu desenho?</mat-checkbox>
+                        <mat-checkbox [(ngModel)]="item.clienteForneceuDesenho" (ngModelChange)="onFieldChange(item)">Desenho feito pela Baron?</mat-checkbox>
                         <mat-checkbox [(ngModel)]="item.adicionarArruela" (ngModelChange)="onFieldChange(item)">Adicionar arruela?</mat-checkbox>
                         <mat-checkbox [(ngModel)]="item.adicionarTampao" (ngModelChange)="onFieldChange(item)">Adicionar tampão?</mat-checkbox>
                     </div>

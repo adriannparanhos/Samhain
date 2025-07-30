@@ -99,33 +99,33 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     this.calculateItemValue(item); 
   }
 
-  addSpecialItem(product: SpecialProduct): void {
-    const newItem: OrcamentoItemNaTabela = {
-      produto: product.produto,
-      modelo: product.modelo,
-      valorUnitario: product.valorUnitario,
-      ncm: product.ncm,
-      ipi: product.ipi,
-      quantidade: 1, 
-      desconto: 0,
-      total: product.valorUnitario,
-      totalCIPI: product.valorUnitario * (1 + (product.ipi / 100)),
-      isPanelVisible: false,
+  // addSpecialItem(product: SpecialProduct): void {
+  //   const newItem: OrcamentoItemNaTabela = {
+  //     produto: product.produto,
+  //     modelo: product.modelo,
+  //     valorUnitario: product.valorUnitario,
+  //     ncm: product.ncm,
+  //     ipi: product.ipi,
+  //     quantidade: 0, 
+  //     desconto: 0,
+  //     total: product.valorUnitario,
+  //     totalCIPI: product.valorUnitario * (1 + (product.ipi / 100)),
+  //     isPanelVisible: false,
 
-      clienteForneceuDesenho: false,
-      adicionarProjeto: false,
-      adicionarArruela: false,
-      adicionarTampao: false,
-      valorUnitarioCIPI: product.valorUnitario * (1 + (product.ipi / 100)), 
-      peso: 0, 
-      categoria: product.produto, 
-      espessura: 0,
-      pesoTotal: 0,
-      quantidadeConjuntos: 1,
-    };
-    this.items.push(newItem);
-    this.updateTotals();
-  }
+  //     clienteForneceuDesenho: false,
+  //     adicionarProjeto: false,
+  //     adicionarArruela: false,
+  //     adicionarTampao: false,
+  //     valorUnitarioCIPI: product.valorUnitario * (1 + (product.ipi / 100)), 
+  //     peso: 0, 
+  //     categoria: product.produto, 
+  //     espessura: 0,
+  //     pesoTotal: 0,
+  //     quantidadeConjuntos: 1,
+  //   };
+  //   this.items.push(newItem);
+  //   this.updateTotals();
+  // }
 
   public setLoadedData(data: { items: BackendItemOrcamentoPayload[], descontoGlobal?: number, valorFrete?: number, valorDifal?: number}): void {
     this.items = []; 
@@ -259,7 +259,7 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
       item.ipi = specialItemData.ipi ?? 0;
       item.ncm = specialItemData.ncm || '';
       item.valorUnitario = specialItemData.valorUnitario || 0;
-      item.quantidade = item.quantidade > 0 ? item.quantidade : 1;
+      item.quantidade = item.quantidade > 0 ? item.quantidade : 0;
       this.updateTotalsForItem(item); 
     }
   }
@@ -362,87 +362,6 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
     totalFinal += (this.valorDifal || 0);
 
     this.grandTotal = totalFinal;
-  }
-
-  private aplicarAjustesGlobaisNosItens(): void {
-    this.items.forEach(item => {
-      item.valorUnitario = item.valorUnitarioOriginal ?? item.valorUnitario;
-      item.total = item.totalOriginal ?? item.total;
-      item.totalCIPI = item.totalCIPIOriginal ?? item.totalCIPI;
-    });
-    
-    const custoTotalAdicional = (this.valorFrete || 0) + (this.valorDifal || 0);
-    const quantidadeTotal = this.items.reduce((acc, item) => acc + (item.quantidade || 0), 0);
-    const descontoGlobalMultiplier = (this.descontoGlobal > 0 && this.descontoGlobal <= 100) 
-        ? (1 - (this.descontoGlobal / 100)) 
-        : 1;
-
-    let custoPorUnidade = 0;
-    if (custoTotalAdicional > 0 && quantidadeTotal > 0) {
-      custoPorUnidade = custoTotalAdicional / quantidadeTotal;
-    }
-
-    this.items.forEach(item => {
-      if (item.quantidade > 0 && item.valorUnitarioOriginal != null) {
-        
-        let valorUnitarioAjustado = item.valorUnitarioOriginal;
-
-        valorUnitarioAjustado *= descontoGlobalMultiplier;
-
-        valorUnitarioAjustado += custoPorUnidade;
-
-        item.valorUnitario = valorUnitarioAjustado;
-
-        const ipiMultiplier = item.ipi || 1;
-        const itemDiscountMultiplier = 1 - ((item.desconto || 0) / 100);
-
-        item.total = item.valorUnitario * item.quantidade * itemDiscountMultiplier;
-        item.valorUnitarioCIPI = item.valorUnitario * ipiMultiplier;
-        item.totalCIPI = item.valorUnitarioCIPI * item.quantidade * itemDiscountMultiplier;
-      }
-    });
-
-    this.subtotal = this.items.reduce((total, item) => total + (item.total || 0), 0);
-    this.subtotalCIPI = this.items.reduce((totalCIPI, item) => totalCIPI + (item.totalCIPI || 0), 0);
-  }
-
-  private distribuirCustosAdicionais(): void {
-    this.items.forEach(item => {
-      item.valorUnitario = item.valorUnitarioOriginal ?? item.valorUnitario;
-      item.total = item.totalOriginal ?? item.total;
-      item.totalCIPI = item.totalCIPIOriginal ?? item.totalCIPI;
-    });
-    
-    const custoTotalAdicional = (this.valorFrete || 0) + (this.valorDifal || 0);
-    const quantidadeTotal = this.items.reduce((acc, item) => acc + (item.quantidade || 0), 0);
-
-    if (custoTotalAdicional > 0 && quantidadeTotal > 0) {
-      const custoPorUnidade = custoTotalAdicional / quantidadeTotal;
-
-      this.items.forEach(item => {
-        if (item.quantidade > 0) {
-          item.valorUnitario += custoPorUnidade;
-
-          const ipiMultiplier = item.ipi || 1;
-          const discountMultiplier = 1 - ((item.desconto || 0) / 100);
-
-          item.total = item.valorUnitario * item.quantidade * discountMultiplier;
-          
-          item.valorUnitarioCIPI = item.valorUnitario * ipiMultiplier;
-          item.totalCIPI = item.valorUnitarioCIPI * item.quantidade * discountMultiplier;
-        }
-      });
-    }
-
-    this.subtotal = this.items.reduce((total, item) => total + (item.total || 0), 0);
-    this.subtotalCIPI = this.items.reduce((totalCIPI, item) => totalCIPI + (item.totalCIPI || 0), 0);
-  }
-
-  private updateGlobalValues(): void {
-    this.descontoGlobal = this.form.get('globalDiscount')?.value || 0;
-    this.valorFrete = this.form.get('shipping')?.value || 0;
-    this.valorDifal = this.form.get('difal')?.value || 0;
-    this.updateTotals();
   }
 
   isItemInvalid(item: OrcamentoItemNaTabela): boolean {
