@@ -337,7 +337,7 @@ export class OrcamentoPdfComponent implements OnInit {
     if (this.isDataLoaded) {
       setTimeout(() => {
         window.print();
-      }, 300); 
+      }, 500); 
     } else {
       alert('Por favor, aguarde o carregamento completo dos dados antes de imprimir.');
     }

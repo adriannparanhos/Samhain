@@ -151,83 +151,79 @@
     <p class="font-medium">Condições gerais de venda</p>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 mt-2 text-[9px]">
-    <!-- COLUNA 1 -->
-    <div class="space-y-4">
+  <div class="mt-2 text-[9px]">
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+      <div>
         <p>{{CONDICOES_GERAL_VENDA_PART1}}</p>
-        
-        <!-- Tabela 1 inserida aqui -->
-        <div class="mt-4">
-            <p class="text-center font-bold text-[9px]">Tabela 1 - Afastamentos admissíveis para dimensões lineares</p>
-            <p class="text-center text-[7px] mb-1">(raios externos e altura de chanfros, ver tabela 2)</p>
-            <table class="w-full border-collapse border border-gray-400 text-center text-[9px]">
-                <thead class="bg-gray-100">
-                    <tr class="font-light">
-                        <th class="border border-gray-400" colspan="2">Classe de tolerância</th>
-                        <th class="border border-gray-400" colspan="8">Afastamentos admissíveis para intervalo de dimensões básicas (mm)</th>
-                    </tr>
-                    <tr class="font-light">
-                        <th class="border border-gray-400">Desig.</th>
-                        <th class="border border-gray-400">Descrição</th>
-                        <th class="border border-gray-400">de 0,5¹) até 3</th>
-                        <th class="border border-gray-400">acima de 3 até 6</th>
-                        <th class="border border-gray-400">acima de 6 até 30</th>
-                        <th class="border border-gray-400">acima de 30 até 120</th>
-                        <th class="border border-gray-400">acima de 120 até 400</th>
-                        <th class="border border-gray-400">acima de 400 até 1000</th>
-                        <th class="border border-gray-400">acima de 1000 até 2000</th>
-                        <th class="border border-gray-400">acima de 2000 até 4000</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td class="border border-gray-400 font-bold">f</td><td class="border border-gray-400 p-1">fino</td><td class="border border-gray-400 p-1">± 0,05</td><td class="border border-gray-400 p-1">± 0,05</td><td class="border border-gray-400 p-1">± 0,1</td><td class="border border-gray-400 p-1">± 0,15</td><td class="border border-gray-400 p-1">± 0,2</td><td class="border border-gray-400 p-1">± 0,3</td><td class="border border-gray-400 p-1">± 0,5</td><td class="border border-gray-400 p-1">-</td></tr>
-                    <tr><td class="border border-gray-400 font-bold">m</td><td class="border border-gray-400 p-1">médio</td><td class="border border-gray-400 p-1">± 0,1</td><td class="border border-gray-400 p-1">± 0,1</td><td class="border border-gray-400 p-1">± 0,2</td><td class="border border-gray-400 p-1">± 0,3</td><td class="border border-gray-400 p-1">± 0,5</td><td class="border border-gray-400 p-1">± 0,8</td><td class="border border-gray-400 p-1">± 1,2</td><td class="border border-gray-400 p-1">± 2</td></tr>
-                    <tr><td class="border border-gray-400 font-bold">c</td><td class="border border-gray-400 p-1">grosso</td><td class="border border-gray-400 p-1">± 0,2</td><td class="border border-gray-400 p-1">± 0,3</td><td class="border border-gray-400 p-1">± 0,5</td><td class="border border-gray-400 p-1">± 0,8</td><td class="border border-gray-400 p-1">± 1,2</td><td class="border border-gray-400 p-1">± 2</td><td class="border border-gray-400 p-1">± 3</td><td class="border border-gray-400 p-1">± 4</td></tr>
-                    <tr><td class="border border-gray-400 font-bold">v</td><td class="border border-gray-400 p-1">muito grosso</td><td class="border border-gray-400 p-1">-</td><td class="border border-gray-400 p-1">± 0,5</td><td class="border border-gray-400 p-1">± 1</td><td class="border border-gray-400 p-1">± 1,5</td><td class="border border-gray-400 p-1">± 2,5</td><td class="border border-gray-400 p-1">± 4</td><td class="border border-gray-400 p-1">± 6</td><td class="border border-gray-400 p-1">± 8</td></tr>
-                </tbody>
-            </table>
-            <p class="text-[7px] mt-1">1) Para dimensões nominais abaixo de 0,5 mm, o afastamento deve ser indicado junto à dimensão nominal correspondente.</p>
-        </div>
-    </div>
-
-    <!-- COLUNA 2 -->
-    <div class="space-y-4">
+      </div>
+      <div>
         <p>{{CONDICOES_GERAL_VENDA_PART2}}</p>
+      </div>
+    </div>
 
-        <!-- Tabela 2 inserida aqui -->
-        <div class="mt-4">
-            <p class="text-center font-bold text-[9px]">Tabela 2 - Limites de tolerâncias de espessuras</p>
-            <p class="text-center text-[7px] mb-1">Dimensões em milímetros</p>
-            <table class="w-full border-collapse border border-gray-400 text-center text-[9px]">
-                <thead class="bg-gray-100">
-                    <tr class="font-light">
-                        <th class="border border-gray-400 align-middle" rowspan="2">Classes de tolerâncias</th>
-                        <th class="border border-gray-400" colspan="7">Espessura nominal</th>
-                    </tr>
-                    <tr class="font-light">
-                        <th class="border border-gray-400">Até 20</th>
-                        <th class="border border-gray-400">21 a 40</th>
-                        <th class="border border-gray-400">41 a 60</th>
-                        <th class="border border-gray-400">61 a 80</th>
-                        <th class="border border-gray-400">81 a 100</th>
-                        <th class="border border-gray-400">101 a 120</th>
-                        <th class="border border-gray-400">121 a 150</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td class="border border-gray-400 font-bold">I</td><td class="border border-gray-400 p-1">+ 1,0<br>0</td><td class="border border-gray-400">+ 1,0<br>0</td><td class="border border-gray-400">+ 1,0<br>0</td><td class="border border-gray-400">+ 1,0<br>0</td><td class="border border-gray-400">+ 1,0<br>0</td><td class="border border-gray-400">+ 1,0<br>0</td><td class="border border-gray-400">+ 1,0<br>0</td></tr>
-                    <tr><td class="border border-gray-400 font-bold">J</td><td class="border border-gray-400 p-1">+ 1,5<br>0</td><td class="border border-gray-400">+ 2,0<br>0</td><td class="border border-gray-400">+ 3,0<br>0</td><td class="border border-gray-400">+ 4,0<br>0</td><td class="border border-gray-400">+ 5,0<br>0</td><td class="border border-gray-400">+ 6,0<br>0</td><td class="border border-gray-400">+ 7,0<br>0</td></tr>
-                    <tr><td class="border border-gray-400 font-bold">K</td><td class="border border-gray-400 p-1">+ 3,0<br>0</td><td class="border border-gray-400">+ 5,0<br>0</td><td class="border border-gray-400">+ 6,0<br>0</td><td class="border border-gray-400">+ 8,0<br>0</td><td class="border border-gray-400">+ 10,0<br>0</td><td class="border border-gray-400">+ 12,0<br>0</td><td class="border border-gray-400">+ 14,0<br>0</td></tr>
-                </tbody>
-            </table>
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 mt-4" id="condicoes-venda-tabelas">
+      
+      <div>
+        <p class="text-center font-bold text-[9px] print:font-bold">Tabela 1 - Afastamentos admissíveis para dimensões lineares</p>
+        <p class="text-center text-[7px] mb-1">(raios externos e altura de chanfros, ver tabela 2)</p>
+        <table class="mx-auto border-collapse border border-gray-400 text-center text-[9px] print:border-collapse print:border print:border-gray-400">
+          <thead class="bg-gray-100 print:bg-gray-100">
+            <tr class="font-light">
+              <th class="border border-gray-400 px-2 print:border print:border-gray-400 print:px-2" colspan="2">Classe de tolerância</th>
+              <th class="border border-gray-400 px-2 print:border print:border-gray-400 print:px-2" colspan="8">Afastamentos admissíveis (mm)</th>
+            </tr>
+            <tr class="font-light">
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">Desig.</th>
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">Descrição</th>
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">até 3</th>
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">>3-6</th>
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">>6-30</th>
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">>30-120</th>
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">>120-400</th>
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">>400-1k</th>
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">>1k-2k</th>
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">>2k-4k</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="border border-gray-400 font-bold print:border print:border-gray-400 print:font-bold">f</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">fino</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,05</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,05</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,1</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,15</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,2</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,3</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,5</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">-</td></tr>
+            <tr><td class="border border-gray-400 font-bold print:border print:border-gray-400 print:font-bold">m</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">médio</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,1</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,1</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,2</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,3</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,5</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,8</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 1,2</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 2</td></tr>
+            <tr><td class="border border-gray-400 font-bold print:border print:border-gray-400 print:font-bold">c</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">grosso</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,2</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,3</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,5</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,8</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 1,2</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 2</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 3</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 4</td></tr>
+            <tr><td class="border border-gray-400 font-bold print:border print:border-gray-400 print:font-bold">v</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">muito grosso</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">-</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 0,5</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 1</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 1,5</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 2,5</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 4</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 6</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">± 8</td></tr>
+          </tbody>
+        </table>
+        <p class="text-[7px] text-center mt-1">1) Para dimensões nominais abaixo de 0,5 mm, o afastamento deve ser indicado junto à dimensão nominal correspondente.</p>
+      </div>
+
+      <div>
+        <p class="text-center font-bold text-[9px] print:font-bold">Tabela 2 - Limites de tolerâncias de espessuras</p>
+        <p class="text-center text-[7px] mb-1">Dimensões em milímetros</p>
+        <table class="mx-auto border-collapse border border-gray-400 text-center text-[9px] print:border-collapse print:border print:border-gray-400">
+          <thead class="bg-gray-100 print:bg-gray-100">
+            <tr class="font-light">
+              <th class="border border-gray-400 align-middle px-2 print:border print:border-gray-400 print:px-2" rowspan="2">Classes de<br>tolerâncias</th>
+              <th class="border border-gray-400 px-2 print:border print:border-gray-400 print:px-2" colspan="7">Espessura nominal</th>
+            </tr>
+            <tr class="font-light">
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">Até 20</th>
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">21 a 40</th>
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">41 a 60</th>
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">61 a 80</th>
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">81 a 100</th>
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">101 a 120</th>
+              <th class="border border-gray-400 px-1 print:border print:border-gray-400 print:px-1">121 a 150</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="border border-gray-400 font-bold print:border print:border-gray-400 print:font-bold">I</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">+ 1,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 1,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 1,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 1,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 1,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 1,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 1,0<br>0</td></tr>
+            <tr><td class="border border-gray-400 font-bold print:border print:border-gray-400 print:font-bold">J</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">+ 1,5<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 2,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 3,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 4,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 5,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 6,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 7,0<br>0</td></tr>
+            <tr><td class="border border-gray-400 font-bold print:border print:border-gray-400 print:font-bold">K</td><td class="border border-gray-400 p-1 print:border print:border-gray-400 print:p-1">+ 3,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 5,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 6,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 8,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 10,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 12,0<br>0</td><td class="border border-gray-400 print:border print:border-gray-400">+ 14,0<br>0</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-
-  <!-- <div class="bg-gray-200 text-center mb-4">
-    <p class="font-medium">Observações</p>
-  </div>
-  <p>{{ orcamentoRecebido?.descricao }}</p>  -->
 
   <section *ngIf="orcamentoRecebido?.anexos && orcamentoRecebido?.anexos!.length > 0" class="mt-4 break-before-page">
     <div class="bg-gray-200 text-center py-2 mb-4">
@@ -247,7 +243,13 @@
     </div>
   </section>
 
-  <button (click)="printPage()" [disabled]="!isDataLoaded" class="print:hidden">
-    Imprimir
-  </button>
+  <div class="mt-8 mb-4 flex justify-center print:hidden">
+    <button 
+      (click)="printPage()" 
+      [disabled]="!isDataLoaded" 
+      class="flex items-center justify-center px-6 py-2 bg-blue-400 text-white font-bold rounded-lg shadow-md hover:bg-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+      
+      Imprimir Proposta
+    </button>
+  </div>
 </div>

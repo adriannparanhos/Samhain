@@ -9,23 +9,55 @@ header {
 }
 
 @media print {
-    header {
-        height: 70px !important;
-        /* margin-top: -20px !important; */
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 
-    body, .orcamento-container {
-        color: #000 !important;
-        background-color: #fff !important;
-    }
+  .no-print, .print\\:hidden {
+    display: none !important;
+  }
 
-    .no-print, .print\:hidden {
-        display: none !important;
-    }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 
-    #isoImage {
-        height: 70px !important;
-    }
+  .no-print, .print\:hidden {
+    display: none !important;
+  }
+
+  #condicoes-venda-tabelas {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 2rem !important;
+  }
+  #condicoes-venda-tabelas > div {
+    flex: 1 1 auto !important;
+    page-break-inside: avoid;
+  }
+
+  #condicoes-venda-tabelas table {
+    width: 90% !important;
+    table-layout: auto !important;
+    margin: 0 !important;
+    border-collapse: collapse !important;
+    font-size: 9px !important;
+    text-align: center !important;
+  }
+
+  #condicoes-venda-tabelas table thead {
+    background-color: #F3F4F6 !important;
+  }
+
+  #condicoes-venda-tabelas table th,
+  #condicoes-venda-tabelas table td {
+    border: 1px solid #9CA3AF !important;
+    padding: 1px 2px !important;
+    vertical-align: middle !important;
+  }
+
+  #condicoes-venda-tabelas table {
+    font-size: 8px !important;
+  }
 }
