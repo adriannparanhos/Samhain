@@ -126,7 +126,19 @@ export class PedidosComponent implements OnInit {
 
   onCheckList(pedido: BudgetParaTabela): void {
     console.log('Check-list Pedido:', pedido);
-    // Navega para a rota filha a partir da rota atual
-    this.router.navigate(['checklist', pedido.proposta]);
+    
+    this.fetchBudgetsService.getBudgetByProposta(pedido.proposta).subscribe({
+      next: (dadosCompletosDoOrcamento: DadosOrcamento) => {
+        if (dadosCompletosDoOrcamento) {
+          this.dadosNovoOrcamentoService.setOrcamento(dadosCompletosDoOrcamento);
+          this.router.navigate(['checklist', pedido.proposta]);
+        }
+      },
+      error: (err) => {
+        console.error(`Erro ao buscar dados completos da proposta ${pedido.proposta}:`, err);
+        alert('Erro ao buscar detalhes do pedido para o check-list.');
+      }
+    });
+    // this.router.navigate(['checklist', pedido.proposta]);
   }
 }

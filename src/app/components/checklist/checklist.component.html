@@ -1,6 +1,6 @@
-<div class="max-w-4xl mx-auto bg-white p-6 shadow-lg my-8 font-sans text-xs">
+<div class="max-w-5xl mx-auto bg-white p-6 shadow-lg my-8 font-sans text-xs">
   <form [formGroup]="checklistForm" (ngSubmit)="onSubmit()">
-    <header class="grid grid-cols-[1fr_auto] border-2 border-black">
+    <header class="grid grid-cols-[1fr_auto] border-2 border-black print:max-w-5x1">
       <div class="grid grid-rows-2">
         <div class="flex items-center p-2 border-b-2 border-black">
           <img src="../../../assets/images/baron-header-img-removebg-preview.png" alt="Baron Logo" class="h-10 mr-4">
@@ -13,31 +13,62 @@
       <div class="grid grid-rows-3 text-center border-l-2 border-black">
         <div class="p-1 border-b-2 border-black"><span class="font-bold">IDENTIFICAÇÃO</span><br>FOR.12.011</div>
         <div class="p-1 border-b-2 border-black"><span class="font-bold">REVISÃO</span><br>04</div>
-        <div class="p-1"><span class="font-bold">DATA</span><br>{{ dadosPedido?.cliente ? '02/01/1900' : 'N/A' }}</div>
+        <div class="p-1"><span class="font-bold">DATA</span><br>05/06/2024</div>
       </div>
     </header>
 
     <section class="mt-1 border-2 border-black p-2">
       <h3 class="text-center font-bold bg-gray-200 -m-2 mb-2 p-1">DADOS DO CLIENTE</h3>
       <div class="grid grid-cols-2 gap-x-4">
-        <p><span class="font-bold">Empresa:</span> {{ dadosPedido?.cliente?.empresa }}</p>
-        <p><span class="font-bold">Cidade:</span> {{ dadosPedido?.cliente?.cidade }}</p>
-        <p><span class="font-bold">CNPJ:</span> {{ dadosPedido?.cliente?.cnpj }}</p>
-        <p><span class="font-bold">Estado:</span> {{ dadosPedido?.cliente?.estado }}</p>
-        <p><span class="font-bold">IE:</span> {{ dadosPedido?.cliente?.ie }}</p>
+        <p class="mb-2"><span class="font-bold">Empresa:</span> {{ razaoSocial }}</p>
+        <p class="mb-2"><span class="font-bold">Cidade:</span> {{ cidade }}</p>
+        <p><span class="font-bold">CNPJ:</span> {{ cnpj }}</p>
+        <p><span class="font-bold">Estado:</span> {{ estado }}</p>
         <div class="flex items-center">
+            <label class="font-bold mr-2">Inscrição estadual:</label>
+            <input type="text" class="border border-gray-400 px-1 w-64">
+        </div>
+        <div class="flex items-center mt-2">
             <label class="font-bold mr-2">Nº Pedido:</label>
-            <input type="text" formControlName="numeroPedido" class="border border-gray-400 px-1 w-full">
+            <input type="text" class="border border-gray-400 px-1 w-64">
         </div>
       </div>
-      <p class="mt-1"><span class="font-bold">Endereço e CNPJ de Faturamento:</span> {{ dadosPedido?.cliente?.enderecoFaturamento }}</p>
-      <p><span class="font-bold">Endereço e CNPJ de Entrega:</span> {{ dadosPedido?.cliente?.enderecoEntrega }}</p>
-      <p><span class="font-bold">Endereço de Cobrança:</span> {{ dadosPedido?.cliente?.enderecoCobranca }}</p>
-      <div class="flex items-center space-x-4 mt-1">
+
+      <div class="flex items-center mt-2">
+        <label class="font-bold mr-2">Endereço e CNPJ de Faturamento:</label>
+        <input type="text" class="border border-gray-400 px-1 w-128" formControlName="enderecoFaturamento" />
+      </div>
+      <div class="flex items-center mt-2">
+          <label class="font-bold mr-2">Endereço e CNPJ de Entrega:</label>
+          <input type="text" class="border border-gray-400 px-1 w-128" formControlName="enderecoFaturamento">
+      </div>
+      <div class="flex items-center mt-2">
+          <label class="font-bold mr-2">Endereço de Cobrança:</label>
+          <input type="text" class="border border-gray-400 px-1 w-128" formControlName="enderecoFaturamento">
+      </div>
+      <div class="flex items-center space-x-4 mt-2">
         <span class="font-bold">Contribuinte ICMS:</span>
-        <label class="flex items-center"><input type="checkbox" [checked]="dadosPedido?.cliente?.contribuinteIcms" class="mr-1"> SIM</label>
-        <label class="flex items-center"><input type="checkbox" class="mr-1"> NÃO</label>
-        <label class="flex items-center ml-auto"><input type="checkbox" [checked]="dadosPedido?.cliente?.clienteFinal" class="mr-1"> Cliente Final</label>
+        <label class="flex items-center"><input type="checkbox" formControlName="ICMS_SIM" class="mr-1" [disabled]="checklistForm.get('ICMS_NAO')?.value"> SIM</label>
+        <label class="flex items-center"><input type="checkbox" formControlName="ICMS_NAO" class="mr-1" [disabled]="checklistForm.get('ICMS_SIM')?.value"> NÃO</label>
+        <label class="flex items-center ml-auto">
+          <input
+            type="checkbox"
+            formControlName="clienteFinal"
+            [disabled]="checklistForm.get('revenda')?.value"
+            class="mr-1"
+          >
+          Cliente Final
+        </label>
+
+        <label class="flex items-center ml-auto">
+          <input
+            type="checkbox"
+            formControlName="revenda"
+            [disabled]="checklistForm.get('clienteFinal')?.value"
+            class="mr-1"
+          >
+          Revenda
+        </label>
       </div>
     </section>
 
@@ -45,8 +76,8 @@
       <div class="p-2 border-r-2 border-black">
         <h3 class="text-center font-bold bg-gray-200 -m-2 mb-2 p-1">FORMA DE PAGAMENTO</h3>
         <div class="flex flex-col space-y-1">
-          <label class="flex items-center"><input type="checkbox" formControlName="pagamentoBoleto" class="mr-2"> BOLETO BANCÁRIO</label>
-          <label class="flex items-center"><input type="checkbox" formControlName="pagamentoDeposito" class="mr-2"> DEPÓSITO EM CONTA</label>
+          <label class="flex items-center"><input type="checkbox" formControlName="pagamentoBoleto" [disabled]="checklistForm.get('pagamentoDeposito')?.value" class="mr-2"> BOLETO BANCÁRIO</label>
+          <label class="flex items-center"><input type="checkbox" formControlName="pagamentoDeposito" [disabled]="checklistForm.get('pagamentoBoleto')?.value" class="mr-2"> DEPÓSITO EM CONTA</label>
         </div>
       </div>
       <div class="p-2">
@@ -71,15 +102,15 @@
       </div>
       <div class="grid grid-cols-[1fr_1fr_1fr_1fr] border-b border-gray-300">
         <div class="p-1 border-r-2 border-black font-bold">Envio de NF, XML e Boletos</div>
-        <input class="p-1 border-r-2 border-black font-bold">
-        <input class="p-1 border-r-2 border-black font-bold">
-        <input class="p-1 border-r-2 border-black font-bold">
+        <input class="p-1 border-r-2 border-black">
+        <input class="p-1 border-r-2 border-black">
+        <input class="p-1 border-r-2 border-black">
       </div>
       <div class="grid grid-cols-[1fr_1fr_1fr_1fr] border-b border-gray-300">
         <div class="p-1 border-r-2 border-black font-bold">Financeiro / Contas a Pagar</div>
-        <input class="p-1 border-r-2 border-black font-bold">
-        <input class="p-1 border-r-2 border-black font-bold">
-        <input class="p-1 border-r-2 border-black font-bold">
+        <input class="p-1 border-r-2 border-black">
+        <input class="p-1 border-r-2 border-black">
+        <input class="p-1 border-r-2 border-black">
       </div>
     </section>
     <section class="mt-1 border-2 border-black p-2">
@@ -104,7 +135,7 @@
         </div>
 
         <label class="font-bold" for="pesoMedidas">Peso e medidas (AxLxC)</label>
-        <input id="pesoMedidas" type="text" formControlName="" class="border border-gray-400 px-1 w-full">
+        <input id="pesoMedidas" type="text" class="border border-gray-400 px-1 w-full">
       </div>
     </section>
     <section class="mt-4 border-2 border-black p-2 flex flex-col">
@@ -138,12 +169,16 @@
     </section>
     <section class="mt-4 border-2 border-black p-2 flex flex-col">
             <h3 class="text-center font-bold bg-gray-200 -m-2 p-1">Observações importantes</h3>
-            <textarea name="" id="" class="mt-4 placeholder:text-gray-400" placeholder="Campo destinado a informações adicionais"></textarea>
+            <textarea
+              class="mt-4 placeholder:text-gray-400 resize-none overflow-hidden"
+              placeholder="Campo destinado a informações adicionais"
+              (input)="autoResize($event)"
+            ></textarea>
     </section>
 
     <div class="mt-8 flex justify-end">
         <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors">
-            Salvar Aceite
+            Imprimir
         </button>
     </div>
   </form>

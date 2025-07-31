@@ -41,6 +41,7 @@ export interface DadosOrcamento {
   anexos?: { nome: string; url: SafeUrl | string; }[];
   contato?: string; 
   enderecoNumero?: string | number | null | undefined; 
+  inscricao_estadual?: string;
 }
 
 export interface ItemOrcamentoPayload {
