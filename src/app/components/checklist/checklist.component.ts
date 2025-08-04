@@ -21,7 +21,7 @@ export interface ClienteData {
 
 export interface PedidoData {
   cliente: ClienteData;
-  condicoesPagamento: string;
+  condicaoPagamento: string;
   contatos: {
     finalidade: string;
     nome: string;
@@ -49,6 +49,8 @@ export interface PedidoData {
   styleUrl: './checklist.component.css'
 })
 export class ChecklistComponent implements OnInit, OnChanges {
+  public isDataLoaded: boolean = true;
+  dataAtual: string;
   clienteFinal = false;
   revenda = false;
   proposta?: string | undefined | null= '';  
@@ -121,6 +123,9 @@ export class ChecklistComponent implements OnInit, OnChanges {
       ICMS_NAO: [false],
       enderecoFaturamento: ['']
     });
+
+    const hoje = new Date();
+    this.dataAtual = hoje.toLocaleDateString('pt-BR');
   }
 
   ngOnInit(): void {
@@ -200,7 +205,7 @@ export class ChecklistComponent implements OnInit, OnChanges {
       numeroPedido: data.numeroPedido || '',
       pagamentoBoleto: data.formaPagamentoBoleto || false,
       pagamentoDeposito: data.formaPagamentoDeposito || false,
-      condicoesPagamento: data.condicoesPagamento || '',
+      condicoesPagamento: data.condicaoPagamento || '',
       nomeTransportadora: data.transportadora?.nome || '',
       cnpjTransportadora: data.transportadora?.cnpj || '',
       contatoTransportadora: data.transportadora?.contato || '',
@@ -279,6 +284,16 @@ export class ChecklistComponent implements OnInit, OnChanges {
       alert('Dados do checklist salvos com sucesso! Verifique o console.');
     } else {
       alert('Formulário inválido.');
+    }
+  }
+
+  public printPage(): void {
+    if (this.isDataLoaded) {
+      setTimeout(() => {
+        window.print();
+      }, 500); 
+    } else {
+      alert('Por favor, aguarde o carregamento completo dos dados antes de imprimir.');
     }
   }
 }

@@ -110,6 +110,49 @@ export class BudgetsComponent implements OnInit {
     });
   }
 
+  onApproved(budget: BudgetParaTabela) {
+    if (!confirm(`Deseja aprovar o orçamento ${budget.proposta}?`)) {
+      return; 
+    }
+
+    this.isLoading = true;
+
+    this.fetchBudgetsService.updateBudgetStatus(budget.proposta, 'Aprovado').subscribe({
+      next: () => {
+        console.log(`Orçamento ${budget.proposta} aprovado com sucesso.`);
+        
+        this.loadFilteredBudgets(); 
+      },
+      error: (error: any) => {
+        console.error(`Erro ao aprovar o orçamento ${budget.proposta}:`, error);
+        alert('Ocorreu um erro ao tentar aprovar o orçamento. Tente novamente.');
+        this.isLoading = false; 
+      }
+    });
+  }
+    
+
+  onRepproved(budget: BudgetParaTabela) {
+    if (!confirm(`Deseja reprovar o orçamento ${budget.proposta}?`)) {
+      return; 
+    }
+
+    this.isLoading = true;
+
+    this.fetchBudgetsService.updateBudgetStatus(budget.proposta, 'Reprovado').subscribe({
+      next: () => {
+        console.log(`Orçamento ${budget.proposta} reprovado com sucesso.`);
+        
+        this.loadFilteredBudgets(); 
+      },
+      error: (error: any) => {
+        console.error(`Erro ao reprovar o orçamento ${budget.proposta}:`, error);
+        alert('Ocorreu um erro ao tentar reprovar o orçamento. Tente novamente.');
+        this.isLoading = false; 
+      }
+    });
+  }
+
   openAddBudget() {
     this.router.navigate(['budgets/add']);
   }

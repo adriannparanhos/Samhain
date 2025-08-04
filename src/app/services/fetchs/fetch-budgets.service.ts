@@ -155,4 +155,12 @@ export class FetchBudgetsService {
     return this.http.post<ServiceBudgetResponse>(url, formData);
   }
 
+  updateBudgetStatus(proposta: string, novoStatus: string): Observable<void> {
+    const url =  'https://v2.calculadora.backend.baron.dev.br/api/orcamentos/alterar-status';
+    // const url =  'http://localhost:8080/api/orcamentos/alter
+    const body = { proposta: proposta, novoStatus: novoStatus };
+    
+    return this.http.put<void>(url, body);
+  }
+
 }

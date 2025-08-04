@@ -74,8 +74,14 @@ export interface TableColumn<T> {
                     <button *ngIf="showCheckListAction" (click)="checkList.emit(row)" title="Check-list" class="text-purple-600 hover:text-purple-800 p-1 rounded hover:bg-gray-100 transition">
                         <lucide-icon [name]="'list-check'" class="w-5 h-5"></lucide-icon>
                     </button>
-                    <button *ngIf="showProcessAction" (click)="delete.emit(row)" title="Ficha-processo" class="text-green-600 hover:text-green-800 p-1 rounded hover:bg-gray-100 transition">
+                    <button *ngIf="showProcessAction" (click)="process.emit(row)" title="Ficha-processo" class="text-green-600 hover:text-green-800 p-1 rounded hover:bg-gray-100 transition">
                         <lucide-icon [name]="'file-spreadsheet'" class="w-5 h-5"></lucide-icon>
+                    </button>
+                    <button *ngIf="showApprovedAction" (click)="approved.emit(row)" title="Aprovar" class="text-green-600 hover:text-green-800 p-1 rounded hover:bg-gray-100 transition">
+                        <lucide-icon [name]="'check'" class="w-5 h-5"></lucide-icon>
+                    </button>
+                    <button *ngIf="showRepprovedAction" (click)="repproved.emit(row)" title="Reprovar" class="text-red-600 hover:text-red-800 p-1 rounded hover:bg-gray-100 transition">
+                        <lucide-icon [name]="'x'" class="w-5 h-5"></lucide-icon>
                     </button>
                 </div>
             </td>
@@ -101,12 +107,16 @@ export class TableInfoComponent<T> {
   @Output() delete = new EventEmitter<T>();
   @Output() checkList = new EventEmitter<T>();
   @Output() process = new EventEmitter<T>();
+  @Output() approved = new EventEmitter<T>();
+  @Output() repproved = new EventEmitter<T>();
 
   @Input() showViewAction: boolean = true;   
   @Input() showEditAction: boolean = true;   
   @Input() showDeleteAction: boolean = true; 
   @Input() showCheckListAction: boolean = false;
   @Input() showProcessAction: boolean = false;
+  @Input() showApprovedAction: boolean = false;
+  @Input() showRepprovedAction: boolean = false;
 
   get displayActionsColumn(): boolean {
     return this.showViewAction || this.showEditAction || this.showDeleteAction;
@@ -149,6 +159,12 @@ export class TableInfoComponent<T> {
     }
     if (changes['showProcessAction']) {
       console.log('TableInfo: showProcessAction mudou para', this.showProcessAction);
+    }
+    if (changes['showApprovedAction']) {
+      console.log('TableInfo: showApprovedAction mudou para', this.showApprovedAction);
+    }
+    if (changes['showRepprovedAction']) {
+      console.log('TableInfo: showRepprovedAction mudou para', this.showRepprovedAction);
     }
     console.log('TableInfo: displayActionsColumn é', this.displayActionsColumn);
   }

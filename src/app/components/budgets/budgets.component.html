@@ -17,10 +17,14 @@
         [data]="pagedBudgets"
         [isLoading]="isDeleting"
         [showViewAction]="false"   
+        [showApprovedAction]="true"
         [showEditAction]="true"  
         [showDeleteAction]="true" 
+        [showRepprovedAction]="true"
         (edit)="onEdit($event)"
-        (delete)="onDelete($event)">
+        (delete)="onDelete($event)"
+        (approved)="onApproved($event)"
+        (repproved)="onRepproved($event)">
     </app-table-info>
 
     <div *ngIf="totalPages > 1" class="flex justify-center items-center space-x-4 mt-6">

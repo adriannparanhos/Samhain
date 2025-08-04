@@ -326,7 +326,7 @@ export class OrcamentoPdfComponent implements OnInit {
   };
 
   returnPage() {
-    this.router.navigate(['budgets/add']);
+    this.router.navigate(['dashboard']);
   }
 
   get userLogado() {
