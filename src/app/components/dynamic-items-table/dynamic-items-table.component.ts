@@ -347,21 +347,34 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
   }
 
   public updateTotals(): void {
+    const quantidadeTotal = this.items.reduce((acc, item) => acc + (Number(item.quantidade) || 0), 0);
+    const fretePorUnidade = (quantidadeTotal > 0) ? (this.valorFrete || 0) / quantidadeTotal : 0;
+    const difalPorUnidade = (quantidadeTotal > 0) ? (this.valorDifal || 0) / quantidadeTotal : 0;
+
+    for (const item of this.items) {
+      const valorUnitarioBase = item.valorUnitarioOriginal !== undefined ? item.valorUnitarioOriginal : 0;
+      
+      item.valorUnitario = valorUnitarioBase + fretePorUnidade + difalPorUnidade;
+
+      const descontoMultiplier = 1 - ((item.desconto || 0) / 100);
+      item.total = item.valorUnitario * (item.quantidade || 0) * descontoMultiplier;
+      
+      const ipiMultiplier = item.ipi || 1; 
+      item.totalCIPI = item.total * ipiMultiplier;
+    }
+
     this.subtotal = this.items.reduce((acc, item) => acc + (item.total || 0), 0);
     this.subtotalCIPI = this.items.reduce((acc, item) => acc + (item.totalCIPI || 0), 0);
     this.pesoTotal = this.items.reduce((acc, item) => acc + (item.pesoTotal || 0), 0);
-
-    let totalFinal = this.subtotalCIPI;
-
+    
+    let totalComDesconto = this.subtotalCIPI;
     if (this.descontoGlobal > 0 && this.descontoGlobal <= 100) {
-      const fatorDesconto = 1 - (this.descontoGlobal / 100);
-      totalFinal = totalFinal * fatorDesconto;
+      totalComDesconto *= (1 - (this.descontoGlobal / 100));
     }
+    
+    this.grandTotal = totalComDesconto;
 
-    totalFinal += (this.valorFrete || 0);
-    totalFinal += (this.valorDifal || 0);
-
-    this.grandTotal = totalFinal;
+    this.cdRef.detectChanges();
   }
 
   isItemInvalid(item: OrcamentoItemNaTabela): boolean {

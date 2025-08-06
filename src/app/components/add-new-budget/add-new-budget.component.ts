@@ -8,7 +8,7 @@ import { ButtonFormComponent } from '../button-form/button-form.component';
 import { Item } from '../../models/constantes';
 import { DynamicItemsTableComponent } from '../dynamic-items-table/dynamic-items-table.component';
 import { FetchEnterpriseService } from '../../services/fetchs/fetch-enterprise.service';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, switchMap, catchError } from 'rxjs/operators';
 import { DadosNovoOrcamentoService } from '../../services/datas/dados-novo-orcamento.service';
@@ -93,16 +93,17 @@ export class AddNewBudgetComponent implements OnInit {
       label: 'CNPJ', 
       type: 'text', 
       placeholder: '00.000.000/0000-00',
-      useMask: 'cpfCnpjMask'
+      useMask: 'cpfCnpjMask',
+      validators: [Validators.required]
     },
-    { name: 'razaoSocial', label: 'Razão Social', type: 'text', placeholder: 'Razão Social da empresa', disabled: true },
-    { name: 'condicaoPagamento', label: 'Condição de Pagamento', type: 'text', placeholder: 'Condição de pagamento' },
+    { name: 'razaoSocial', label: 'Razão Social', type: 'text', placeholder: 'Razão Social da empresa', disabled: true, validators: [Validators.required] },
+    { name: 'condicaoPagamento', label: 'Condição de Pagamento', type: 'text', placeholder: 'Condição de pagamento', validators: [Validators.required] },
     { name: 'status', label: 'Status', type: 'select', options: [{ label: 'Aprovado', value: 'Aprovado' }, { label: 'Pendente', value: 'Pendente' }, { label: 'Reprovado', value: 'Reprovado' }] },
-    { name: 'nomeContato', label: 'Contato', type: 'text', placeholder: 'Nome do contato'},
-    { name: 'emailContato', label: 'Email', type: 'email', placeholder: 'contato@example.com'},
-    { name: 'telefoneContato', label: 'Telefone', type: 'text', placeholder: '(16)9 9999-8888'},
-    { name: 'prazoEntrega', label: 'Prazo de entrega', type: 'text', placeholder: 'Ex: 25 dias úteis'},
-    { name: 'tipoFrete', label: 'Frete', type: 'select', options: [{ label: 'FOB', value: 'FOB' }, { label: 'CIF', value: 'CIF' }] },
+    { name: 'nomeContato', label: 'Contato', type: 'text', placeholder: 'Nome do contato', validators: [Validators.required]},
+    { name: 'emailContato', label: 'Email', type: 'email', placeholder: 'contato@example.com', validators: [Validators.required]},
+    { name: 'telefoneContato', label: 'Telefone', type: 'text', placeholder: '(16)9 9999-8888', validators: [Validators.required]},
+    { name: 'prazoEntrega', label: 'Prazo de entrega', type: 'text', placeholder: 'Ex: 25 dias úteis', validators: [Validators.required]},
+    { name: 'tipoFrete', label: 'Frete', type: 'select', options: [{ label: 'FOB', value: 'FOB' }, { label: 'CIF', value: 'CIF' }, {label: 'Gratis', value: 'Gratis'}], validators: [Validators.required] },
     { name: 'descricao', label: 'Descrição', type: 'textarea', placeholder: 'Descrição do orçamento' }
   ];
 
@@ -144,6 +145,12 @@ export class AddNewBudgetComponent implements OnInit {
       console.log('Status definido como Pendente para novo orçamento.');
     } else {
       console.warn("Controle 'status' não encontrado no formulário ao tentar definir valor padrão.");
+    }
+
+    const tipoFreteControl = this.form.get('tipoFrete');
+    if (tipoFreteControl) {
+      tipoFreteControl.setValue('Gratis');
+      console.log('Tipo de frete definido como Gratis para novo orçamento.');
     }
   }
 
@@ -243,7 +250,7 @@ export class AddNewBudgetComponent implements OnInit {
 
   onSave() {
     if (this.form.invalid) {
-      this.form.markAllAsTouched();
+      // this.form.markAllAsTouched();
       console.warn('Formulário inválido:', this.form.errors);
       Object.keys(this.form.controls).forEach(key => {
         const controlErrors = this.form.get(key)?.errors;
@@ -308,6 +315,7 @@ export class AddNewBudgetComponent implements OnInit {
       difal: this.table.valorDifal || 0,
       grandTotal: this.table.grandTotal,
       peso: this.table.pesoTotal || 0,
+      frete: this.table.valorFrete || 0,
       cep: this.empresaSelecionada?.address?.cep,
       endereco: this.empresaSelecionada?.address?.endereco,
       endereco_numero: String(this.empresaSelecionada?.address?.endereco_numero), 
@@ -356,6 +364,17 @@ export class AddNewBudgetComponent implements OnInit {
   onAttachmentsChanged(files: AttachmentFile[]): void {
     this.anexos = files;
     console.log('Anexos atualizados no componente pai:', this.anexos);
+  }
+
+  get tableHasValidItems(): boolean {
+    if (!this.table) {
+      return false;
+    }
+    return this.table.getItemsForPayload().length > 0;
+  }
+
+  get disabled(): boolean {
+    return !this.form || !this.form.valid || !this.tableHasValidItems;
   }
 
 }

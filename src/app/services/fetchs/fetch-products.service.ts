@@ -54,15 +54,6 @@ export class FetchProductsService {
     this.loadSpecialProducts();
   }
 
-  private loadAndProcessProducts(): void {
-    this.http.get<OrcamentoItemNaTabela[]>(this.apiUrl).pipe(
-      map(data => this.processAndGroupData(data)), 
-      tap(() => console.log("Dados de produtos carregados, processados e disponíveis."))
-    ).subscribe(processedData => {
-      this.standardProductsState.next(processedData); 
-    });
-  }
-
   private loadStandardProducts(): void {
     this.http.get<OrcamentoItemNaTabela[]>(this.apiUrl).pipe(
       tap(rawData => {
@@ -72,9 +63,11 @@ export class FetchProductsService {
           console.log('[DEBUG-SERVICE] Exemplo do item bruto - produto:', rawData);
         }
       }),
-      map(data => this.groupStandardProducts(data)), 
+      
+      map(data => this.processAndGroupData(data)),   
+
       tap(groupedData => {
-        console.log('[DEBUG-SERVICE] Dados APÓS o agrupamento:', groupedData);
+        console.log('[DEBUG-SERVICE] Dados APÓS o processamento e ordenação:', groupedData);
       })
     ).subscribe(processedData => {
       console.log('[DEBUG-SERVICE] Emitindo para standardProductsState.next():', processedData);
@@ -167,34 +160,34 @@ export class FetchProductsService {
     return grouped;
   }
 
-  private customSort = (textA: string, textB: string): number => {
-    const re = /(\d+)/g; 
+  private customSort = (modeloA: string, modeloB: string): number => {
+    
+    const extrairCaracteristicas = (modelo: string) => {
+      const matchEspessura = modelo.match(/#(\d+)/);
+      const espessura = matchEspessura ? parseInt(matchEspessura[1], 10) : Infinity;
 
-    const partsA = textA.split(re).filter(Boolean);
-    const partsB = textB.split(re).filter(Boolean);
+      let prioridadeCor = 3; 
+      if (modelo.includes('BLACK')) prioridadeCor = 0;
+      else if (modelo.includes('NATURAL')) prioridadeCor = 1;
+      else if (modelo.includes('ULTRA')) prioridadeCor = 2;
 
-    const len = Math.min(partsA.length, partsB.length);
+      const prioridadeDimensao = modelo.includes('1000 x 3000') ? 1 : 0;
 
-    for (let i = 0; i < len; i++) {
-      const partA = partsA[i];
-      const partB = partsB[i];
-      
-      const isNumA = !isNaN(Number(partA));
-      const isNumB = !isNaN(Number(partB));
+      return { prioridadeCor, prioridadeDimensao };
+    };
 
-      if (isNumA && isNumB) {
-        const numA = Number(partA);
-        const numB = Number(partB);
-        if (numA !== numB) {
-          return numA - numB; 
-        }
-      } else {
-        const textualCompare = partA.localeCompare(partB);
-        if (textualCompare !== 0) {
-          return textualCompare; 
-        }
-      }
+    const caracA = extrairCaracteristicas(modeloA);
+    const caracB = extrairCaracteristicas(modeloB);
+
+    if (caracA.prioridadeCor !== caracB.prioridadeCor) {
+      return caracA.prioridadeCor - caracB.prioridadeCor;
     }
-    return partsA.length - partsB.length;
+
+    if (caracA.prioridadeDimensao !== caracB.prioridadeDimensao) {
+      return caracA.prioridadeDimensao - caracB.prioridadeDimensao;
+    }
+
+    return modeloA.localeCompare(modeloB);
   };
+
 }

@@ -27,6 +27,7 @@ export interface DadosOrcamento {
   outrasTaxas?: number; 
   grandTotal: number;
   peso?: number;
+  frete?: number;
 
   vendedorResponsavel?: string;
   dataUltimaModificacao?: string | null; 

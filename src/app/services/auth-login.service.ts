@@ -94,14 +94,10 @@ export class AuthLoginService {
         photoUrl = 'assets/images/profiles/adriann.jpeg'
       } else if (payload.sub === 'bianca') {
         photoUrl = 'assets/images/profiles/bianca.png'
-      } else if (payload.sub === 'celia') {
-        photoUrl = 'assets/images/profiles/celia.jpeg'
       } else if (payload.sub === 'allan') {
         photoUrl = 'assets/images/profiles/alan.jpeg'
       } else if (payload.sub === 'alex') {
         photoUrl = 'assets/images/profiles/alex.jpeg'
-      } else if (payload.sub === 'lucas') {
-        photoUrl = 'assets/images/profiles/lucas.jpeg'
       } else if (payload.sub === 'sergio') {
         photoUrl = 'assets/images/profiles/sergio.jpeg'
       } else if (payload.sub === 'ana') {

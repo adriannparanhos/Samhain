@@ -1,11 +1,15 @@
+:hoot {
+  scale: 1.1;
+}
+
 header {
-    width: 100%;
-    height: 120px;
-    /* background-image: url(../../../assets/images/baron-header-img-removebg-preview.png), url(../../../assets/images/ISO-removebg-preview.png);
-    background-position: left top, center;
-    background-repeat: no-repeat, no-repeat;
-    background-size: 500px, 200px; */
-    margin-bottom: 1rem;
+  width: 100%;
+  height: 120px;
+  /* background-image: url(../../../assets/images/baron-header-img-removebg-preview.png), url(../../../assets/images/ISO-removebg-preview.png);
+  background-position: left top, center;
+  background-repeat: no-repeat, no-repeat;
+  background-size: 500px, 200px; */
+  margin-bottom: 1rem;
 }
 
 @media print {

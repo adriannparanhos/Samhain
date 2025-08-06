@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, Input, EventEmitter } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
 import { Location } from '@angular/common';
 
@@ -13,7 +13,7 @@ export class ButtonFormComponent {
   constructor(private location: Location) {}
 
   @Output() save = new EventEmitter<void>();
-
+  @Input() disabled: boolean = false;
 
   onCancel() {
     this.location.back();
@@ -22,5 +22,6 @@ export class ButtonFormComponent {
   onSaveClick(): void {
     this.save.emit();
   }
+  
 
 }

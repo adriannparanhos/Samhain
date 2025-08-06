@@ -204,12 +204,10 @@ export class OrcamentoPdfComponent implements OnInit {
     this.cidade = this.orcamentoRecebido.cidade;
 
     if (this.subtotalItens && this.pesoTotal && this.pesoTotal > 0) {
-      this.valorKg = this.subtotalItens / this.pesoTotal;
+      this.valorKg = this.grandTotal / this.pesoTotal;
     } else {
       this.valorKg = 0;
     }
-
-
   }
 
   limparDados(): void {

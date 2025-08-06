@@ -270,6 +270,15 @@ export class ChecklistComponent implements OnInit, OnChanges {
         pagamentoBoletoCtrl?.enable({ emitEvent: false });
       }
     });
+
+    this.checklistForm.get('freteFOB')?.valueChanges.subscribe((valor) => {
+      const freteCIFCtrl = this.checklistForm.get('freteCIF');
+      if (valor) {
+        freteCIFCtrl?.disable({ emitEvent: false });
+      } else {
+        freteCIFCtrl?.enable({ emitEvent: false });
+      }
+    });
   }
 
   autoResize(event: Event): void {

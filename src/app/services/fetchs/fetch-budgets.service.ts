@@ -157,10 +157,40 @@ export class FetchBudgetsService {
 
   updateBudgetStatus(proposta: string, novoStatus: string): Observable<void> {
     const url =  'https://v2.calculadora.backend.baron.dev.br/api/orcamentos/alterar-status';
-    // const url =  'http://localhost:8080/api/orcamentos/alter
+    // const url =  'http://localhost:8080/api/orcamentos/alterar-status';
     const body = { proposta: proposta, novoStatus: novoStatus };
     
     return this.http.put<void>(url, body);
+  }
+
+  getBudgetsForCurrentMonth(): Observable<ListarOrcamentosDTOBackend[]> {
+    const url = 'https://v2.calculadora.backend.baron.dev.br/api/orcamentos/listarPorMes';
+    // const url = 'http://localhost:8080/api/orcamentos/listarPor
+    
+    const hoje = new Date();
+    const ano = hoje.getFullYear() % 100; 
+    const mes = hoje.getMonth() + 1; 
+
+    const params = new HttpParams()
+      .set('ano', ano.toString())
+      .set('mes', mes.toString());
+
+    return this.http.get<ListarOrcamentosDTOBackend[]>(url, { params });
+  }
+
+  getAllOrcamentoServicos(): Observable<ListarOrcamentosDTOBackend[]> {
+    const url = 'https://v2.calculadora.backend.baron.dev.br/api/servico';
+    // const url = 'http://localhost:8080/api/servico';
+
+    const hoje = new Date();
+    const ano = hoje.getFullYear() % 100;
+    const mes = hoje.getMonth() + 1;
+
+    const params = new HttpParams()
+      .set('ano', ano.toString())
+      .set('mes', mes.toString());
+
+    return this.http.get<ListarOrcamentosDTOBackend[]>(url, { params });
   }
 
 }

@@ -57,7 +57,8 @@ export class SettingsComponent implements OnInit {
         { label: 'Administrador', value: 'ROLE_ADMIN' }
       ], 
       validators: [Validators.required] 
-    }
+    },
+    { name: 'novaSenha', label: 'Nova Senha (opcional)', type: 'password', placeholder: '********', validators: [Validators.minLength(6)] }
   ];
 
   constructor(
@@ -201,7 +202,8 @@ onUpdateUser(): void {
 
   const payload = {
     email: this.editUserForm.value.email,
-    role: this.editUserForm.value.role
+    role: this.editUserForm.value.role,
+    senha: this.editUserForm.value.novaSenha || null
   };
 
   console.log(`Enviando dados atualizados para o usuário ID ${userId}:`, payload);
@@ -245,9 +247,6 @@ onUpdateUser(): void {
       console.log('Salvando novo nome:', this.profileForm.value.name);
       alert('Nome alterado com sucesso! (simulação)');
     }
-  }
-
-  onPasswordSubmit(): void {
   }
   
   deleteUser(userId: number): void {
