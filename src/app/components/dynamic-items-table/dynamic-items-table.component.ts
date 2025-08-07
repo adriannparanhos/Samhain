@@ -159,6 +159,10 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
         pesoTotal: backendItem.pesoItem || 0,
       };
       this.items.push(newItem);
+
+      if (this.shouldCalculateBackend(newItem)) {
+        this.calculateItemValue(newItem);
+      }
     });
 
     if (this.form) { 

@@ -1,0 +1,86 @@
+.fc .fc-daygrid-day-frame {
+  min-height: 170px; 
+}
+
+.fc .fc-daygrid-day-events {
+  overflow: hidden;
+}
+
+.modal-body ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-event-item .visit-event {
+  padding: 10px;
+  border-radius: 8px;
+  border-width: 2px !important;
+  border-style: solid;
+}
+
+.fc-event {
+  background-color: transparent !important;
+  border-width: 2px !important;
+  border-style: solid;
+  padding: 4px 6px !important;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.fc-event:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.visit-event {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.vendor-avatar {
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.vendor-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.event-title {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #334155; 
+}
+
+.status-agendada {
+  border-color: #1e90ff !important;
+  background-color: #e0f2fe !important;
+}
+
+.status-completa {
+  border-color: #28a745 !important;
+  background-color: #dcfce7 !important;
+}
+
+.status-em_andamento {
+  border-color: #e3bc08 !important;
+  background-color: #fef9c3 !important;
+}
+
+.status-cancelada {
+  border-color: #dc3545 !important;
+  background-color: #fee2e2 !important;
+}

@@ -29,13 +29,14 @@ export class AppLayoutComponent {
   user: any;
 
   navigationItems: NavItem[] = [
-    { name: 'Dashboard', path: '/dashboard', icon: 'home'      },
+    { name: 'Dashboard', path: '/dashboard', icon: 'home' },
     { name: 'Empresas',  path: '/enterprises', icon: 'building-2'},
-    { name: 'Produtos',  path: '/products',  icon: 'package'   },
+    { name: 'Produtos',  path: '/products',  icon: 'package' },
     { name: 'Orçamentos',path: '/budgets',   icon: 'file-text' },
     { name: 'Pedidos', path: '/orders',    icon: 'file-check' },
     { name: 'Serviços', path: '/services', icon: 'Hammer' },
     { name: 'Figuras trigonometricas', path: '/advanced-geometry', icon: 'Cone' },
+    { name: 'Visitas', path: '/visits', icon: 'CalendarDays' }
   ];
 
   constructor(

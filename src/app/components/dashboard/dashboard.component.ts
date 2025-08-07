@@ -3,11 +3,12 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FetchBudgetsService } from '../../services/fetchs/fetch-budgets.service';
 import { Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
+import { ChartVisitsGraphComponent } from "../chart-visits-graph/chart-visits-graph.component";
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, LucideAngularModule],
+  imports: [CommonModule, CurrencyPipe, LucideAngularModule, ChartVisitsGraphComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -136,4 +137,5 @@ export class DashboardComponent implements OnInit {
   goToBudgets() {
     this.router.navigate(['/budgets']);
   }
+
 }
