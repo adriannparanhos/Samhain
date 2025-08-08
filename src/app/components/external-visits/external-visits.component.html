@@ -4,7 +4,7 @@
       <h1 class="text-4xl font-bold text-slate-800">Calendário de Visitas</h1>
       <p class="text-slate-500 mt-1">Gerencie os agendamentos da equipe de vendas</p>
     </div>
-    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <button (click)="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
       Agendar Visita
     </button>
   </header>
@@ -15,3 +15,61 @@
 </div>
 
 
+<!-- ======================= -->
+<!-- MODAL DE AGENDAMENTO    -->
+<!-- ======================= -->
+<div *ngIf="isModalOpen" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+
+    <!-- Cabeçalho do Modal -->
+    <div class="modal-header">
+      <h3 class="modal-title">Agendar Nova Visita</h3>
+      <button (click)="closeModal()" class="modal-close-button">&times;</button>
+    </div>
+
+    <!-- Corpo do Modal com o Formulário -->
+    <div class="modal-body">
+      <form [formGroup]="visitForm" (ngSubmit)="onFormSubmit()" class="space-y-4">
+
+        <div>
+          <label for="cnpj" class="form-label">CNPJ</label>
+          <input type="text" id="cnpj" formControlName="cnpj" class="form-input" placeholder="Digite o CNPJ e aguarde">
+        </div>
+
+        <div>
+          <label for="razaoSocial" class="form-label">Razão Social</label>
+          <input type="text" id="razaoSocial" formControlName="razaoSocial" class="form-input-disabled">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="data" class="form-label">Data da Visita</label>
+            <input type="date" id="data" formControlName="data" class="form-input">
+          </div>
+          <div>
+            <label for="horario" class="form-label">Horário</label>
+            <input type="time" id="horario" formControlName="horario" class="form-input">
+          </div>
+        </div>
+
+        <div>
+          <label for="motivo" class="form-label">Motivo da Visita</label>
+          <select id="motivo" formControlName="motivo" class="form-input">
+            <option value="" disabled>Selecione um motivo</option>
+            <option value="apresentacao">Visita de Apresentação</option>
+            <option value="recorrencia">Recorrência</option>
+            <option value="negociacao">Negociação</option>
+            <option value="pos_venda">Pós-venda</option>
+          </select>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="flex justify-end gap-4 pt-4">
+          <button type="button" (click)="closeModal()" class="btn-secondary">Cancelar</button>
+          <button type="submit" [disabled]="visitForm.invalid" class="btn-primary">Salvar Agendamento</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

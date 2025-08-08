@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { CalendarOptions, EventApi } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -7,6 +7,8 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 import ptBrLocale from '@fullcalendar/core/locales/pt-br'; 
 import { DateClickArg } from '@fullcalendar/interaction';
 import { EventClickArg } from '@fullcalendar/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-external-visits',
@@ -14,17 +16,75 @@ import { EventClickArg } from '@fullcalendar/core';
   imports: [
     CommonModule,
     FullCalendarModule,
-    DatePipe
+    DatePipe,
+    FormsModule,
+    ReactiveFormsModule
   ],
   templateUrl: './external-visits.component.html',
   styleUrls: ['./external-visits.component.css'],
   encapsulation: ViewEncapsulation.None 
 })
-export class ExternalVisitsComponent {
-
+export class ExternalVisitsComponent implements OnInit {
+  isModalOpen = false;
+  visitForm!: FormGroup;
   isModalVisible = false;
   modalTitle = '';
   modalEvents: EventApi[] = []; 
+
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit(): void {
+    this.visitForm = this.fb.group({
+      cnpj: ['', [Validators.required]],
+      razaoSocial: [{ value: '', disabled: false }, [Validators.required]],
+      data: ['', [Validators.required]],
+      horario: ['', [Validators.required]],
+      motivo: ['', [Validators.required]]
+    });
+  }
+
+  openModal(): void {
+    this.visitForm.reset(); 
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
+  }
+
+  onFormSubmit(): void {
+    if (this.visitForm.invalid) {
+      alert('Por favor, preencha todos os campos.');
+      return;
+    }
+
+    const formValues = this.visitForm.getRawValue();
+
+    // 1. Crie o novo evento a partir dos dados do formulário
+    const newEvent = {
+      title: `${formValues.horario} - ${formValues.razaoSocial}`,
+      date: formValues.data, // O FullCalendar aceita 'YYYY-MM-DD'
+      extendedProps: {
+        status: 'agendada', // Status padrão para novas visitas
+        vendedor: { 
+          nome: 'Adriann', // No futuro, pegue do usuário logado
+          fotoUrl: '../../../assets/images/profiles/adriann.jpeg' 
+        }
+      }
+    };
+
+    // 2. Atualize a lista de eventos
+    // Criamos um novo array com os eventos existentes (...) mais o novo.
+    this.calendarOptions = {
+      ...this.calendarOptions, // Mantém todas as outras opções
+      events: [
+        ...this.calendarOptions.events as any[], // Pega todos os eventos antigos
+        newEvent // Adiciona o novo no final
+      ]
+    };
+
+    this.closeModal();
+  }
 
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
@@ -88,4 +148,6 @@ export class ExternalVisitsComponent {
       { title: '17:00 - Empresa E', date: todayStr, extendedProps: { status: 'agendada', vendedor: { nome: 'Carlos', fotoUrl: 'https://placehold.co/40x40/EFEFEF/333?text=C' } } },
     ];
   }
+
+
 }

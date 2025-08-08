@@ -51,14 +51,14 @@ export interface ServiceBudgetResponse {
   providedIn: 'root'
 })
 export class FetchBudgetsService {
-  // private apiUrlOrcamentos = 'https://v2.calculadora.backend.baron.dev.br/api/orcamentos'; 
-  private apiUrlOrcamentos = 'http://localhost:8080/api/orcamentos'; 
+  private apiUrlOrcamentos = 'https://v2.calculadora.backend.baron.dev.br/api/orcamentos'; 
+  // private apiUrlOrcamentos = 'http://localhost:8080/api/orcamentos'; 
 
   constructor(private http: HttpClient) { }
 
   getBudgets(): Observable<DadosOrcamento[]> {
-    // const url = 'https://v2.calculadora.backend.baron.dev.br/api/orcamentos/listar';
-    const url = 'http://localhost:8080/api/orcamentos/listar';
+    const url = 'https://v2.calculadora.backend.baron.dev.br/api/orcamentos/listar';
+    // const url = 'http://localhost:8080/api/orcamentos/listar';
     return this.http.get<DadosOrcamento[]>(url);
   }
 
@@ -150,22 +150,22 @@ export class FetchBudgetsService {
   }
 
   gerarOrcamentoDeServico(formData: ServiceFormData): Observable<ServiceBudgetResponse> {
-    // const url = 'https://v2.calculadora.backend.baron.dev.br/api/servico/gerar-orcamento';
-    const url = 'http://localhost:8080/api/servico/gerar-orcamento'; 
+    const url = 'https://v2.calculadora.backend.baron.dev.br/api/servico/gerar-orcamento';
+    // const url = 'http://localhost:8080/api/servico/gerar-orcamento'; 
     return this.http.post<ServiceBudgetResponse>(url, formData);
   }
 
   updateBudgetStatus(proposta: string, novoStatus: string): Observable<void> {
-    // const url =  'https://v2.calculadora.backend.baron.dev.br/api/orcamentos/alterar-status';
-    const url =  'http://localhost:8080/api/orcamentos/alterar-status';
+    const url =  'https://v2.calculadora.backend.baron.dev.br/api/orcamentos/alterar-status';
+    // const url =  'http://localhost:8080/api/orcamentos/alterar-status';
     const body = { proposta: proposta, novoStatus: novoStatus };
     
     return this.http.put<void>(url, body);
   }
 
   getBudgetsForCurrentMonth(): Observable<ListarOrcamentosDTOBackend[]> {
-    // const url = 'https://v2.calculadora.backend.baron.dev.br/api/orcamentos/listarPorMes';
-    const url = 'http://localhost:8080/api/orcamentos/listarPorMes';
+    const url = 'https://v2.calculadora.backend.baron.dev.br/api/orcamentos/listarPorMes';
+    // const url = 'http://localhost:8080/api/orcamentos/listarPorMes';
     
     const hoje = new Date();
     const ano = hoje.getFullYear() % 100; 
@@ -179,8 +179,8 @@ export class FetchBudgetsService {
   }
 
   getAllOrcamentoServicos(): Observable<ListarOrcamentosDTOBackend[]> {
-    // const url = 'https://v2.calculadora.backend.baron.dev.br/api/servico';
-    const url = 'http://localhost:8080/api/servico';
+    const url = 'https://v2.calculadora.backend.baron.dev.br/api/servico';
+    // const url = 'http://localhost:8080/api/servico';
 
     const hoje = new Date();
     const ano = hoje.getFullYear() % 100;

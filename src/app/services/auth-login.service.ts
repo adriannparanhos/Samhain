@@ -11,11 +11,11 @@ export class AuthLoginService {
   private apiLoginUrl = `${environment.apiUrl}/login`;
   private apiUserUrl = `${environment.apiUrl}/user`;
   
-  // private apiUrl = 'https://v2.calculadora.backend.baron.dev.br/login';
-  // private url = 'https://v2.calculadora.backend.baron.dev.br/user';
+  private apiUrl = 'https://v2.calculadora.backend.baron.dev.br/login';
+  private url = 'https://v2.calculadora.backend.baron.dev.br/user';
   
-  private apiUrl = 'http://localhost:8080/login';
-  private url = 'http://localhost:8080/user';
+  // private apiUrl = 'http://localhost:8080/login';
+  // private url = 'http://localhost:8080/user';
 
 
   private currentUserSubject: BehaviorSubject<any>;

@@ -201,7 +201,7 @@
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-slate-600">Subtotal:</span>
-                <span class="font-medium text-slate-800">{{ subtotal | currency:'BRL':'symbol':'1.2-2' }}</span>
+                <span class="font-medium text-slate-800">{{ subtotal | truncate | currency:'BRL':'symbol':'1.2-2' }}</span>
               </div>
               <div *ngIf="descontoGlobal > 0" class="flex justify-between items-center">
                 <span class="text-slate-600">Desconto Global ({{ descontoGlobal }}%):</span>
@@ -217,7 +217,7 @@
               </div>
               <div class="flex justify-between items-baseline pt-4 mt-2 border-t-2 border-dashed border-slate-300">
                 <span class="font-bold text-slate-900 text-base">Total C/IPI:</span>
-                <span class="font-bold text-green-600 text-xl">{{ grandTotal | currency:'BRL':'symbol':'1.2-2' }}</span>
+                <span class="font-bold text-green-600 text-xl">{{ grandTotal | truncate | currency:'BRL':'symbol':'1.2-2' }}</span>
               </div>
             </div>
         </div>

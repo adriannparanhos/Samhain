@@ -11,6 +11,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { OrcamentoItemNaTabela } from '../../models/orcamento-item';
 import { ItemOrcamentoPayload as BackendItemOrcamentoPayload } from '../../models/interfaces/dados-orcamento';
 import { SpecialProduct } from '../../services/fetchs/fetch-products.service';
+import { TruncatePipe } from '../../pipes/truncate.pipe';
 
 @Component({
   selector: 'app-dynamic-items-table',
@@ -21,7 +22,8 @@ import { SpecialProduct } from '../../services/fetchs/fetch-products.service';
     ReactiveFormsModule,
     LucideAngularModule,
     MatExpansionModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    TruncatePipe
   ],
   templateUrl: './dynamic-items-table.component.html',
 })
@@ -351,32 +353,20 @@ export class DynamicItemsTableComponent implements OnInit, OnDestroy {
   }
 
   public updateTotals(): void {
-    const quantidadeTotal = this.items.reduce((acc, item) => acc + (Number(item.quantidade) || 0), 0);
-    const fretePorUnidade = (quantidadeTotal > 0) ? (this.valorFrete || 0) / quantidadeTotal : 0;
-    const difalPorUnidade = (quantidadeTotal > 0) ? (this.valorDifal || 0) / quantidadeTotal : 0;
-
-    for (const item of this.items) {
-      const valorUnitarioBase = item.valorUnitarioOriginal !== undefined ? item.valorUnitarioOriginal : 0;
-      
-      item.valorUnitario = valorUnitarioBase + fretePorUnidade + difalPorUnidade;
-
-      const descontoMultiplier = 1 - ((item.desconto || 0) / 100);
-      item.total = item.valorUnitario * (item.quantidade || 0) * descontoMultiplier;
-      
-      const ipiMultiplier = item.ipi || 1; 
-      item.totalCIPI = item.total * ipiMultiplier;
-    }
-
+    // A função agora apenas SOMA os valores que já foram calculados pelo backend.
+    // Ela não entra mais em cada item para recalcular.
     this.subtotal = this.items.reduce((acc, item) => acc + (item.total || 0), 0);
     this.subtotalCIPI = this.items.reduce((acc, item) => acc + (item.totalCIPI || 0), 0);
     this.pesoTotal = this.items.reduce((acc, item) => acc + (item.pesoTotal || 0), 0);
     
+    // A lógica de ajustes globais continua a mesma
     let totalComDesconto = this.subtotalCIPI;
     if (this.descontoGlobal > 0 && this.descontoGlobal <= 100) {
       totalComDesconto *= (1 - (this.descontoGlobal / 100));
     }
     
-    this.grandTotal = totalComDesconto;
+    // O frete e o DIFAL são adicionados ao final, pois são valores globais.
+    this.grandTotal = totalComDesconto + (this.valorFrete || 0) + (this.valorDifal || 0);
 
     this.cdRef.detectChanges();
   }
